@@ -3,6 +3,9 @@ import 'package:beebetter/TodayPage.dart';
 import 'package:beebetter/GuidedMode.dart';
 import 'package:beebetter/Dashboard.dart';
 import 'package:beebetter/ProfilePage.dart';
+import 'widgets/Hexagon.dart';
+import 'dart:math';
+
 
 void main() {
   runApp(const MyApp());
@@ -48,6 +51,9 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
+    final hexWidth = 90.0;
+    final hexHeight = hexWidth * sqrt(3) / 2;
+
     return Scaffold(
       body: Center(
         child: _pages[_selectedIndex],
@@ -70,8 +76,8 @@ class _MainPageState extends State<MainPage> {
                       topRight: Radius.circular(30.0),
                     ),
                     child: BottomNavigationBar(
-                      backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-                      selectedItemColor: Theme.of(context).colorScheme.onPrimary,
+                      // backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+                      selectedItemColor: Theme.of(context).colorScheme.inversePrimary,
                       unselectedItemColor: Theme.of(context).colorScheme.primary,
                       currentIndex: _selectedIndex,
                       // showSelectedLabels: false,
@@ -80,11 +86,7 @@ class _MainPageState extends State<MainPage> {
                       items:
                         <BottomNavigationBarItem>[
                           BottomNavigationBarItem(
-                            icon: _buildNavIcon(
-                              context,
-                              icon: Icons.today,
-                              isSelected: _selectedIndex == 0,
-                            ),
+                            icon: Icon(Icons.today,),
                             label: 'Dashboard',
                           ),
                           BottomNavigationBarItem(
@@ -92,11 +94,7 @@ class _MainPageState extends State<MainPage> {
                             label: ' ',
                           ),
                           BottomNavigationBarItem(
-                            icon: _buildNavIcon(
-                              context,
-                              icon: Icons.person,
-                              isSelected: _selectedIndex == 2,
-                            ),
+                            icon: Icon(Icons.person,),
                             label: 'Profile',
                           ),
                       ],
@@ -104,63 +102,45 @@ class _MainPageState extends State<MainPage> {
                   ),
 
                   Positioned(
-                    top: -15, // Moves circle up to overlap
+                    top: -25,
                     child: GestureDetector(
                       onTap: () {
                         setState(() {
                           _selectedIndex = 1;
                         });
                       },
-                      child: Container(
-                        width: 90,
-                        height: 90,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Theme.of(context).colorScheme.inversePrimary,
-                          border: Border.all(
-                            color: Colors.white,
-                            width: 5,
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Theme.of(context).colorScheme.inversePrimary,
-                              blurRadius: 15,
-                              offset: const Offset(0, 3),
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+
+                        ClipPath(
+                          clipper: HexagonClipper(),
+                          child: Container(
+                            width: hexWidth,
+                            height: hexHeight,
+                            color: Theme.of(context).colorScheme.inversePrimary,
                             ),
-                          ],
-                        ),
-                        child: Icon(
-                          Icons.edit_note,
-                          color: Theme.of(context).colorScheme.primary,
-                          size: 50,
-                        ),
+                          ),
+
+                        ClipPath(
+                          clipper: HexagonClipper(),
+                          child: Container(
+                            width: hexWidth * 0.92,
+                            height: hexHeight * 0.92,
+                            color: Theme.of(context).colorScheme.surface,
+                            child: Icon(Icons.edit_note,
+                                color: _selectedIndex == 1?
+                                Theme.of(context).colorScheme.inversePrimary : Theme.of(context).colorScheme.primary
+                                , size: 50),
+                            ),
+                          ),
+                        ],
+                        )
                       ),
                     ),
-                  ),
               ]
             )
         )
     );
   }
-}
-
-Widget _buildNavIcon(BuildContext context,
-    {required IconData icon, required bool isSelected}) {
-  final colorScheme = Theme
-      .of(context)
-      .colorScheme;
-  return AnimatedContainer(
-    duration: const Duration(milliseconds: 200),
-    width: 45,
-    height: 45,
-    decoration: BoxDecoration(
-      shape: BoxShape.circle,
-      color: isSelected ? colorScheme.onPrimary : Colors.transparent,
-    ),
-    child: Icon(
-      icon,
-      color: isSelected ? colorScheme.inversePrimary : colorScheme.primary,
-      size: 28,
-    ),
-  );
 }
