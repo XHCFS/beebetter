@@ -35,7 +35,7 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  int _selectedIndex = 0;
+  int selectedIndex = 1;
 
   final _pages = [
     Dashboard(),
@@ -45,102 +45,87 @@ class _MainPageState extends State<MainPage> {
 
   void _onItemTapped(int index) {
     setState(() {
-      _selectedIndex = index;
+      selectedIndex = index;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final hexWidth = 90.0;
-    final hexHeight = hexWidth * sqrt(3) / 2;
 
     return Scaffold(
       body: Center(
-        child: _pages[_selectedIndex],
+        child: _pages[selectedIndex],
       ),
-        bottomNavigationBar: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(30), topLeft: Radius.circular(30)),
-              boxShadow: [
-                BoxShadow(color: Theme.of(context).colorScheme.inversePrimary, spreadRadius: 0, blurRadius: 5),
-              ],
+      bottomNavigationBar:  NavigationBarTheme(
+        data: NavigationBarThemeData(
+          height: 70,
+          backgroundColor: Theme.of(context).colorScheme.surface,
+          indicatorColor: Theme.of(context).colorScheme.inversePrimary.withAlpha(64),
+
+          labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
+
+          iconTheme: WidgetStateProperty.resolveWith((states) {
+            if (states.contains(WidgetState.selected)) {
+              return IconThemeData(
+                color: Theme.of(context).colorScheme.primary,
+                size: 34,
+              );
+            }
+            return IconThemeData(
+              color: Theme.of(context).colorScheme.primary.withAlpha(128),
+              size: 30,
+            );
+          }),
+
+          labelTextStyle: WidgetStateProperty.resolveWith((states) {
+            if (states.contains(WidgetState.selected)) {
+              return TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: Theme.of(context).colorScheme.primary,
+              );
+            }
+            return TextStyle(
+              fontSize: 12,
+              color: Theme.of(context).colorScheme.primary.withAlpha(128),
+            );
+          }),
+        ),
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border(
+              top: BorderSide(
+                color: Theme.of(context).colorScheme.outline.withAlpha(77),
+                width: 1,
+              ),
             ),
-            child: Stack(
-                alignment: Alignment.bottomCenter,
-                clipBehavior: Clip.none,
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(30.0),
-                      topRight: Radius.circular(30.0),
-                    ),
-                    child: BottomNavigationBar(
-                      // backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-                      selectedItemColor: Theme.of(context).colorScheme.inversePrimary,
-                      unselectedItemColor: Theme.of(context).colorScheme.primary,
-                      currentIndex: _selectedIndex,
-                      // showSelectedLabels: false,
-                      showUnselectedLabels: false,
-                      onTap: _onItemTapped,
-                      items:
-                        <BottomNavigationBarItem>[
-                          BottomNavigationBarItem(
-                            icon: Icon(Icons.today,),
-                            label: 'Dashboard',
-                          ),
-                          BottomNavigationBarItem(
-                            icon: SizedBox.shrink(),
-                            label: ' ',
-                          ),
-                          BottomNavigationBarItem(
-                            icon: Icon(Icons.person,),
-                            label: 'Profile',
-                          ),
-                      ],
-                    )
-                  ),
-
-                  Positioned(
-                    top: -25,
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          _selectedIndex = 1;
-                        });
-                      },
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-
-                        ClipPath(
-                          clipper: HexagonClipper(),
-                          child: Container(
-                            width: hexWidth,
-                            height: hexHeight,
-                            color: Theme.of(context).colorScheme.inversePrimary,
-                            ),
-                          ),
-
-                        ClipPath(
-                          clipper: HexagonClipper(),
-                          child: Container(
-                            width: hexWidth * 0.92,
-                            height: hexHeight * 0.92,
-                            color: Theme.of(context).colorScheme.surface,
-                            child: Icon(Icons.edit_note,
-                                color: _selectedIndex == 1?
-                                Theme.of(context).colorScheme.inversePrimary : Theme.of(context).colorScheme.primary
-                                , size: 50),
-                            ),
-                          ),
-                        ],
-                        )
-                      ),
-                    ),
-              ]
-            )
-        )
+          ),
+          child: NavigationBar(
+            selectedIndex: selectedIndex,
+            onDestinationSelected: _onItemTapped,
+            destinations: const [
+              NavigationDestination(
+                icon: Icon(Icons.today_outlined),
+                selectedIcon: Icon(Icons.today),
+                label: 'Dashboard',
+              ),
+              NavigationDestination(
+                icon: Icon(Icons.menu_book_outlined),
+                selectedIcon: Icon(Icons.menu_book_rounded),
+                label: 'Today',
+              ),
+              NavigationDestination(
+                icon: Icon(Icons.person_outline),
+                selectedIcon: Icon(Icons.person),
+                label: 'Profile',
+              ),
+            ],
+          ),
+        ),
+      ),
     );
+
   }
+
 }
+
