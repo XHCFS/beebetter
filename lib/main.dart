@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:beebetter/TodayPage.dart';
-import 'package:beebetter/GuidedMode.dart';
-import 'package:beebetter/Dashboard.dart';
-import 'package:beebetter/ProfilePage.dart';
+import 'package:beebetter/pages/TodayPage.dart';
+import 'package:beebetter/pages/GuidedMode.dart';
+import 'package:beebetter/pages/Dashboard.dart';
+import 'package:beebetter/pages/ProfilePage.dart';
 import 'widgets/Hexagon.dart';
 import 'dart:math';
 
@@ -14,9 +14,17 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    // final baseScheme = ColorScheme.fromSeed(seedColor: Colors.orangeAccent);
+    // final customScheme = baseScheme.copyWith(
+    //   primary: const Color(0xFF9C89B8),
+    //   onPrimary: const Color(0xFFFFFFFF),
+    //   secondary: const Color(0xFFBFA2DB),
+    //   onSecondary: const Color(0xFF1C1B1F),
+    //   tertiary: const Color(0xFFD9CFF3),
+    // );
+
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
@@ -58,11 +66,12 @@ class _MainPageState extends State<MainPage> {
       ),
       bottomNavigationBar:  NavigationBarTheme(
         data: NavigationBarThemeData(
-          height: 70,
+          height: 80,
           backgroundColor: Theme.of(context).colorScheme.surface,
-          indicatorColor: Theme.of(context).colorScheme.inversePrimary.withAlpha(64),
+          // indicatorColor: Theme.of(context).colorScheme.inversePrimary.withAlpha(64),
+          indicatorColor: Colors.transparent,
 
-          labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
+          // labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
 
           iconTheme: WidgetStateProperty.resolveWith((states) {
             if (states.contains(WidgetState.selected)) {
