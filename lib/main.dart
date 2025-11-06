@@ -64,77 +64,89 @@ class _MainPageState extends State<MainPage> {
       body: Center(
         child: _pages[selectedIndex],
       ),
-      bottomNavigationBar:  NavigationBarTheme(
-        data: NavigationBarThemeData(
-          height: 80,
-          backgroundColor: Theme.of(context).colorScheme.surface,
-          // indicatorColor: Theme.of(context).colorScheme.inversePrimary.withAlpha(64),
-          indicatorColor: Colors.transparent,
-
-          // labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
-
-          iconTheme: WidgetStateProperty.resolveWith((states) {
-            if (states.contains(WidgetState.selected)) {
-              return IconThemeData(
-                color: Theme.of(context).colorScheme.primary,
-                size: 34,
-              );
-            }
-            return IconThemeData(
-              color: Theme.of(context).colorScheme.primary.withAlpha(128),
-              size: 30,
-            );
-          }),
-
-          labelTextStyle: WidgetStateProperty.resolveWith((states) {
-            if (states.contains(WidgetState.selected)) {
-              return TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: Theme.of(context).colorScheme.primary,
-              );
-            }
-            return TextStyle(
-              fontSize: 12,
-              color: Theme.of(context).colorScheme.primary.withAlpha(128),
-            );
-          }),
+      bottomNavigationBar:  Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(30),
+            topRight: Radius.circular(30),
+          ),
+          border: Border.all(
+            color: Theme.of(context).colorScheme.outline.withAlpha(77),
+            width: 1,
+          ),
         ),
-        child: Container(
-          decoration: BoxDecoration(
-            border: Border(
-              top: BorderSide(
-                color: Theme.of(context).colorScheme.outline.withAlpha(77),
-                width: 1,
+        child: ClipRRect(
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(30),
+            topRight: Radius.circular(30),
+          ),
+          child:  NavigationBarTheme(
+            data: NavigationBarThemeData(
+              height: 80,
+              backgroundColor: Theme.of(context).colorScheme.surface,
+              indicatorColor: Theme.of(context).colorScheme.inversePrimary.withAlpha(64),
+              // indicatorColor: Colors.transparent,
+              indicatorShape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+
+              // labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
+
+              iconTheme: WidgetStateProperty.resolveWith((states) {
+                if (states.contains(WidgetState.selected)) {
+                  return IconThemeData(
+                    color: Theme.of(context).colorScheme.primary,
+                    size: 30,
+                  );
+                }
+                return IconThemeData(
+                  color: Theme.of(context).colorScheme.primary.withAlpha(128),
+                  size: 30,
+                );
+              }),
+
+              labelTextStyle: WidgetStateProperty.resolveWith((states) {
+                if (states.contains(WidgetState.selected)) {
+                  return TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: Theme.of(context).colorScheme.primary,
+                  );
+                }
+                return TextStyle(
+                  fontSize: 12,
+                  color: Theme.of(context).colorScheme.primary.withAlpha(128),
+                );
+              }),
+            ),
+            child: NavigationBar(
+                  selectedIndex: selectedIndex,
+                  onDestinationSelected: _onItemTapped,
+                  destinations: const [
+                    NavigationDestination(
+                      icon: Icon(Icons.today_outlined),
+                      selectedIcon: Icon(Icons.today),
+                      label: 'Dashboard',
+                    ),
+                    NavigationDestination(
+                      icon: Icon(Icons.menu_book_outlined),
+                      selectedIcon: Icon(Icons.menu_book_rounded),
+                      label: 'Today',
+                    ),
+                    NavigationDestination(
+                      icon: Icon(Icons.person_outline),
+                      selectedIcon: Icon(Icons.person),
+                      label: 'Profile',
+                    ),
+                  ],
+                // ),
               ),
             ),
           ),
-          child: NavigationBar(
-            selectedIndex: selectedIndex,
-            onDestinationSelected: _onItemTapped,
-            destinations: const [
-              NavigationDestination(
-                icon: Icon(Icons.today_outlined),
-                selectedIcon: Icon(Icons.today),
-                label: 'Dashboard',
-              ),
-              NavigationDestination(
-                icon: Icon(Icons.menu_book_outlined),
-                selectedIcon: Icon(Icons.menu_book_rounded),
-                label: 'Today',
-              ),
-              NavigationDestination(
-                icon: Icon(Icons.person_outline),
-                selectedIcon: Icon(Icons.person),
-                label: 'Profile',
-              ),
-            ],
-          ),
         ),
-      ),
     );
 
   }
-
 }
 
