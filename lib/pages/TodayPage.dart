@@ -39,6 +39,12 @@ class _TodayPageBodyState extends State<TodayPageBody> {
     final DateTime today = DateTime.now();
     final String day = DateFormat('EEEE').format(today);
     final String formattedDate = DateFormat('MMMM d, yyyy').format(today);
+    ColorScheme colorScheme = Theme.of(context).colorScheme;
+    TextTheme textTheme = Theme.of(context).textTheme;
+    Color surfaceContainerDark = Color.alphaBlend(
+      Theme.of(context).colorScheme.inversePrimary.withAlpha(20),
+      Theme.of(context).colorScheme.surfaceContainerLow,
+    );
 
     return GestureDetector(
       onVerticalDragEnd: (details) {
@@ -67,28 +73,29 @@ class _TodayPageBodyState extends State<TodayPageBody> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text("Welcome back, ", style: Theme.of(context).textTheme.headlineMedium
-                          ?.copyWith(color: Theme.of(context).colorScheme.primary),),
+                          ?.copyWith(color: colorScheme.primary),),
                       const SizedBox(width: 4),
                       Text(name, style: Theme.of(context).textTheme.headlineMedium
-                          ?.copyWith(color: Theme.of(context).colorScheme.primary),),
+                          ?.copyWith(color: colorScheme.primary),),
                       const SizedBox(width: 4),
                       Text("!", style: Theme.of(context).textTheme.headlineMedium
-                          ?.copyWith(color: Theme.of(context).colorScheme.primary),),
+                          ?.copyWith(color: colorScheme.primary),),
                     ],
                   ),
                   const SizedBox(height: 32),
                   Text(day, style: Theme.of(context).textTheme.titleMedium
-                      ?.copyWith(color: Theme.of(context).colorScheme.primary),),
+                      ?.copyWith(color: colorScheme.primary),),
                   Text(formattedDate, style: Theme.of(context).textTheme.titleMedium
-                      ?.copyWith(color: Theme.of(context).colorScheme.primary.withAlpha(160)),),
+                      ?.copyWith(color: colorScheme.primary.withAlpha(160)),),
                   const SizedBox(height: 16),
 
                   Card(
-                    elevation: 0,
-                    color: Theme.of(context).colorScheme.onPrimary,
+                    // elevation: 2,
+                    color: colorScheme.onPrimary,
+                    shadowColor: colorScheme.inversePrimary,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
-                      side: BorderSide(color: Theme.of(context).colorScheme.inversePrimary, width: 1),
+                      // side: BorderSide(color: colorScheme.inversePrimary, width: 1),
                     ),
                     child: InkWell(
                       borderRadius: BorderRadius.circular(12),
@@ -110,26 +117,26 @@ class _TodayPageBodyState extends State<TodayPageBody> {
                             Container(
                               padding: const EdgeInsets.all(16),
                               decoration: BoxDecoration(
-                                color: Theme.of(context).colorScheme.inversePrimary.withAlpha(40),
+                                color: colorScheme.inversePrimary.withAlpha(40),
                                 shape: BoxShape.circle,
                               ),
                               child: Icon(
                                 Icons.edit,
                                 size: 32,
-                                color: Theme.of(context).colorScheme.primary,
+                                color: colorScheme.primary,
                               ),
                             ),
                             const SizedBox(height: 8),
                             Text(
                               "New Entry",
                               style: Theme.of(context).textTheme.titleMedium
-                                  ?.copyWith(color: Theme.of(context).colorScheme.primary),
+                                  ?.copyWith(color: colorScheme.primary),
                             ),
                             const SizedBox(height: 16),
                             Text(
                               "Journal your thoughts and mood",
                               style: Theme.of(context).textTheme.bodyMedium
-                                  ?.copyWith(color: Theme.of(context).colorScheme.inversePrimary.withAlpha(200)),
+                                  ?.copyWith(color: colorScheme.primary.withAlpha(100)),
                             ),
                           ],
                         ),
@@ -138,80 +145,81 @@ class _TodayPageBodyState extends State<TodayPageBody> {
                   ),
                   const SizedBox(height: 16),
                   Card(
-                    elevation: 0,
-                    color: Theme.of(context).colorScheme.surfaceContainerLow,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      side: BorderSide(color: Theme.of(context).colorScheme.inversePrimary, width: 1),
-                    ),
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(12),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          PageRouteBuilder(
-                            pageBuilder: (context, animation, secondaryAnimation) => GuidedMode(),
-                            transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                              const begin = Offset(0.0, 0.4);
-                              const end = Offset.zero;
-                              final tween = Tween(begin: begin, end: end)
-                                  .chain(CurveTween(curve: Curves.easeInOut));
-                              return SlideTransition(position: animation.drive(tween), child: child);
-                            },
-                          ),
-                        );
+                      elevation: 2,
+                      color: surfaceContainerDark,
+                      shadowColor: colorScheme.inversePrimary,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        // side: BorderSide(color: colorScheme.inversePrimary, width: 1),
+                      ),
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(12),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            PageRouteBuilder(
+                              pageBuilder: (context, animation, secondaryAnimation) => GuidedMode(),
+                              transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                const begin = Offset(0.0, 0.4);
+                                const end = Offset.zero;
+                                final tween = Tween(begin: begin, end: end)
+                                    .chain(CurveTween(curve: Curves.easeInOut));
+                                return SlideTransition(position: animation.drive(tween), child: child);
+                              },
+                            ),
+                          );
 
-                      },
-                      child: Container(
-                        width: double.infinity,
-                        height: 120,
-                        padding: const EdgeInsets.all(16),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(16),
-                              decoration: BoxDecoration(
-                                color: Theme.of(context).colorScheme.inversePrimary.withAlpha(80),
-                                shape: BoxShape.circle,
+                        },
+                        child: Container(
+                          width: double.infinity,
+                          height: 120,
+                          padding: const EdgeInsets.all(16),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                  color: colorScheme.inversePrimary.withAlpha(100),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Icon(
+                                  Icons.lightbulb_outline_rounded,
+                                  size: 32,
+                                  color: colorScheme.primary,
+                                ),
                               ),
-                              child: Icon(
-                                Icons.lightbulb_outline_rounded,
+                              const SizedBox(width: 20),
+                              Column(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Daily prompts",
+                                    style: Theme.of(context).textTheme.titleMedium
+                                        ?.copyWith(color: colorScheme.primary),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    "$completed / $total completed",
+                                    style: Theme.of(context).textTheme.bodyMedium
+                                        ?.copyWith(color: colorScheme.primary.withAlpha(120)),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(width: 32),
+                              Icon(
+                                Icons.keyboard_arrow_up_rounded,
                                 size: 32,
-                                color: Theme.of(context).colorScheme.primary,
+                                color: colorScheme.inversePrimary,
                               ),
-                            ),
-                            const SizedBox(width: 20),
-                            Column(
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Daily prompts",
-                                  style: Theme.of(context).textTheme.titleMedium
-                                      ?.copyWith(color: Theme.of(context).colorScheme.primary),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  "$completed / $total completed",
-                                  style: Theme.of(context).textTheme.bodyMedium
-                                      ?.copyWith(color: Theme.of(context).colorScheme.primary.withAlpha(120)),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(width: 32),
-                            Icon(
-                              Icons.keyboard_arrow_up_rounded,
-                              size: 32,
-                              color: Theme.of(context).colorScheme.inversePrimary,
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
-                    ),
                   ),
                 ],
               ),
