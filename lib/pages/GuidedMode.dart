@@ -38,44 +38,7 @@ class _GuidedModeBodyState extends State<GuidedModeBody> {
   Widget build(BuildContext context) {
     ColorScheme colorScheme = Theme.of(context).colorScheme;
     TextTheme textTheme = Theme.of(context).textTheme;
-    return GestureDetector(
-      onVerticalDragEnd: (details) {
-        if (details.primaryVelocity != null && details.primaryVelocity! > 500) {
-          Navigator.push(
-            context,
-            PageRouteBuilder(
-              pageBuilder: (_, __, ___) => MainPage(),
-              transitionsBuilder: (_, animation, __, child) =>
-                  SlideTransition(
-                    position: Tween(
-                      begin: const Offset(0, -0.5),
-                      end: Offset.zero,
-                    ).animate(animation),
-                    child: child,
-                  ),
-            ),
-          );
-        }
-      },
-      onHorizontalDragEnd: (details) {
-        if (details.primaryVelocity != null && details.primaryVelocity! > 500) {
-
-          Navigator.push(
-            context,
-            PageRouteBuilder(
-              pageBuilder: (_, __, ___) => MainPage(),
-              transitionsBuilder: (_, animation, __, child) => SlideTransition(
-                position: Tween(
-                  begin: const Offset(0, -0.5),
-                  end: Offset.zero,
-                ).animate(animation),
-                child: child,
-              ),
-            ),
-          );
-        }
-      },
-      child:Column(
+    return Column(
           children: [
             // ---------------------------------------------------
             // Swipe Gesture Indication Bar
@@ -464,7 +427,6 @@ class _GuidedModeBodyState extends State<GuidedModeBody> {
             ),
           ),
         ]
-      ),
     );
   }
 }
