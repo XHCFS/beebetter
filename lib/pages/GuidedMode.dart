@@ -263,10 +263,6 @@ class _GuidedModeBodyState extends State<GuidedModeBody> {
                                                             children: [
                                                               Container(
                                                                 padding: const EdgeInsets.all(16),
-                                                                decoration: BoxDecoration(
-                                                                  color: Theme.of(context).colorScheme.inversePrimary.withAlpha(40),
-                                                                  shape: BoxShape.circle,
-                                                                ),
                                                                 child: Icon(
                                                                   Icons.mic,
                                                                   size: 32,

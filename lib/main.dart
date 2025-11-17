@@ -44,24 +44,6 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin{
-
-  // ---------------------------------------------------
-  // Navigation Bar Function
-  // ---------------------------------------------------
-  int selectedIndex = 1;
-
-  final pages = [
-    Dashboard(),
-    TodayPage(),
-    ProfilePage(),
-  ];
-
-  void _onItemTapped(int index) {
-    setState(() {
-      selectedIndex = index;
-    });
-  }
-
   // ---------------------------------------------------
   // Sipe Up Guided Mode
   // ---------------------------------------------------
@@ -84,8 +66,26 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
   }
 
 
-  void _openSheet() => guidedModeController.forward();
-  void _closeSheet() => guidedModeController.reverse();
+  void openGuidedMode() => guidedModeController.forward();
+  void closeGuidedMode() => guidedModeController.reverse();
+
+  // ---------------------------------------------------
+  // Navigation Bar Function
+  // ---------------------------------------------------
+  int selectedIndex = 1;
+
+  List<Widget> get pages => [
+    Dashboard(),
+    TodayPage(openGuidedMode: openGuidedMode),
+    ProfilePage(),
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      selectedIndex = index;
+    });
+  }
+
 
 
   @override
@@ -111,9 +111,9 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
             },
             onVerticalDragEnd: (details) {
               if (guidedModeController.value < 0.15) {
-                _closeSheet();   // snap closed
+                closeGuidedMode();   // snap closed
               } else {
-                _openSheet();    // snap open
+                openGuidedMode();    // snap open
               }
             },
             child: pages[selectedIndex],
@@ -232,14 +232,14 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                   },
                   onVerticalDragEnd: (details) {
                     if (guidedModeController.value < 0.8) {
-                      _closeSheet();
+                      closeGuidedMode();
                     } else {
-                      _openSheet();
+                      openGuidedMode();
                     }
                   },
                   onHorizontalDragEnd: (details) {
                       if (details.primaryVelocity != null && details.primaryVelocity! > 500) {
-                        _closeSheet();
+                        closeGuidedMode();
                       }
                   },
                   child: Container(
