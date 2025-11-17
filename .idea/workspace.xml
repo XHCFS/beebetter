@@ -9,7 +9,6 @@
       <change beforePath="$PROJECT_DIR$/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/main.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/pages/GuidedMode.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/pages/GuidedMode.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/pages/TodayPage.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/pages/TodayPage.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/widgets/BackgroundGradient.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/widgets/BackgroundGradient.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -42,16 +41,16 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.cidr.known.project.marker": "true",
-    "cidr.known.project.marker": "true",
-    "dart.analysis.tool.window.visible": "false",
-    "io.flutter.reload.alreadyRun": "true",
-    "last_opened_file_path": "E:/Textbook/Year 5/Grad Project/github/network-monitoring/network_monitoring",
-    "show.migrate.to.gradle.popup": "false"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
+    &quot;io.flutter.reload.alreadyRun&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;E:/Textbook/Year 5/Grad Project/github/network-monitoring/network_monitoring&quot;,
+    &quot;show.migrate.to.gradle.popup&quot;: &quot;false&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="E:\Textbook\Year 5\CIE 460\beebetter\lib\pages" />

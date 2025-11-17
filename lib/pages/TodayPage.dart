@@ -46,25 +46,7 @@ class _TodayPageBodyState extends State<TodayPageBody> {
       Theme.of(context).colorScheme.surfaceContainerLow,
     );
 
-    return GestureDetector(
-      onVerticalDragEnd: (details) {
-        if (details.primaryVelocity != null && details.primaryVelocity! < -500) {
-          Navigator.push(
-            context,
-            PageRouteBuilder(
-              pageBuilder: (_, __, ___) => GuidedMode(),
-              transitionsBuilder: (_, animation, __, child) => SlideTransition(
-                position: Tween(
-                  begin: const Offset(0, 1),
-                  end: Offset.zero,
-                ).animate(animation),
-                child: child,
-              ),
-            ),
-          );
-        }
-      },
-      child: SingleChildScrollView(
+    return SingleChildScrollView(
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -152,25 +134,7 @@ class _TodayPageBodyState extends State<TodayPageBody> {
                         borderRadius: BorderRadius.circular(12),
                         // side: BorderSide(color: colorScheme.inversePrimary, width: 1),
                       ),
-                      child: InkWell(
-                        borderRadius: BorderRadius.circular(12),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            PageRouteBuilder(
-                              pageBuilder: (context, animation, secondaryAnimation) => GuidedMode(),
-                              transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                                const begin = Offset(0.0, 0.4);
-                                const end = Offset.zero;
-                                final tween = Tween(begin: begin, end: end)
-                                    .chain(CurveTween(curve: Curves.easeInOut));
-                                return SlideTransition(position: animation.drive(tween), child: child);
-                              },
-                            ),
-                          );
-
-                        },
-                        child: Container(
+                      child: Container(
                           width: double.infinity,
                           height: 120,
                           padding: const EdgeInsets.all(16),
@@ -220,10 +184,8 @@ class _TodayPageBodyState extends State<TodayPageBody> {
                           ),
                         ),
                       ),
-                  ),
                 ],
               ),
-          ),
     );
   }
 }
