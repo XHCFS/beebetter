@@ -5,6 +5,9 @@ import 'package:flutter/rendering.dart';
 import 'package:beebetter/widgets/BackgroundGradient.dart';
 
 class TodayPage extends StatelessWidget {
+  final VoidCallback openGuidedMode;
+  const TodayPage({super.key, required this.openGuidedMode});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -13,7 +16,7 @@ class TodayPage extends StatelessWidget {
             SafeArea(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0), // top & horizontal padding
-                child: TodayPageBody(),
+                child: TodayPageBody(openGuidedMode: openGuidedMode),
               ),
             ),
       ),
@@ -23,7 +26,8 @@ class TodayPage extends StatelessWidget {
 
 
 class TodayPageBody extends StatefulWidget {
-  const TodayPageBody({super.key});
+  final VoidCallback openGuidedMode;
+  const TodayPageBody({super.key, required this.openGuidedMode});
   @override
   State<TodayPageBody> createState() => _TodayPageBodyState();
 }
@@ -98,10 +102,6 @@ class _TodayPageBodyState extends State<TodayPageBody> {
                           children: [
                             Container(
                               padding: const EdgeInsets.all(16),
-                              decoration: BoxDecoration(
-                                color: colorScheme.inversePrimary.withAlpha(40),
-                                shape: BoxShape.circle,
-                              ),
                               child: Icon(
                                 Icons.edit,
                                 size: 32,
@@ -134,7 +134,10 @@ class _TodayPageBodyState extends State<TodayPageBody> {
                         borderRadius: BorderRadius.circular(12),
                         // side: BorderSide(color: colorScheme.inversePrimary, width: 1),
                       ),
-                      child: Container(
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(12),
+                        onTap: widget.openGuidedMode,
+                        child: Container(
                           width: double.infinity,
                           height: 120,
                           padding: const EdgeInsets.all(16),
@@ -145,10 +148,6 @@ class _TodayPageBodyState extends State<TodayPageBody> {
                             children: [
                               Container(
                                 padding: const EdgeInsets.all(16),
-                                decoration: BoxDecoration(
-                                  color: colorScheme.inversePrimary.withAlpha(100),
-                                  shape: BoxShape.circle,
-                                ),
                                 child: Icon(
                                   Icons.lightbulb_outline_rounded,
                                   size: 32,
@@ -184,6 +183,7 @@ class _TodayPageBodyState extends State<TodayPageBody> {
                           ),
                         ),
                       ),
+                    ),
                 ],
               ),
     );
