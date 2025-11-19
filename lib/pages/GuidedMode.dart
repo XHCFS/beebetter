@@ -27,6 +27,8 @@ class GuidedModeBody extends StatefulWidget {
 }
 
 class _GuidedModeBodyState extends State<GuidedModeBody> {
+  late HoneycombPainter honeycombPainter;
+
   int totalPrompts = 3;
   int currentPrompt = 1;
   int completedPrompts = 1;
@@ -266,11 +268,11 @@ class _GuidedModeBodyState extends State<GuidedModeBody> {
                                                                 child: Icon(
                                                                   Icons.mic,
                                                                   size: 32,
-                                                                  color: Theme.of(context).colorScheme.primary,
+                                                                  color: Theme.of(context).colorScheme.primary.withAlpha(200),
                                                                 ),
                                                               ),
                                                               const SizedBox(height: 16),
-                                                              Text("Click to start", style: textTheme.bodyMedium
+                                                              Text("Click to start", style: textTheme.titleSmall
                                                                   ?.copyWith(color: colorScheme.primary.withAlpha(160)),),
                                                             ],
                                                           ),
@@ -308,7 +310,7 @@ class _GuidedModeBodyState extends State<GuidedModeBody> {
                                                         colors: canContinue
                                                             ? [
                                                           colorScheme.inversePrimary,
-                                                          colorScheme.errorContainer,
+                                                          colorScheme.primaryContainer
                                                         ]
                                                             : [
                                                           colorScheme.surfaceContainerHighest,

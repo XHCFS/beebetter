@@ -5,10 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2f3e1994-0671-4947-954c-e64651a39a54" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/main.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/pages/GuidedMode.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/pages/GuidedMode.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/pages/TodayPage.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/pages/TodayPage.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/widgets/BackgroundGradient.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/widgets/BackgroundGradient.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
