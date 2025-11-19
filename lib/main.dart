@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:beebetter/pages/TodayPage.dart';
 import 'package:beebetter/pages/GuidedMode.dart';
 import 'package:beebetter/pages/Dashboard.dart';
 import 'package:beebetter/pages/ProfilePage.dart';
-import 'widgets/Hexagon.dart';
 import 'dart:math';
 import 'dart:ui';
 
@@ -73,6 +73,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
   // Navigation Bar Function
   // ---------------------------------------------------
   int selectedIndex = 1;
+  final PageController pageController = PageController();
 
   List<Widget> get pages => [
     Dashboard(),
@@ -83,6 +84,11 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
   void _onItemTapped(int index) {
     setState(() {
       selectedIndex = index;
+      pageController.animateToPage(
+        index,
+        duration: Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
     });
   }
 
@@ -91,7 +97,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
-    final double navBarHeight = 80;
+    final double navBarHeight = 40;
     return Scaffold(
       body: Stack(
         children: [
@@ -116,16 +122,26 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                 openGuidedMode();    // snap open
               }
             },
-            child: pages[selectedIndex],
+            // child: pages[selectedIndex],
+              child: PageView(
+                controller: pageController,
+                onPageChanged: (index) {
+                  setState(() {
+                    selectedIndex = index;
+                  });
+                },
+                children: pages,
+              )
+
           ),
           // ---------------------------------------------------
           // Navigation Bar
           // ---------------------------------------------------
-          Align(
-          alignment: Alignment.bottomCenter,
-          child: SizedBox(
-            height: navBarHeight,
-            child:
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+          child:
               Container(
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.surface,
@@ -182,33 +198,35 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                         );
                       }),
                     ),
-                    child: NavigationBar(
-                      selectedIndex: selectedIndex,
-                      onDestinationSelected: _onItemTapped,
-                      destinations: const [
-                        NavigationDestination(
-                          icon: Icon(Icons.today_outlined),
-                          selectedIcon: Icon(Icons.today),
-                          label: 'Dashboard',
-                        ),
-                        NavigationDestination(
-                          icon: Icon(Icons.menu_book_outlined),
-                          selectedIcon: Icon(Icons.menu_book_rounded),
-                          label: 'Today',
-                        ),
-                        NavigationDestination(
-                          icon: Icon(Icons.person_outline),
-                          selectedIcon: Icon(Icons.person),
-                          label: 'Profile',
-                        ),
-                      ],
-                      // ),
+                    child: Transform.translate(
+                    offset: const Offset(0, -6),
+                      child: NavigationBar(
+                        selectedIndex: selectedIndex,
+                        onDestinationSelected: _onItemTapped,
+                        destinations: const [
+                          NavigationDestination(
+                            icon: Icon(Symbols.today, fill: 0,),
+                            selectedIcon: Icon(Symbols.today, fill: 1,),
+                            label: 'Dashboard',
+                          ),
+                          NavigationDestination(
+                            icon: Icon(Symbols.menu_book_rounded, fill: 0,),
+                            selectedIcon: Icon(Symbols.menu_book_rounded, fill: 1,),
+                            label: 'Today',
+                          ),
+                          NavigationDestination(
+                            icon: Icon(Symbols.person, fill: 0,),
+                            selectedIcon: Icon(Symbols.person, fill: 1,),
+                            label: 'Profile',
+                          ),
+                        ],
+                        // ),
+                      ),
                     ),
                   ),
                 ),
               ),
             ),
-          ),
 
           // ---------------------------------------------------
           // Animation Builder for Swipe Animation
