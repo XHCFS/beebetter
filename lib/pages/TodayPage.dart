@@ -103,9 +103,9 @@ class _TodayPageBodyState extends State<TodayPageBody> {
                             Container(
                               padding: const EdgeInsets.all(16),
                               child: Icon(
-                                Icons.edit,
+                                Icons.edit_outlined,
                                 size: 32,
-                                color: colorScheme.primary,
+                                color: colorScheme.primary.withAlpha(240),
                               ),
                             ),
                             const SizedBox(height: 8),
@@ -117,7 +117,7 @@ class _TodayPageBodyState extends State<TodayPageBody> {
                             const SizedBox(height: 16),
                             Text(
                               "Journal your thoughts and mood",
-                              style: Theme.of(context).textTheme.bodyMedium
+                              style: Theme.of(context).textTheme.titleSmall
                                   ?.copyWith(color: colorScheme.primary.withAlpha(100)),
                             ),
                           ],
@@ -151,7 +151,7 @@ class _TodayPageBodyState extends State<TodayPageBody> {
                                 child: Icon(
                                   Icons.lightbulb_outline_rounded,
                                   size: 32,
-                                  color: colorScheme.primary,
+                                  color: colorScheme.primary.withAlpha(200),
                                 ),
                               ),
                               const SizedBox(width: 20),
@@ -168,7 +168,7 @@ class _TodayPageBodyState extends State<TodayPageBody> {
                                   const SizedBox(height: 4),
                                   Text(
                                     "$completed / $total completed",
-                                    style: Theme.of(context).textTheme.bodyMedium
+                                    style: Theme.of(context).textTheme.titleSmall
                                         ?.copyWith(color: colorScheme.primary.withAlpha(120)),
                                   ),
                                 ],
