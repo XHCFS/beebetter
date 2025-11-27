@@ -5,24 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2f3e1994-0671-4947-954c-e64651a39a54" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/lib/pages/GuidedMode/GuidedMode.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/pages/GuidedMode/GuidedModeLogic.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/pages/GuidedMode/GuidedModeUI.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/pages/MainPage/GuidedModeOverlay.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/pages/MainPage/MainPage.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/pages/MainPage/MainPageLogic.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/pages/MainPage/MainPageUI.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/pages/TodayPage/TodayPageLogic.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/pages/TodayPage/TodayPageUI.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/widgets/NavigationBar.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/widgets/PromptCard.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Flutter_Plugins.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Flutter_Plugins.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/main.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/pages/Dashboard.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/pages/Dashboard/Dashboard.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/pages/GuidedMode.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/pages/ProfilePage.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/pages/ProfilePage/ProfilePage.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/pages/TodayPage.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/pages/TodayPage/TodayPage.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/pages/GuidedMode/GuidedModeUI.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/pages/GuidedMode/GuidedModeUI.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/widgets/PromptCard.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/widgets/PromptCard.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -56,16 +43,16 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.cidr.known.project.marker": "true",
-    "cidr.known.project.marker": "true",
-    "dart.analysis.tool.window.visible": "false",
-    "io.flutter.reload.alreadyRun": "true",
-    "last_opened_file_path": "E:/Textbook/Year 5/CIE 460/beebetter",
-    "show.migrate.to.gradle.popup": "false"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
+    &quot;io.flutter.reload.alreadyRun&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;E:/Textbook/Year 5/CIE 460/beebetter&quot;,
+    &quot;show.migrate.to.gradle.popup&quot;: &quot;false&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="E:\Textbook\Year 5\CIE 460\beebetter\lib\pages\ProfilePage" />
