@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:beebetter/widgets/PromptCard.dart';
 import 'package:beebetter/pages/GuidedMode/GuidedModeLogic.dart';
-import 'package:provider/provider.dart';
-
 
 class GuidedModeUI extends StatelessWidget {
   const GuidedModeUI({super.key});
