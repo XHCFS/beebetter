@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:beebetter/widgets/RecordingCard.dart';
+import 'package:beebetter/pages/GuidedMode/RecordingLogic.dart';
 
 class PromptCard extends StatefulWidget {
   final String category;
@@ -176,35 +179,11 @@ class PromptCardState extends State<PromptCard>
                                   ),
                                 ),
 
-                                Card(
-                                  elevation: 0,
-                                  margin: EdgeInsets.zero,
-                                  color: colorScheme.surfaceBright,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                    // side: BorderSide(color: colorScheme.inversePrimary.withAlpha(120), width: 2)
-                                  ),
-                                  child: Padding(
-                                    padding: EdgeInsets.all(16.0),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Container(
-                                          padding: const EdgeInsets.all(16),
-                                          child: Icon(
-                                            Icons.mic,
-                                            size: 32,
-                                            color: Theme.of(context).colorScheme.primary.withAlpha(200),
-                                          ),
-                                        ),
-                                        const SizedBox(height: 16),
-                                        Text("Click to start", style: textTheme.titleSmall
-                                            ?.copyWith(color: colorScheme.primary.withAlpha(160)),),
-                                      ],
-                                    ),
-                                  ),
-                                ),
+                                ChangeNotifierProvider(
+                                  create: (_) => RecordingLogic(),
+
+                                  child: RecordingCard(),
+                                )
                               ],
                             ),
                           ),
