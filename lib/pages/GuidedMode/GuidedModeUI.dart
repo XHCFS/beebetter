@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:beebetter/widgets/PromptCard.dart';
 import 'package:beebetter/pages/GuidedMode/GuidedModeLogic.dart';
+import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 
 class GuidedModeUI extends StatelessWidget {
   const GuidedModeUI({super.key});
@@ -9,6 +10,7 @@ class GuidedModeUI extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final logic = context.watch<GuidedModeLogic>();
+    final CardSwiperController cardSwiperController = CardSwiperController();
 
     ColorScheme colorScheme = Theme.of(context).colorScheme;
     TextTheme textTheme = Theme.of(context).textTheme;
@@ -73,17 +75,39 @@ class GuidedModeUI extends StatelessWidget {
             // ---------------------------------------------------
             // Prompt Cards
             // ---------------------------------------------------
-            const SizedBox(height: 32),
-            PromptCard(
-              category: logic.currentPromptCategory,
-              prompt: logic.currentPromptText,
-              canContinue: logic.canContinue,
-              onTextChanged: (value) {
-                logic.updateCanContinue(value.trim().isNotEmpty);
-              },
-              onContinuePressed: (entry) {logic.submit(entry);},
+            // const SizedBox(height: 32),
+
+            Expanded(
+              child: CardSwiper(
+                cardsCount: logic.totalPrompts,
+                controller: cardSwiperController,
+                onSwipe: (prevIndex, currentIndex, direction) {
+                  logic.onSwipe(currentIndex);
+                  return true;
+                },
+                cardBuilder: (context, index, percentThresholdX, percentThresholdY) {
+                  final prompt = logic.prompts[index];
+                  final category = logic.promptsCategory[index];
+                  final initialText = logic.userInputs[index];
+                  bool isDone = (index < logic.isDone.length) ? logic.isDone[index] : false;
+                  return PromptCard(
+                    index: index,
+                    category: category,
+                    prompt: prompt,
+                    canContinue: logic.canContinue[index],
+                    isDone: isDone,
+                    initialText: initialText,
+                    onTextChanged: (value) {
+                      logic.updatePromptInput(index, value);
+                      logic.updateCanContinue(value.trim().isNotEmpty);
+                    },
+                    onContinuePressed: (entry) {
+                      logic.submit(entry);
+                    },
+                  );
+                },
+              ),
             ),
-            const SizedBox(height: 32),
 
           // Navigation Buttons
           Padding(
@@ -99,7 +123,9 @@ class GuidedModeUI extends StatelessWidget {
                     children: [
                       // Back
                       ElevatedButton(
-                        onPressed: logic.previousPrompt,
+                        onPressed: () {
+                          logic.previousPrompt(cardSwiperController);
+                        },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: logic.currentPrompt <= 0
                               ? colorScheme.inversePrimary.withAlpha(100)
@@ -137,7 +163,9 @@ class GuidedModeUI extends StatelessWidget {
                       ),
                       // Next
                       ElevatedButton(
-                        onPressed: logic.nextPrompt,
+                        onPressed: () {
+                            cardSwiperController.swipe(CardSwiperDirection.right);
+                        },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: logic.currentPrompt >= logic.totalPrompts -1
                               ? colorScheme.inversePrimary.withAlpha(100)
@@ -150,7 +178,6 @@ class GuidedModeUI extends StatelessWidget {
                       ),
                     ],
                   )
-                  // ---------------------------------------------------
                 ],
               ),
             ),
