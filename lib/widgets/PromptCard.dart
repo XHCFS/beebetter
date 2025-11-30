@@ -2,21 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:beebetter/widgets/RecordingCard.dart';
 import 'package:beebetter/pages/GuidedMode/RecordingLogic.dart';
+import 'package:beebetter/pages/GuidedMode/GuidedModeLogic.dart';
 
 class PromptCard extends StatefulWidget {
+  final int index;
   final String category;
   final String prompt;
   final bool canContinue;
+  final bool isDone;
   final void Function(String) onContinuePressed;
   final void Function(String) onTextChanged;
+  final String initialText;
 
   const PromptCard({
     super.key,
+    required this.index,
     required this.category,
     required this.prompt,
     required this.canContinue,
+    required this.isDone,
     required this.onContinuePressed,
     required this.onTextChanged,
+    required this.initialText,
   });
 
   @override
@@ -26,8 +33,27 @@ class PromptCard extends StatefulWidget {
 
 class PromptCardState extends State<PromptCard>
     with AutomaticKeepAliveClientMixin{
-  final TextEditingController controller = TextEditingController();
 
+  late TextEditingController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = TextEditingController(text: widget.initialText);
+  }
+
+  @override
+  void didUpdateWidget(covariant PromptCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (oldWidget.initialText != widget.initialText) {
+      controller.text = widget.initialText;
+    }
+
+    if (oldWidget.isDone != widget.isDone) {
+      setState(() {});
+    }
+  }
 
   @override
   bool get wantKeepAlive => true;
@@ -36,8 +62,7 @@ class PromptCardState extends State<PromptCard>
   Widget build(BuildContext context) {
     ColorScheme colorScheme = Theme.of(context).colorScheme;
     TextTheme textTheme = Theme.of(context).textTheme;
-    return Expanded(
-        child: Card(
+    return Card(
           margin: EdgeInsets.zero,
           color: colorScheme.onPrimary,
           shadowColor: colorScheme.inversePrimary,
@@ -162,7 +187,10 @@ class PromptCardState extends State<PromptCard>
                                     padding: const EdgeInsets.all(16.0),
                                     child: TextField(
                                       controller: controller,
-                                      onChanged: widget.onTextChanged,
+                                      readOnly: widget.isDone,
+                                      onChanged: (value) {
+                                        widget.onTextChanged(value);
+                                      },
                                       maxLines: null,
                                       decoration: InputDecoration(
                                         hintText: "Share your thoughts...",
@@ -181,7 +209,6 @@ class PromptCardState extends State<PromptCard>
 
                                 ChangeNotifierProvider(
                                   create: (_) => RecordingLogic(),
-
                                   child: RecordingCard(),
                                 )
                               ],
@@ -220,8 +247,7 @@ class PromptCardState extends State<PromptCard>
                               child: Container(
                                 alignment: Alignment.center,
                                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                                child: Text(
-                                  "Continue",
+                                child: Text( widget.isDone ? "Done" : "Continue",
                                   style: TextStyle(
                                     color: widget.canContinue
                                         ? colorScheme.secondary
@@ -239,7 +265,6 @@ class PromptCardState extends State<PromptCard>
                 ]
             ),
           ),
-        ),
       );
   }
 }
