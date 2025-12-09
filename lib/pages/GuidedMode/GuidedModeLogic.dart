@@ -2,6 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 
 class GuidedModeLogic extends ChangeNotifier {
+  // ---------------------------------------------------
+  // Variables Initialization
+  // ---------------------------------------------------
+
+  int emotionLevels = 3;
+  int currentPrompt = 0;
+  int completedPrompts = 1;
+  bool canSelectNext = false;
+
+  // ---------------------------------------------------
+  // Data from Database or prompt generator
+  // ---------------------------------------------------
+
   List<String> prompts = [
     "What's one small win you had today?",
     "Reflect on your energy levels today. What patterns do you notice?",
@@ -16,26 +29,48 @@ class GuidedModeLogic extends ChangeNotifier {
     "gratitude practice"
   ];
 
+  final List<String> items = const [
+    "Joy",
+    "Trust",
+    "Fear",
+    "Surprise",
+    "Sadness",
+    "Disgust",
+    "Anger",
+    "Anticipation",
+  ];
+
+  // ---------------------------------------------------
+  // Inputs
+  // ---------------------------------------------------
+
   List<String> userInputs = [];
   List<bool> canContinue = [];
   List<bool> isDone = [];
 
+  List<List<String>> Emotions =[];
 
-  int currentPrompt = 0;
-  int completedPrompts = 1;
 
   int get totalPrompts => prompts.length;
 
   String get currentPromptText => prompts[currentPrompt];
   String get currentPromptCategory => promptsCategory[currentPrompt];
 
+  // ---------------------------------------------------
+  // Constructor
+  // ---------------------------------------------------
 
   GuidedModeLogic() {
     final total = prompts.length;
     userInputs = List.generate(total, (_) => "");
     canContinue = List.generate(total, (_) => false);
     isDone = List.generate(total, (_) => false);
+    Emotions = List.generate(total, (_) => List.generate(emotionLevels, (_) => ""));
   }
+
+  // ---------------------------------------------------
+  // Inputs
+  // ---------------------------------------------------
 
   void updateCanContinue(bool value) {
     if(isDone[currentPrompt]) return;
@@ -44,7 +79,7 @@ class GuidedModeLogic extends ChangeNotifier {
       canContinue[currentPrompt] = value;
     }
     else{
-        canContinue[currentPrompt]  = false;
+      canContinue[currentPrompt]  = false;
     }
     notifyListeners();
   }
@@ -54,22 +89,54 @@ class GuidedModeLogic extends ChangeNotifier {
     notifyListeners();
   }
 
-  void submit(String entry)
-  {
-    if(completedPrompts < totalPrompts) {
-      completedPrompts++;
-    }
-    canContinue[currentPrompt]  = false;
+  void submit(String entry) {
+    userInputs[currentPrompt] = entry; // save input
     isDone[currentPrompt] = true;
+    completedPrompts = (completedPrompts < totalPrompts)
+        ? completedPrompts + 1
+        : completedPrompts;
+    canContinue[currentPrompt] = false; // keep for after emotion wheel
     notifyListeners();
   }
 
-  void nextPrompt() {
-    if (currentPrompt < totalPrompts - 1) {
-      currentPrompt++;
-      notifyListeners();
+  // ---------------------------------------------------
+  // Emotions Selection
+  // ---------------------------------------------------
+  void selectEmotion(int level, String emotion)
+  {
+    Emotions[currentPrompt][level] = emotion;
+    if (emotion != ""){
+        canSelectNext = true;
+      }
+    else {
+      canSelectNext = false;
     }
+    notifyListeners();
   }
+  void submitEmotion(int currentEmotionLevel)  // when user presses next
+  {
+    if(currentEmotionLevel == emotionLevels - 1) {
+      isDone[currentPrompt] = true;
+      canContinue[currentPrompt] = false;
+    }
+    notifyListeners();
+  }
+
+  void updateCanSelectNextForLevel(int level) {
+    canSelectNext = Emotions[currentPrompt][level].isNotEmpty;
+    notifyListeners();
+  }
+
+  // ---------------------------------------------------
+  // Cards Navigation
+  // ---------------------------------------------------
+
+  // void nextPrompt() {
+  //   if (currentPrompt < totalPrompts - 1) {
+  //     currentPrompt++;
+  //     notifyListeners();
+  //   }
+  // }
 
   void previousPrompt(CardSwiperController cardSwiperController) {
     if (currentPrompt > 0) {
