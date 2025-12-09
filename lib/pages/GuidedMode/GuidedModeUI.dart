@@ -91,6 +91,7 @@ class GuidedModeUI extends StatelessWidget {
                   final initialText = logic.userInputs[index];
                   bool isDone = (index < logic.isDone.length) ? logic.isDone[index] : false;
                   return PromptCard(
+                    key: ValueKey(index),
                     index: index,
                     category: category,
                     prompt: prompt,
@@ -164,7 +165,9 @@ class GuidedModeUI extends StatelessWidget {
                       // Next
                       ElevatedButton(
                         onPressed: () {
+                          if (logic.currentPrompt + 1 < logic.totalPrompts) {
                             cardSwiperController.swipe(CardSwiperDirection.right);
+                          }
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: logic.currentPrompt >= logic.totalPrompts -1
