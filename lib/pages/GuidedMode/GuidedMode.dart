@@ -16,10 +16,7 @@ class GuidedMode extends StatelessWidget{
           SafeArea(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0), // top & horizontal padding
-              child: ChangeNotifierProvider(
-                create: (_) => GuidedModeLogic(),
-                child: GuidedModeUI(),
-              ),
+              child: GuidedModeUI(),
             ),
           ),
         ),
