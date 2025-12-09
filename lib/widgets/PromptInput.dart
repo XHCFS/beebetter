@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:beebetter/pages/GuidedMode/RecordingLogic.dart';
 import 'package:beebetter/widgets/RecordingCard.dart';
+import 'package:beebetter/pages/GuidedMode/GuidedModeLogic.dart';
 
 class PromptInput extends StatelessWidget {
   final String category;
@@ -31,6 +32,7 @@ class PromptInput extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
+    final logic = context.watch<GuidedModeLogic>();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -152,7 +154,7 @@ class PromptInput extends StatelessWidget {
                       // Recording Tab
                       // ---------------------------------------------------
                       ChangeNotifierProvider(
-                        create: (_) => RecordingLogic(),
+                        create: (_) => RecordingLogic(logic),
                         child: RecordingCard(),
                       )
                     ],
