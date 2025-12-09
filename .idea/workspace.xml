@@ -5,16 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2f3e1994-0671-4947-954c-e64651a39a54" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/lib/widgets/EmotionWheel/EmotionWheel.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/widgets/EmotionWheel/EmotionsGrid.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/widgets/PromptInput.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/pages/GuidedMode/GuidedModeLogic.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/pages/GuidedMode/GuidedModeLogic.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/pages/GuidedMode/GuidedModeUI.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/pages/GuidedMode/GuidedModeUI.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/pages/GuidedMode/GuidedMode.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/pages/GuidedMode/GuidedMode.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/pages/GuidedMode/RecordingLogic.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/pages/GuidedMode/RecordingLogic.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/widgets/PromptCard.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/widgets/PromptCard.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/widgets/PromptInput.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/widgets/PromptInput.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/widgets/RecordingCard.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/widgets/RecordingCard.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

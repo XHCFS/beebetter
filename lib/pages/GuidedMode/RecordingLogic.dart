@@ -2,12 +2,24 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:record/record.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:beebetter/pages/GuidedMode/GuidedModeLogic.dart';
 
 class RecordingLogic extends ChangeNotifier {
+
+  final GuidedModeLogic guidedLogic;
+  RecordingLogic(this.guidedLogic);
+
+  // ---------------------------------------------------
+  // Variables Initialization
+  // ---------------------------------------------------
+
+  final minRecordingTime = 20;  // seconds
   final recorder = AudioRecorder();
   bool isRecording = false;
   bool isPaused = false;
   Duration elapsed = Duration.zero;
+
+  bool get canContinue => elapsed.inSeconds >= minRecordingTime;
 
   Timer? elapsedTimer;
   Timer? amplitudeTimer;
@@ -15,8 +27,15 @@ class RecordingLogic extends ChangeNotifier {
   final CircularBuffer amplitudes = CircularBuffer(80);
   final int amplitudePollIntervalMs = 80;
 
+  // ---------------------------------------------------
+  // Recording Functions
+  // ---------------------------------------------------
   // Toggle Recording
   Future<void> toggleRecording() async {
+    if (guidedLogic.isDone[guidedLogic.currentPrompt]) {
+      return;
+    }
+
     if (isRecording) {
       await stop();
       return;
@@ -47,6 +66,7 @@ class RecordingLogic extends ChangeNotifier {
     elapsedTimer = Timer.periodic(Duration(seconds: 1), (_) {
       if (isRecording && !isPaused) {
         elapsed += Duration(seconds: 1);
+
         notifyListeners();
       }
     });
@@ -64,18 +84,25 @@ class RecordingLogic extends ChangeNotifier {
   }
 
   Future<void> stop() async {
+    print("stop!");
     if (!isRecording) return;
 
     isRecording = false;
     isPaused = false;
-    elapsed = Duration.zero;
 
     amplitudeTimer?.cancel();
     elapsedTimer?.cancel();
 
     await recorder.stop();
+
+    // print("Final elapsed: ${elapsed.inSeconds} seconds");
+    guidedLogic.updateCanContinue(canContinue);
+
+    elapsed = Duration.zero;
+
     notifyListeners();
   }
+
 
   void togglePause() {
     isPaused = !isPaused;
@@ -98,9 +125,11 @@ class RecordingLogic extends ChangeNotifier {
   }
 }
 
+
 // ---------------------------------------------------
 // Circular Buffer for indicator bars
 // ---------------------------------------------------
+
 class CircularBuffer {
   final int size;
   final List<double> buffer;
