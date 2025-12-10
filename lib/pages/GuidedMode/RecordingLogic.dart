@@ -96,6 +96,7 @@ class RecordingLogic extends ChangeNotifier {
     await recorder.stop();
 
     // print("Final elapsed: ${elapsed.inSeconds} seconds");
+    guidedLogic.isTextLocked[guidedLogic.currentPrompt] = canContinue;
     guidedLogic.updateCanContinue(canContinue);
 
     elapsed = Duration.zero;

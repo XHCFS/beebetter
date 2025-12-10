@@ -75,8 +75,6 @@ class GuidedModeUI extends StatelessWidget {
             // ---------------------------------------------------
             // Prompt Cards
             // ---------------------------------------------------
-            // const SizedBox(height: 32),
-
             Expanded(
               child: CardSwiper(
                 cardsCount: logic.totalPrompts,
