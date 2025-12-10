@@ -46,6 +46,9 @@ class GuidedModeLogic extends ChangeNotifier {
 
   List<String> userInputs = [];
   List<bool> canContinue = [];
+  List<bool> isTextLocked = [];
+  List<bool> isVoiceLocked = [];
+  List<int> lastActiveTab = [];
   List<bool> isDone = [];
 
   List<List<String>> Emotions =[];
@@ -64,6 +67,9 @@ class GuidedModeLogic extends ChangeNotifier {
     final total = prompts.length;
     userInputs = List.generate(total, (_) => "");
     canContinue = List.generate(total, (_) => false);
+    isTextLocked = List.generate(total, (_) => false);
+    isVoiceLocked = List.generate(total, (_) => false);
+    lastActiveTab = List.generate(total, (_) => 1);
     isDone = List.generate(total, (_) => false);
     Emotions = List.generate(total, (_) => List.generate(emotionLevels, (_) => ""));
   }
@@ -86,8 +92,16 @@ class GuidedModeLogic extends ChangeNotifier {
 
   void updatePromptInput(int index, String value) {
     userInputs[index] = value;
+
+    if (userInputs[index].isNotEmpty) {
+      isVoiceLocked[index] = true; // lock voice tab
+    } else {
+      isVoiceLocked[index] = false; // unlock if empty
+    }
+
     notifyListeners();
   }
+
 
   void submit(String entry) {
     userInputs[currentPrompt] = entry; // save input
