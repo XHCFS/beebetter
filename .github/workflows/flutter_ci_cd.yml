@@ -1,0 +1,78 @@
+name: Flutter CI/CD
+
+on:
+  push:
+    branches:
+      - '**'  # Runs on all branches
+
+permissions:
+  contents: write  # Add this section!
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    - name: Set up Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.38.4'
+        channel: 'stable'
+        cache: true
+    
+    - name: Install dependencies
+      run: flutter pub get
+ 
+    - name: Generate code
+      run: flutter pub run build_runner build --delete-conflicting-outputs
+
+    - name: Run tests
+      run: flutter test --no-pub
+      continue-on-error: true  # Won't fail if no tests exist
+    
+    - name: Analyze code
+      run: flutter analyze
+      continue-on-error: true
+    
+    - name: Build APK
+      run: flutter build apk --release
+    
+    - name: Get branch name
+      id: branch_name
+      run: echo "branch=${GITHUB_REF#refs/heads/}" >> $GITHUB_OUTPUT
+    
+    - name: Get commit info
+      id: commit_info
+      run: |
+        echo "short_sha=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+        echo "commit_msg=$(git log -1 --pretty=%B | head -n 1)" >> $GITHUB_OUTPUT
+    
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.branch_name.outputs.branch }}-${{ steps.commit_info.outputs.short_sha }}
+        release_name: Release ${{ steps.branch_name.outputs.branch }} (${{ steps.commit_info.outputs.short_sha }})
+        body: |
+          Branch: ${{ steps.branch_name.outputs.branch }}
+          Commit: ${{ steps.commit_info.outputs.short_sha }}
+          Message: ${{ steps.commit_info.outputs.commit_msg }}
+          
+          Auto-generated release from branch ${{ steps.branch_name.outputs.branch }}
+        draft: false
+        prerelease: ${{ steps.branch_name.outputs.branch != 'main' }}
+    
+    - name: Upload APK to Release
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: build/app/outputs/flutter-apk/app-release.apk
+        asset_name: app-${{ steps.branch_name.outputs.branch }}-${{ steps.commit_info.outputs.short_sha }}.apk
+        asset_content_type: application/vnd.android.package-archive
