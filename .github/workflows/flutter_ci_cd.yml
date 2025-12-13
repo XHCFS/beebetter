@@ -1,15 +1,15 @@
 name: Flutter CI/CD
 on:
+  pull_request:
+    branches:
+      - '**'
   push:
     branches:
-      - '**'  # Runs on all branches
-  pull_request:  # Add this!
-    branches:
-      - '**'  # Runs on PRs to all branches
-
+      - '**'  # Run on all branches
+    tags:
+      - 'v*'  # Also run on version tags
 permissions:
   contents: write
-
 jobs:
   build-and-release:
     runs-on: ubuntu-latest
@@ -42,44 +42,115 @@ jobs:
     - name: Build APK
       run: flutter build apk --release
     
-    # Only create releases on push events (not PRs)
+    # Get branch name and commit info for all pushes
     - name: Get branch name
-      if: github.event_name == 'push'
+      if: github.event_name == 'push' && !startsWith(github.ref, 'refs/tags/')
       id: branch_name
       run: echo "branch=${GITHUB_REF#refs/heads/}" >> $GITHUB_OUTPUT
     
     - name: Get commit info
-      if: github.event_name == 'push'
+      if: github.event_name == 'push' && !startsWith(github.ref, 'refs/tags/')
       id: commit_info
       run: |
         echo "short_sha=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
         echo "commit_msg=$(git log -1 --pretty=%B | head -n 1)" >> $GITHUB_OUTPUT
     
-    - name: Create Release
-      if: github.event_name == 'push'
-      id: create_release
+    # Delete previous release for this branch and sanitize branch name
+    - name: Delete previous release for this branch
+      if: github.event_name == 'push' && !startsWith(github.ref, 'refs/tags/')
+      continue-on-error: true
+      id: sanitize_branch
+      run: |
+        BRANCH_NAME="${{ steps.branch_name.outputs.branch }}"
+        # Replace / with - in branch name for tag compatibility
+        TAG_NAME="branch-${BRANCH_NAME//\//-}"
+        echo "tag_name=$TAG_NAME" >> $GITHUB_OUTPUT
+        gh release delete "$TAG_NAME" --yes --cleanup-tag || true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
+    # Create release for main branch (labeled as "latest")
+    - name: Create Latest Release (Main Branch)
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      id: create_main_release
       uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ steps.branch_name.outputs.branch }}-${{ steps.commit_info.outputs.short_sha }}
-        release_name: Release ${{ steps.branch_name.outputs.branch }} (${{ steps.commit_info.outputs.short_sha }})
+        tag_name: branch-main
+        release_name: Latest (Main Branch)
         body: |
-          Branch: ${{ steps.branch_name.outputs.branch }}
-          Commit: ${{ steps.commit_info.outputs.short_sha }}
-          Message: ${{ steps.commit_info.outputs.commit_msg }}
+          📱 Latest build from main branch
           
-          Auto-generated release from branch ${{ steps.branch_name.outputs.branch }}
+          **Commit:** ${{ steps.commit_info.outputs.short_sha }}
+          **Message:** ${{ steps.commit_info.outputs.commit_msg }}
         draft: false
-        prerelease: ${{ steps.branch_name.outputs.branch != 'main' }}
+        prerelease: false
     
-    - name: Upload APK to Release
-      if: github.event_name == 'push'
+    - name: Upload APK to Main Release
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        upload_url: ${{ steps.create_main_release.outputs.upload_url }}
         asset_path: build/app/outputs/flutter-apk/app-release.apk
-        asset_name: app-${{ steps.branch_name.outputs.branch }}-${{ steps.commit_info.outputs.short_sha }}.apk
+        asset_name: app-main-latest.apk
+        asset_content_type: application/vnd.android.package-archive
+    
+    # Create release for other branches (feature branches, develop, etc.)
+    - name: Create Branch Release
+      if: github.event_name == 'push' && github.ref != 'refs/heads/main' && !startsWith(github.ref, 'refs/tags/')
+      id: create_branch_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.sanitize_branch.outputs.tag_name }}
+        release_name: Branch - ${{ steps.branch_name.outputs.branch }}
+        body: |
+          🔧 Development build from **${{ steps.branch_name.outputs.branch }}** branch
+          
+          **Commit:** ${{ steps.commit_info.outputs.short_sha }}
+          **Message:** ${{ steps.commit_info.outputs.commit_msg }}
+          
+          ⚠️ This is a development build (not production)
+        draft: false
+        prerelease: true
+    
+    - name: Upload APK to Branch Release
+      if: github.event_name == 'push' && github.ref != 'refs/heads/main' && !startsWith(github.ref, 'refs/tags/')
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_branch_release.outputs.upload_url }}
+        asset_path: build/app/outputs/flutter-apk/app-release.apk
+        asset_name: app-${{ steps.branch_name.outputs.branch }}.apk
+        asset_content_type: application/vnd.android.package-archive
+    
+    # Create release for version tags (permanent releases)
+    - name: Create Version Release
+      if: startsWith(github.ref, 'refs/tags/v')
+      id: create_version_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref_name }}
+        release_name: Release ${{ github.ref_name }}
+        body: |
+          🚀 Official Release ${{ github.ref_name }}
+        draft: false
+        prerelease: false
+    
+    - name: Upload APK to Version Release
+      if: startsWith(github.ref, 'refs/tags/v')
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_version_release.outputs.upload_url }}
+        asset_path: build/app/outputs/flutter-apk/app-release.apk
+        asset_name: app-${{ github.ref_name }}.apk
         asset_content_type: application/vnd.android.package-archive
