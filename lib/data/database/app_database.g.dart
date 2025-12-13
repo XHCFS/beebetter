@@ -482,16 +482,18 @@ class $RecordsTable extends Records with TableInfo<$RecordsTable, Record> {
       'REFERENCES prompts (id)',
     ),
   );
+  static const VerificationMeta _inputTypeMeta = const VerificationMeta(
+    'inputType',
+  );
   @override
-  late final GeneratedColumnWithTypeConverter<InputType, int> inputType =
-      GeneratedColumn<int>(
-        'input_type',
-        aliasedName,
-        false,
-        type: DriftSqlType.int,
-        requiredDuringInsert: false,
-        defaultValue: Constant(0),
-      ).withConverter<InputType>($RecordsTable.$converterinputType);
+  late final GeneratedColumn<int> inputType = GeneratedColumn<int>(
+    'input_type',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    clientDefault: () => InputType.text.index,
+  );
   static const VerificationMeta _userIdMeta = const VerificationMeta('userId');
   @override
   late final GeneratedColumn<int> userId = GeneratedColumn<int>(
@@ -561,6 +563,12 @@ class $RecordsTable extends Records with TableInfo<$RecordsTable, Record> {
         promptId.isAcceptableOrUnknown(data['prompt_id']!, _promptIdMeta),
       );
     }
+    if (data.containsKey('input_type')) {
+      context.handle(
+        _inputTypeMeta,
+        inputType.isAcceptableOrUnknown(data['input_type']!, _inputTypeMeta),
+      );
+    }
     if (data.containsKey('user_id')) {
       context.handle(
         _userIdMeta,
@@ -600,12 +608,10 @@ class $RecordsTable extends Records with TableInfo<$RecordsTable, Record> {
         DriftSqlType.int,
         data['${effectivePrefix}prompt_id'],
       ),
-      inputType: $RecordsTable.$converterinputType.fromSql(
-        attachedDatabase.typeMapping.read(
-          DriftSqlType.int,
-          data['${effectivePrefix}input_type'],
-        )!,
-      ),
+      inputType: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}input_type'],
+      )!,
       userId: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}user_id'],
@@ -625,16 +631,13 @@ class $RecordsTable extends Records with TableInfo<$RecordsTable, Record> {
   $RecordsTable createAlias(String alias) {
     return $RecordsTable(attachedDatabase, alias);
   }
-
-  static JsonTypeConverter2<InputType, int, int> $converterinputType =
-      const EnumIndexConverter<InputType>(InputType.values);
 }
 
 class Record extends DataClass implements Insertable<Record> {
   final int id;
   final DateTime createdAt;
   final int? promptId;
-  final InputType inputType;
+  final int inputType;
   final int? userId;
   final String? title;
   final String? content;
@@ -655,11 +658,7 @@ class Record extends DataClass implements Insertable<Record> {
     if (!nullToAbsent || promptId != null) {
       map['prompt_id'] = Variable<int>(promptId);
     }
-    {
-      map['input_type'] = Variable<int>(
-        $RecordsTable.$converterinputType.toSql(inputType),
-      );
-    }
+    map['input_type'] = Variable<int>(inputType);
     if (!nullToAbsent || userId != null) {
       map['user_id'] = Variable<int>(userId);
     }
@@ -701,9 +700,7 @@ class Record extends DataClass implements Insertable<Record> {
       id: serializer.fromJson<int>(json['id']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       promptId: serializer.fromJson<int?>(json['promptId']),
-      inputType: $RecordsTable.$converterinputType.fromJson(
-        serializer.fromJson<int>(json['inputType']),
-      ),
+      inputType: serializer.fromJson<int>(json['inputType']),
       userId: serializer.fromJson<int?>(json['userId']),
       title: serializer.fromJson<String?>(json['title']),
       content: serializer.fromJson<String?>(json['content']),
@@ -716,9 +713,7 @@ class Record extends DataClass implements Insertable<Record> {
       'id': serializer.toJson<int>(id),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'promptId': serializer.toJson<int?>(promptId),
-      'inputType': serializer.toJson<int>(
-        $RecordsTable.$converterinputType.toJson(inputType),
-      ),
+      'inputType': serializer.toJson<int>(inputType),
       'userId': serializer.toJson<int?>(userId),
       'title': serializer.toJson<String?>(title),
       'content': serializer.toJson<String?>(content),
@@ -729,7 +724,7 @@ class Record extends DataClass implements Insertable<Record> {
     int? id,
     DateTime? createdAt,
     Value<int?> promptId = const Value.absent(),
-    InputType? inputType,
+    int? inputType,
     Value<int?> userId = const Value.absent(),
     Value<String?> title = const Value.absent(),
     Value<String?> content = const Value.absent(),
@@ -788,7 +783,7 @@ class RecordsCompanion extends UpdateCompanion<Record> {
   final Value<int> id;
   final Value<DateTime> createdAt;
   final Value<int?> promptId;
-  final Value<InputType> inputType;
+  final Value<int> inputType;
   final Value<int?> userId;
   final Value<String?> title;
   final Value<String?> content;
@@ -834,7 +829,7 @@ class RecordsCompanion extends UpdateCompanion<Record> {
     Value<int>? id,
     Value<DateTime>? createdAt,
     Value<int?>? promptId,
-    Value<InputType>? inputType,
+    Value<int>? inputType,
     Value<int?>? userId,
     Value<String?>? title,
     Value<String?>? content,
@@ -863,9 +858,7 @@ class RecordsCompanion extends UpdateCompanion<Record> {
       map['prompt_id'] = Variable<int>(promptId.value);
     }
     if (inputType.present) {
-      map['input_type'] = Variable<int>(
-        $RecordsTable.$converterinputType.toSql(inputType.value),
-      );
+      map['input_type'] = Variable<int>(inputType.value);
     }
     if (userId.present) {
       map['user_id'] = Variable<int>(userId.value);
@@ -926,25 +919,25 @@ class $MoodsTable extends Moods with TableInfo<$MoodsTable, Mood> {
       'REFERENCES records (id)',
     ),
   );
+  static const VerificationMeta _moodMeta = const VerificationMeta('mood');
   @override
-  late final GeneratedColumnWithTypeConverter<Mood?, int> mood =
-      GeneratedColumn<int>(
-        'mood',
-        aliasedName,
-        true,
-        type: DriftSqlType.int,
-        requiredDuringInsert: false,
-      ).withConverter<Mood?>($MoodsTable.$convertermoodn);
+  late final GeneratedColumn<int> mood = GeneratedColumn<int>(
+    'mood',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _sourceMeta = const VerificationMeta('source');
   @override
-  late final GeneratedColumnWithTypeConverter<MoodSource, int> source =
-      GeneratedColumn<int>(
-        'source',
-        aliasedName,
-        false,
-        type: DriftSqlType.int,
-        requiredDuringInsert: false,
-        defaultValue: Constant(0),
-      ).withConverter<MoodSource>($MoodsTable.$convertersource);
+  late final GeneratedColumn<int> source = GeneratedColumn<int>(
+    'source',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    clientDefault: () => MoodSource.user.index,
+  );
   @override
   List<GeneratedColumn> get $columns => [id, recordId, mood, source];
   @override
@@ -970,6 +963,18 @@ class $MoodsTable extends Moods with TableInfo<$MoodsTable, Mood> {
     } else if (isInserting) {
       context.missing(_recordIdMeta);
     }
+    if (data.containsKey('mood')) {
+      context.handle(
+        _moodMeta,
+        mood.isAcceptableOrUnknown(data['mood']!, _moodMeta),
+      );
+    }
+    if (data.containsKey('source')) {
+      context.handle(
+        _sourceMeta,
+        source.isAcceptableOrUnknown(data['source']!, _sourceMeta),
+      );
+    }
     return context;
   }
 
@@ -987,18 +992,14 @@ class $MoodsTable extends Moods with TableInfo<$MoodsTable, Mood> {
         DriftSqlType.int,
         data['${effectivePrefix}record_id'],
       )!,
-      mood: $MoodsTable.$convertermoodn.fromSql(
-        attachedDatabase.typeMapping.read(
-          DriftSqlType.int,
-          data['${effectivePrefix}mood'],
-        ),
+      mood: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}mood'],
       ),
-      source: $MoodsTable.$convertersource.fromSql(
-        attachedDatabase.typeMapping.read(
-          DriftSqlType.int,
-          data['${effectivePrefix}source'],
-        )!,
-      ),
+      source: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}source'],
+      )!,
     );
   }
 
@@ -1006,20 +1007,13 @@ class $MoodsTable extends Moods with TableInfo<$MoodsTable, Mood> {
   $MoodsTable createAlias(String alias) {
     return $MoodsTable(attachedDatabase, alias);
   }
-
-  static JsonTypeConverter2<Mood, int, int> $convertermood =
-      const EnumIndexConverter<Mood>(Mood.values);
-  static JsonTypeConverter2<Mood?, int?, int?> $convertermoodn =
-      JsonTypeConverter2.asNullable($convertermood);
-  static JsonTypeConverter2<MoodSource, int, int> $convertersource =
-      const EnumIndexConverter<MoodSource>(MoodSource.values);
 }
 
 class Mood extends DataClass implements Insertable<Mood> {
   final int id;
   final int recordId;
-  final Mood? mood;
-  final MoodSource source;
+  final int? mood;
+  final int source;
   const Mood({
     required this.id,
     required this.recordId,
@@ -1032,11 +1026,9 @@ class Mood extends DataClass implements Insertable<Mood> {
     map['id'] = Variable<int>(id);
     map['record_id'] = Variable<int>(recordId);
     if (!nullToAbsent || mood != null) {
-      map['mood'] = Variable<int>($MoodsTable.$convertermoodn.toSql(mood));
+      map['mood'] = Variable<int>(mood);
     }
-    {
-      map['source'] = Variable<int>($MoodsTable.$convertersource.toSql(source));
-    }
+    map['source'] = Variable<int>(source);
     return map;
   }
 
@@ -1057,12 +1049,8 @@ class Mood extends DataClass implements Insertable<Mood> {
     return Mood(
       id: serializer.fromJson<int>(json['id']),
       recordId: serializer.fromJson<int>(json['recordId']),
-      mood: $MoodsTable.$convertermoodn.fromJson(
-        serializer.fromJson<int?>(json['mood']),
-      ),
-      source: $MoodsTable.$convertersource.fromJson(
-        serializer.fromJson<int>(json['source']),
-      ),
+      mood: serializer.fromJson<int?>(json['mood']),
+      source: serializer.fromJson<int>(json['source']),
     );
   }
   @override
@@ -1071,18 +1059,16 @@ class Mood extends DataClass implements Insertable<Mood> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'recordId': serializer.toJson<int>(recordId),
-      'mood': serializer.toJson<int?>($MoodsTable.$convertermoodn.toJson(mood)),
-      'source': serializer.toJson<int>(
-        $MoodsTable.$convertersource.toJson(source),
-      ),
+      'mood': serializer.toJson<int?>(mood),
+      'source': serializer.toJson<int>(source),
     };
   }
 
   Mood copyWith({
     int? id,
     int? recordId,
-    Value<Mood?> mood = const Value.absent(),
-    MoodSource? source,
+    Value<int?> mood = const Value.absent(),
+    int? source,
   }) => Mood(
     id: id ?? this.id,
     recordId: recordId ?? this.recordId,
@@ -1124,8 +1110,8 @@ class Mood extends DataClass implements Insertable<Mood> {
 class MoodsCompanion extends UpdateCompanion<Mood> {
   final Value<int> id;
   final Value<int> recordId;
-  final Value<Mood?> mood;
-  final Value<MoodSource> source;
+  final Value<int?> mood;
+  final Value<int> source;
   const MoodsCompanion({
     this.id = const Value.absent(),
     this.recordId = const Value.absent(),
@@ -1155,8 +1141,8 @@ class MoodsCompanion extends UpdateCompanion<Mood> {
   MoodsCompanion copyWith({
     Value<int>? id,
     Value<int>? recordId,
-    Value<Mood?>? mood,
-    Value<MoodSource>? source,
+    Value<int?>? mood,
+    Value<int>? source,
   }) {
     return MoodsCompanion(
       id: id ?? this.id,
@@ -1176,14 +1162,10 @@ class MoodsCompanion extends UpdateCompanion<Mood> {
       map['record_id'] = Variable<int>(recordId.value);
     }
     if (mood.present) {
-      map['mood'] = Variable<int>(
-        $MoodsTable.$convertermoodn.toSql(mood.value),
-      );
+      map['mood'] = Variable<int>(mood.value);
     }
     if (source.present) {
-      map['source'] = Variable<int>(
-        $MoodsTable.$convertersource.toSql(source.value),
-      );
+      map['source'] = Variable<int>(source.value);
     }
     return map;
   }
@@ -1682,7 +1664,7 @@ typedef $$RecordsTableCreateCompanionBuilder =
       Value<int> id,
       Value<DateTime> createdAt,
       Value<int?> promptId,
-      Value<InputType> inputType,
+      Value<int> inputType,
       Value<int?> userId,
       Value<String?> title,
       Value<String?> content,
@@ -1692,7 +1674,7 @@ typedef $$RecordsTableUpdateCompanionBuilder =
       Value<int> id,
       Value<DateTime> createdAt,
       Value<int?> promptId,
-      Value<InputType> inputType,
+      Value<int> inputType,
       Value<int?> userId,
       Value<String?> title,
       Value<String?> content,
@@ -1775,11 +1757,10 @@ class $$RecordsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnWithTypeConverterFilters<InputType, InputType, int> get inputType =>
-      $composableBuilder(
-        column: $table.inputType,
-        builder: (column) => ColumnWithTypeConverterFilters(column),
-      );
+  ColumnFilters<int> get inputType => $composableBuilder(
+    column: $table.inputType,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<String> get title => $composableBuilder(
     column: $table.title,
@@ -1959,7 +1940,7 @@ class $$RecordsTableAnnotationComposer
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
 
-  GeneratedColumnWithTypeConverter<InputType, int> get inputType =>
+  GeneratedColumn<int> get inputType =>
       $composableBuilder(column: $table.inputType, builder: (column) => column);
 
   GeneratedColumn<String> get title =>
@@ -2071,7 +2052,7 @@ class $$RecordsTableTableManager
                 Value<int> id = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<int?> promptId = const Value.absent(),
-                Value<InputType> inputType = const Value.absent(),
+                Value<int> inputType = const Value.absent(),
                 Value<int?> userId = const Value.absent(),
                 Value<String?> title = const Value.absent(),
                 Value<String?> content = const Value.absent(),
@@ -2089,7 +2070,7 @@ class $$RecordsTableTableManager
                 Value<int> id = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<int?> promptId = const Value.absent(),
-                Value<InputType> inputType = const Value.absent(),
+                Value<int> inputType = const Value.absent(),
                 Value<int?> userId = const Value.absent(),
                 Value<String?> title = const Value.absent(),
                 Value<String?> content = const Value.absent(),
@@ -2201,15 +2182,15 @@ typedef $$MoodsTableCreateCompanionBuilder =
     MoodsCompanion Function({
       Value<int> id,
       required int recordId,
-      Value<Mood?> mood,
-      Value<MoodSource> source,
+      Value<int?> mood,
+      Value<int> source,
     });
 typedef $$MoodsTableUpdateCompanionBuilder =
     MoodsCompanion Function({
       Value<int> id,
       Value<int> recordId,
-      Value<Mood?> mood,
-      Value<MoodSource> source,
+      Value<int?> mood,
+      Value<int> source,
     });
 
 final class $$MoodsTableReferences
@@ -2247,17 +2228,15 @@ class $$MoodsTableFilterComposer extends Composer<_$AppDatabase, $MoodsTable> {
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnWithTypeConverterFilters<Mood?, Mood, int> get mood =>
-      $composableBuilder(
-        column: $table.mood,
-        builder: (column) => ColumnWithTypeConverterFilters(column),
-      );
+  ColumnFilters<int> get mood => $composableBuilder(
+    column: $table.mood,
+    builder: (column) => ColumnFilters(column),
+  );
 
-  ColumnWithTypeConverterFilters<MoodSource, MoodSource, int> get source =>
-      $composableBuilder(
-        column: $table.source,
-        builder: (column) => ColumnWithTypeConverterFilters(column),
-      );
+  ColumnFilters<int> get source => $composableBuilder(
+    column: $table.source,
+    builder: (column) => ColumnFilters(column),
+  );
 
   $$RecordsTableFilterComposer get recordId {
     final $$RecordsTableFilterComposer composer = $composerBuilder(
@@ -2343,10 +2322,10 @@ class $$MoodsTableAnnotationComposer
   GeneratedColumn<int> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
-  GeneratedColumnWithTypeConverter<Mood?, int> get mood =>
+  GeneratedColumn<int> get mood =>
       $composableBuilder(column: $table.mood, builder: (column) => column);
 
-  GeneratedColumnWithTypeConverter<MoodSource, int> get source =>
+  GeneratedColumn<int> get source =>
       $composableBuilder(column: $table.source, builder: (column) => column);
 
   $$RecordsTableAnnotationComposer get recordId {
@@ -2403,8 +2382,8 @@ class $$MoodsTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 Value<int> recordId = const Value.absent(),
-                Value<Mood?> mood = const Value.absent(),
-                Value<MoodSource> source = const Value.absent(),
+                Value<int?> mood = const Value.absent(),
+                Value<int> source = const Value.absent(),
               }) => MoodsCompanion(
                 id: id,
                 recordId: recordId,
@@ -2415,8 +2394,8 @@ class $$MoodsTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 required int recordId,
-                Value<Mood?> mood = const Value.absent(),
-                Value<MoodSource> source = const Value.absent(),
+                Value<int?> mood = const Value.absent(),
+                Value<int> source = const Value.absent(),
               }) => MoodsCompanion.insert(
                 id: id,
                 recordId: recordId,
