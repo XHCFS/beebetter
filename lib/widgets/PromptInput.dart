@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:beebetter/pages/GuidedMode/RecordingLogic.dart';
 import 'package:beebetter/widgets/RecordingCard.dart';
 import 'package:beebetter/pages/GuidedMode/GuidedModeLogic.dart';
+import 'package:beebetter/widgets/DoneCard.dart';
 
 class PromptInput extends StatefulWidget {
   final String category;
@@ -79,198 +80,205 @@ class PromptInputState extends State<PromptInput> with TickerProviderStateMixin 
     bool textLocked = logic.isTextLocked[logic.currentPrompt];
     bool voiceLocked = logic.isVoiceLocked[logic.currentPrompt];
 
+    bool isDoneCard = logic.currentPromptText == "Done!";
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // ---------------------------------------------------
-        // Category
-        // ---------------------------------------------------
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-          decoration: BoxDecoration(
-            color: colorScheme.surfaceBright,
-            borderRadius: BorderRadius.circular(30),
-            border: Border.all(
-              color: colorScheme.inversePrimary,
-              width: 1,
+        if (!isDoneCard)...[
+          // ---------------------------------------------------
+          // Category
+          // ---------------------------------------------------
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+            decoration: BoxDecoration(
+              color: colorScheme.surfaceBright,
+              borderRadius: BorderRadius.circular(30),
+              border: Border.all(
+                color: colorScheme.inversePrimary,
+                width: 1,
+              ),
+            ),
+            child: Text(
+              widget.category,
+              style: textTheme.titleSmall?.copyWith(color: colorScheme.inversePrimary),
             ),
           ),
-          child: Text(
-            widget.category,
-            style: textTheme.titleSmall?.copyWith(color: colorScheme.inversePrimary),
-          ),
-        ),
-        const SizedBox(height: 16),
+          const SizedBox(height: 16),
 
-        // ---------------------------------------------------
-        // Prompt
-        // ---------------------------------------------------
-        Text(widget.prompt, style: textTheme.titleMedium?.copyWith(color: colorScheme.primary)),
-        const SizedBox(height: 8),
+          // ---------------------------------------------------
+          // Prompt
+          // ---------------------------------------------------
+          Text(widget.prompt, style: textTheme.titleMedium?.copyWith(color: colorScheme.primary)),
+          const SizedBox(height: 8),
 
-        // ---------------------------------------------------
-        // Tabs
-        // ---------------------------------------------------
+          // ---------------------------------------------------
+          // Tabs
+          // ---------------------------------------------------
 
-        // ---------------------------------------------------
-        // TabBar
-        // ---------------------------------------------------
-        Container(
-          margin: const EdgeInsets.symmetric(vertical: 8),
-          decoration: BoxDecoration(
-            color: colorScheme.surfaceBright,
-            borderRadius: BorderRadius.circular(12),
-          ),
-
-          child: Material(
-            color: Colors.transparent,
-            shape: RoundedRectangleBorder(
+          // ---------------------------------------------------
+          // TabBar
+          // ---------------------------------------------------
+          Container(
+            margin: const EdgeInsets.symmetric(vertical: 8),
+            decoration: BoxDecoration(
+              color: colorScheme.surfaceBright,
               borderRadius: BorderRadius.circular(12),
             ),
-            clipBehavior: Clip.antiAlias,
 
-            child: TabBar(
-              controller: tabController,
-              padding: EdgeInsets.zero,
-              labelPadding: EdgeInsets.zero,
-              indicatorPadding: EdgeInsets.zero,
-
-              indicator: BoxDecoration(
-                color: colorScheme.inversePrimary,
+            child: Material(
+              color: Colors.transparent,
+              shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
-              labelColor: colorScheme.secondary,
-              unselectedLabelColor: colorScheme.primary,
-              dividerColor: Colors.transparent,
+              clipBehavior: Clip.antiAlias,
 
-              tabs: [
-              IgnorePointer(
-                ignoring: textLocked,
-                child:Padding(
+              child: TabBar(
+                controller: tabController,
+                padding: EdgeInsets.zero,
+                labelPadding: EdgeInsets.zero,
+                indicatorPadding: EdgeInsets.zero,
+
+                indicator: BoxDecoration(
+                  color: colorScheme.inversePrimary,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                labelColor: colorScheme.secondary,
+                unselectedLabelColor: colorScheme.primary,
+                dividerColor: Colors.transparent,
+
+                tabs: [
+                IgnorePointer(
+                  ignoring: textLocked,
+                  child:Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.text_fields, size: 20, color: textLocked ? colorScheme.secondary.withAlpha(128) : colorScheme.primary),
+                          SizedBox(width: 6),
+                          Text("Text", style: TextStyle( color: textLocked ? colorScheme.secondary.withAlpha(128) : colorScheme.primary)),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Padding(
                     padding: EdgeInsets.all(8.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.text_fields, size: 20, color: textLocked ? colorScheme.secondary.withAlpha(128) : colorScheme.primary),
+                        Icon(Icons.mic, size: 20, color: voiceLocked ? colorScheme.secondary.withAlpha(128) : colorScheme.primary),
                         SizedBox(width: 6),
-                        Text("Text", style: TextStyle( color: textLocked ? colorScheme.secondary.withAlpha(128) : colorScheme.primary)),
+                        Text("Voice", style: TextStyle( color: voiceLocked ? colorScheme.secondary.withAlpha(128) : colorScheme.primary)),
                       ],
                     ),
                   ),
+                ],
+              ),
+            ),
+          ),
+
+          // ---------------------------------------------------
+          // TabBarView
+          // ---------------------------------------------------
+          Expanded(
+            child: TabBarView(
+              controller: tabController,
+              physics: (textLocked || voiceLocked)
+                  ? NeverScrollableScrollPhysics()
+                  : BouncingScrollPhysics(),
+              children: [
+                // ---------------------------------------------------
+                // Text Input
+                // ---------------------------------------------------
+                AbsorbPointer(
+                  absorbing: textLocked,
+                  child: Card(
+                    elevation: 0,
+                    margin: EdgeInsets.zero,
+                    color: colorScheme.surfaceBright,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: TextField(
+                        controller: widget.controller,
+                        readOnly: widget.isDone,
+                        onChanged: widget.onTextChanged,
+                        maxLines: null,
+                        decoration: InputDecoration(
+                          hintText: "Share your thoughts...",
+                          hintStyle: textTheme.bodyMedium?.copyWith(
+                            color: colorScheme.primary.withAlpha(128),
+                          ),
+                          border: InputBorder.none,
+                          isDense: true,
+                        ),
+                        style: textTheme.bodyMedium?.copyWith(color: colorScheme.primary),
+                      ),
+                    ),
+                  ),
                 ),
-                Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.mic, size: 20, color: voiceLocked ? colorScheme.secondary.withAlpha(128) : colorScheme.primary),
-                      SizedBox(width: 6),
-                      Text("Voice", style: TextStyle( color: voiceLocked ? colorScheme.secondary.withAlpha(128) : colorScheme.primary)),
-                    ],
+
+                // ---------------------------------------------------
+                // Recording Tab
+                // ---------------------------------------------------
+                AbsorbPointer(
+                  absorbing: voiceLocked,
+                  child: ChangeNotifierProvider(
+                    create: (_) => RecordingLogic(logic),
+                    child: RecordingCard(),
                   ),
                 ),
               ],
             ),
           ),
-        ),
 
-        // ---------------------------------------------------
-        // TabBarView
-        // ---------------------------------------------------
-        Expanded(
-          child: TabBarView(
-            controller: tabController,
-            physics: (textLocked || voiceLocked)
-                ? NeverScrollableScrollPhysics()
-                : BouncingScrollPhysics(),
-            children: [
-              // ---------------------------------------------------
-              // Text Input
-              // ---------------------------------------------------
-              AbsorbPointer(
-                absorbing: textLocked,
-                child: Card(
-                  elevation: 0,
-                  margin: EdgeInsets.zero,
-                  color: colorScheme.surfaceBright,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
+          const SizedBox(height: 16),
 
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: TextField(
-                      controller: widget.controller,
-                      readOnly: widget.isDone,
-                      onChanged: widget.onTextChanged,
-                      maxLines: null,
-                      decoration: InputDecoration(
-                        hintText: "Share your thoughts...",
-                        hintStyle: textTheme.bodyMedium?.copyWith(
-                          color: colorScheme.primary.withAlpha(128),
-                        ),
-                        border: InputBorder.none,
-                        isDense: true,
-                      ),
-                      style: textTheme.bodyMedium?.copyWith(color: colorScheme.primary),
-                    ),
+          // ---------------------------------------------------
+          // Continue Button
+          // ---------------------------------------------------
+          OutlinedButton(
+            onPressed: (widget.canContinue || !widget.isDone)
+                ? ()  {
+              widget.onFlip();
+            }
+                : null,
+            style: OutlinedButton.styleFrom(
+              padding: EdgeInsets.zero,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              side: BorderSide.none,
+            ),
+            child: Ink(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: widget.canContinue
+                      ? [colorScheme.inversePrimary, colorScheme.primaryContainer]
+                      : [colorScheme.surfaceContainerHighest, colorScheme.surfaceContainerHighest],
+                ),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Container(
+                alignment: Alignment.center,
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                child: Text(
+                  widget.isDone ? "Done" : "Continue",
+                  style: TextStyle(
+                    color: widget.canContinue ? colorScheme.secondary : colorScheme.onSurface.withAlpha(160),
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
-
-              // ---------------------------------------------------
-              // Recording Tab
-              // ---------------------------------------------------
-              AbsorbPointer(
-                absorbing: voiceLocked,
-                child: ChangeNotifierProvider(
-                  create: (_) => RecordingLogic(logic),
-                  child: RecordingCard(),
-                ),
-              ),
-            ],
-          ),
-        ),
-
-        const SizedBox(height: 16),
-
-        // ---------------------------------------------------
-        // Continue Button
-        // ---------------------------------------------------
-        OutlinedButton(
-          onPressed: (widget.canContinue || !widget.isDone)
-              ? ()  {
-            widget.onFlip();
-          }
-              : null,
-          style: OutlinedButton.styleFrom(
-            padding: EdgeInsets.zero,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            side: BorderSide.none,
-          ),
-          child: Ink(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: widget.canContinue
-                    ? [colorScheme.inversePrimary, colorScheme.primaryContainer]
-                    : [colorScheme.surfaceContainerHighest, colorScheme.surfaceContainerHighest],
-              ),
-              borderRadius: BorderRadius.circular(12),
             ),
-            child: Container(
-              alignment: Alignment.center,
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-              child: Text(
-                widget.isDone ? "Done" : "Continue",
-                style: TextStyle(
-                  color: widget.canContinue ? colorScheme.secondary : colorScheme.onSurface.withAlpha(160),
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-          ),
-        )
-      ],
+          )
+        ]
+      else... [
+          DoneCard()
+        ]
+      ]
     );
   }
 }

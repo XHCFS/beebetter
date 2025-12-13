@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:beebetter/widgets/PromptInput.dart';
 import 'package:beebetter/widgets/EmotionWheel/EmotionWheel.dart';
 import 'package:flutter_flip_card/flutter_flip_card.dart';
+import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 
 class PromptCard extends StatefulWidget {
   final int index;
@@ -12,6 +13,7 @@ class PromptCard extends StatefulWidget {
   final void Function(String) onContinuePressed;
   final void Function(String) onTextChanged;
   final String initialText;
+  final CardSwiperController cardSwiperController;
 
   const PromptCard({
     super.key,
@@ -23,6 +25,7 @@ class PromptCard extends StatefulWidget {
     required this.onContinuePressed,
     required this.onTextChanged,
     required this.initialText,
+    required this.cardSwiperController,
   });
 
   @override
@@ -86,6 +89,7 @@ class PromptCardState extends State<PromptCard>
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         child: EmotionWheel(
           onFlip: () => cardController.flipcard(),
+          cardSwiperController : widget.cardSwiperController,
         ),
       ),
     );
