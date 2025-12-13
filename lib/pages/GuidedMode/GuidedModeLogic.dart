@@ -10,9 +10,10 @@ class GuidedModeLogic extends ChangeNotifier {
   int currentPrompt = 0;
   int completedPrompts = 1;
   bool canSelectNext = false;
+  late final int originalTotalPrompts;
 
   // ---------------------------------------------------
-  // Data from Database or prompt generator
+  // Later will be loaded from Database or prompt generator
   // ---------------------------------------------------
 
   List<String> prompts = [
@@ -65,6 +66,7 @@ class GuidedModeLogic extends ChangeNotifier {
 
   GuidedModeLogic() {
     final total = prompts.length;
+    originalTotalPrompts = total;
     userInputs = List.generate(total, (_) => "");
     canContinue = List.generate(total, (_) => false);
     isTextLocked = List.generate(total, (_) => false);
@@ -79,16 +81,13 @@ class GuidedModeLogic extends ChangeNotifier {
   // ---------------------------------------------------
 
   void updateCanContinue(bool value) {
-    if(isDone[currentPrompt]) return;
+    if (isDone[currentPrompt]) return;
 
-    if(completedPrompts <= totalPrompts) {
-      canContinue[currentPrompt] = value;
-    }
-    else{
-      canContinue[currentPrompt]  = false;
-    }
+    canContinue[currentPrompt] = value;
+
     notifyListeners();
   }
+
 
   void updatePromptInput(int index, String value) {
     userInputs[index] = value;
@@ -103,21 +102,57 @@ class GuidedModeLogic extends ChangeNotifier {
   }
 
 
-  void submit(String entry) {
-    userInputs[currentPrompt] = entry; // save input
-    isDone[currentPrompt] = true;
-    completedPrompts = (completedPrompts < totalPrompts)
-        ? completedPrompts + 1
-        : completedPrompts;
-    canContinue[currentPrompt] = false; // keep for after emotion wheel
+  void submit(CardSwiperController cardController) {
+    completedPrompts++;
+
+    // Remove the current card first
+    if (prompts.length == 1) {
+      // Last card -> replace with Done!
+      prompts[0] = "Done!";
+      promptsCategory[0] = "";
+      userInputs[0] = "";
+      canContinue[0] = false;
+      isTextLocked[0] = true;
+      isVoiceLocked[0] = true;
+      lastActiveTab[0] = 1;
+      isDone[0] = true;
+      Emotions[0] = List.generate(emotionLevels, (_) => "");
+    } else {
+      prompts.removeAt(currentPrompt);
+      promptsCategory.removeAt(currentPrompt);
+      userInputs.removeAt(currentPrompt);
+      canContinue.removeAt(currentPrompt);
+      isTextLocked.removeAt(currentPrompt);
+      isVoiceLocked.removeAt(currentPrompt);
+      lastActiveTab.removeAt(currentPrompt);
+      isDone.removeAt(currentPrompt);
+      Emotions.removeAt(currentPrompt);
+    }
+    if (prompts.isEmpty) {
+      currentPrompt = 0;
+    } else {
+      currentPrompt = currentPrompt.clamp(0, prompts.length - 1);
+    }
+
+    // After removing, always clamp currentPrompt to valid index
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (prompts.isNotEmpty) {
+        cardController.moveTo(currentPrompt);
+      }
+    });
+
     notifyListeners();
   }
+
+
+
 
   // ---------------------------------------------------
   // Emotions Selection
   // ---------------------------------------------------
   void selectEmotion(int level, String emotion)
   {
+    if (currentPrompt >= Emotions.length || level >= emotionLevels) return;
     Emotions[currentPrompt][level] = emotion;
     if (emotion != ""){
         canSelectNext = true;

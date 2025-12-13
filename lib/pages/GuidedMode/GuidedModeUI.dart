@@ -49,7 +49,7 @@ class GuidedModeUI extends StatelessWidget {
                     children: [
                       Text("Progress", style: textTheme.bodyLarge
                           ?.copyWith(color: colorScheme.primary.withAlpha(160)),),
-                      Text("${logic.completedPrompts} / ${logic.totalPrompts}", style: textTheme.bodyLarge
+                      Text("${logic.completedPrompts} / ${logic.originalTotalPrompts}", style: textTheme.bodyLarge
                           ?.copyWith(color: colorScheme.primary.withAlpha(160)),),
                     ],
                   ),
@@ -60,7 +60,7 @@ class GuidedModeUI extends StatelessWidget {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(10),
                       child: LinearProgressIndicator(
-                        value: logic.completedPrompts / logic.totalPrompts,
+                        value: logic.completedPrompts / logic.originalTotalPrompts,
                         backgroundColor: colorScheme.primary.withAlpha(30),
                         color: colorScheme.inversePrimary,
                         minHeight: 10,
@@ -77,31 +77,35 @@ class GuidedModeUI extends StatelessWidget {
             // ---------------------------------------------------
             Expanded(
               child: CardSwiper(
-                cardsCount: logic.totalPrompts,
+                key: ValueKey(logic.prompts.length),
+                cardsCount: logic.prompts.length,
+                numberOfCardsDisplayed: logic.prompts.length > 1 ? 2 : 1,
                 controller: cardSwiperController,
                 onSwipe: (prevIndex, currentIndex, direction) {
                   logic.onSwipe(currentIndex);
                   return true;
                 },
                 cardBuilder: (context, index, percentThresholdX, percentThresholdY) {
+                  // if (index >= logic.totalPrompts) return SizedBox.shrink();
                   final prompt = logic.prompts[index];
                   final category = logic.promptsCategory[index];
                   final initialText = logic.userInputs[index];
                   bool isDone = (index < logic.isDone.length) ? logic.isDone[index] : false;
                   return PromptCard(
-                    key: ValueKey(index),
+                    key: ValueKey(prompt),
                     index: index,
                     category: category,
                     prompt: prompt,
                     canContinue: logic.canContinue[index],
                     isDone: isDone,
                     initialText: initialText,
+                    cardSwiperController : cardSwiperController,
                     onTextChanged: (value) {
                       logic.updatePromptInput(index, value);
                       logic.updateCanContinue(value.trim().isNotEmpty);
                     },
                     onContinuePressed: (entry) {
-                      logic.submit(entry);
+                      logic.submit(cardSwiperController);
                     },
                   );
                 },

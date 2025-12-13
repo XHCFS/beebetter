@@ -3,13 +3,16 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:beebetter/widgets/EmotionWheel/EmotionsGrid.dart';
 import 'package:beebetter/pages/GuidedMode/GuidedModeLogic.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 
 class EmotionWheel extends StatefulWidget {
   final VoidCallback onFlip;
+  final CardSwiperController cardSwiperController;
 
   const EmotionWheel({
     super.key,
     required this.onFlip,
+    required this.cardSwiperController,
   });
 
   @override
@@ -101,10 +104,8 @@ class EmotionWheelState extends State<EmotionWheel> {
                     padding: const EdgeInsets.symmetric(vertical: 14), // match heights
                   ),
                   onPressed: () {
-                    print("current level $currentLevel");
                     if(currentLevel == 0)
                       {
-                        print("current level $currentLevel!!!");
                         widget.onFlip();
                       }
                     else {
@@ -138,12 +139,15 @@ class EmotionWheelState extends State<EmotionWheel> {
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                       side: BorderSide.none,
                     ),
-                    onPressed: logic.canSelectNext ? () {
+                    onPressed: logic.canSelectNext ? () async {
                       print("current level $currentLevel!?");
                       if(currentLevel == logic.emotionLevels - 1)
                       {
                         widget.onFlip();
                         logic.submitEmotion(currentLevel);
+                        widget.cardSwiperController.swipe(CardSwiperDirection.left);
+                        await Future.delayed(const Duration(milliseconds: 300));
+                        logic.submit(widget.cardSwiperController);
                       }
                       else {
                         currentLevel++;
