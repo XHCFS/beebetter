@@ -1,12 +1,14 @@
 name: Flutter CI/CD
-
 on:
   push:
     branches:
       - '**'  # Runs on all branches
+  pull_request:  # Add this!
+    branches:
+      - '**'  # Runs on PRs to all branches
 
 permissions:
-  contents: write  # Add this section!
+  contents: write
 
 jobs:
   build-and-release:
@@ -28,10 +30,10 @@ jobs:
  
     - name: Generate code
       run: flutter pub run build_runner build --delete-conflicting-outputs
-
+    
     - name: Run tests
       run: flutter test --no-pub
-      continue-on-error: true  # Won't fail if no tests exist
+      continue-on-error: true
     
     - name: Analyze code
       run: flutter analyze
@@ -40,17 +42,21 @@ jobs:
     - name: Build APK
       run: flutter build apk --release
     
+    # Only create releases on push events (not PRs)
     - name: Get branch name
+      if: github.event_name == 'push'
       id: branch_name
       run: echo "branch=${GITHUB_REF#refs/heads/}" >> $GITHUB_OUTPUT
     
     - name: Get commit info
+      if: github.event_name == 'push'
       id: commit_info
       run: |
         echo "short_sha=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
         echo "commit_msg=$(git log -1 --pretty=%B | head -n 1)" >> $GITHUB_OUTPUT
     
     - name: Create Release
+      if: github.event_name == 'push'
       id: create_release
       uses: actions/create-release@v1
       env:
@@ -68,6 +74,7 @@ jobs:
         prerelease: ${{ steps.branch_name.outputs.branch != 'main' }}
     
     - name: Upload APK to Release
+      if: github.event_name == 'push'
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
