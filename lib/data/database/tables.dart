@@ -2,8 +2,6 @@
 
 import 'package:drift/drift.dart';
 
-part 'tables.g.dart';
-
 enum Mood {
   cheerful,
   content,
@@ -110,7 +108,8 @@ class Records extends Table {
   DateTimeColumn get createdAt =>
       dateTime().withDefault(currentDateAndTime)();
   IntColumn get promptId => integer().references(Prompts, #id).nullable()();
-  IntColumn get inputType => intEnum<InputType>().withDefault(Constant(0))();
+  IntColumn get inputType => integer()
+      .clientDefault(() => InputType.text.index)();
 
   // under the assumption there can be several seperate user profiles on the same device
   IntColumn get userId => integer().references(User, #id).nullable()();
@@ -125,8 +124,9 @@ class Records extends Table {
 class Moods extends Table {
   IntColumn get id => integer().autoIncrement()();
   IntColumn get recordId => integer().references(Records, #id)();
-  IntColumn get mood => intEnum<Mood>().nullable()();
+  IntColumn get mood => integer().nullable()();
 
   // source defines whether recorded mood is inferred by a model or not. will be useful in training
-  IntColumn get source => intEnum<MoodSource>().withDefault(Constant(0))();
+  IntColumn get source => integer()
+      .clientDefault(() => MoodSource.user.index)();
 }
