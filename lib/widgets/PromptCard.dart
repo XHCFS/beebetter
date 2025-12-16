@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:beebetter/widgets/PromptInput.dart';
 import 'package:beebetter/widgets/EmotionWheel/EmotionWheel.dart';
 import 'package:flutter_flip_card/flutter_flip_card.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
+import 'package:beebetter/pages/GuidedMode/GuidedModeLogic.dart';
 
 class PromptCard extends StatefulWidget {
   final int index;
@@ -57,6 +59,7 @@ class PromptCardState extends State<PromptCard>
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    final logic = context.watch<GuidedModeLogic>();
 
     final colorScheme = Theme.of(context).colorScheme;
 
@@ -88,10 +91,25 @@ class PromptCardState extends State<PromptCard>
         color: colorScheme.onPrimary,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         child: EmotionWheel(
-          onFlip: () => cardController.flipcard(),
-          cardSwiperController : widget.cardSwiperController,
-          index : widget.index,
-        ),
+          emotionItems: logic.emotionItems,
+          levels: logic.emotionLevels,
+          canSelectNext: logic.canSelectNext,
+          onBack: () => cardController.flipcard(),
+          onEmotionSelected: (level, emotion) {
+            logic.selectEmotion(level, emotion);
+          },
+          onNext: (level) async {
+            if (level == logic.emotionLevels - 1) {
+              cardController.flipcard();
+              logic.submitEmotion(level);
+              widget.cardSwiperController.swipe(CardSwiperDirection.left);
+              await Future.delayed(const Duration(milliseconds: 300));
+              logic.submit(widget.index, widget.cardSwiperController);
+            } else {
+              logic.updateCanSelectNextForLevel(level + 1);
+            }
+          },
+        )
       ),
     );
   }

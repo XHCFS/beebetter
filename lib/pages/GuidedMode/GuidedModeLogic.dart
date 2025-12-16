@@ -7,7 +7,7 @@ class GuidedModeLogic extends ChangeNotifier {
   // Variables Initialization
   // ---------------------------------------------------
 
-  int emotionLevels = 3;
+  final int emotionLevels = 3;
   int currentPrompt = 0;
   int completedPrompts = 1;
   bool canSelectNext = false;
@@ -17,16 +17,21 @@ class GuidedModeLogic extends ChangeNotifier {
   // Later will be loaded from Database or prompt generator
   // ---------------------------------------------------
 
-  final List<String> items = const [
-    "Joy",
-    "Trust",
-    "Fear",
-    "Surprise",
-    "Sadness",
-    "Disgust",
-    "Anger",
-    "Anticipation",
+  final List<List<String>> emotionItems = const [
+    [
+      "Joy",
+      "Trust",
+      "Fear",
+      "Surprise",
+      "Sadness",
+      "Disgust",
+      "Anger",
+      "Anticipation",
+      ],
+    ["Happy", "Calm", "Excited"],
+    ["Overwhelmed", "Empty", "Hopeful"],
   ];
+
 
   // ---------------------------------------------------
   // Inputs

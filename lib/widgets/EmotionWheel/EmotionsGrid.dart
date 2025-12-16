@@ -1,30 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:beebetter/pages/GuidedMode/GuidedModeLogic.dart';
-import 'package:provider/provider.dart';
 
-class EmotionsGrid extends StatefulWidget {
+class EmotionsGrid extends StatelessWidget {
   final List<String> items;
-  final void Function(String) onPressed;
-  final int emotionLevel;
+  final String? selectedItem;
+  final ValueChanged<String?> onChanged;
 
   const EmotionsGrid({
     super.key,
     required this.items,
-    required this.emotionLevel,
-    required this.onPressed,
+    required this.selectedItem,
+    required this.onChanged,
   });
-
-  @override
-  State<EmotionsGrid> createState() => EmotionsGridState();
-}
-
-class EmotionsGridState extends State<EmotionsGrid> {
-  String? selectedItem;
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final logic = context.watch<GuidedModeLogic>();
 
     return GridView.count(
       padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -33,11 +23,9 @@ class EmotionsGridState extends State<EmotionsGrid> {
       mainAxisSpacing: 12,
       // physics: const NeverScrollableScrollPhysics(), // disables scrolling
         childAspectRatio: 2.5,
-        children: List.generate( widget.items.length, (index) {
+        children: List.generate(items.length, (index) {
 
-          selectedItem = logic.currentPromptInfo.emotions[widget.emotionLevel];
-
-          final item = widget.items[index];
+          final item = items[index];
           final isSelected = selectedItem == item;
 
         return ElevatedButton(
@@ -55,17 +43,8 @@ class EmotionsGridState extends State<EmotionsGrid> {
               ),
             ),
           ),
-          // onPressed: () => onPressed(item),
           onPressed: () {
-            setState(() {
-              if (selectedItem == item) {
-                selectedItem = null;
-                logic.selectEmotion(widget.emotionLevel, "");
-              } else {
-                selectedItem = item;
-                logic.selectEmotion(widget.emotionLevel, item);
-              }
-            });
+            onChanged(isSelected ? null : item);
           },
           child: Text(
             item,

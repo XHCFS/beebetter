@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:beebetter/widgets/EmotionWheel/EmotionsGrid.dart';
-import 'package:beebetter/pages/GuidedMode/GuidedModeLogic.dart';
-import 'package:provider/provider.dart';
-import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 
 class EmotionWheel extends StatefulWidget {
-  final VoidCallback onFlip;
-  final CardSwiperController cardSwiperController;
-  final int index;
+  final List<List<String>> emotionItems;
+  final int levels;
+  final void Function(int level, String emotion) onEmotionSelected;
+  final bool canSelectNext;
+  final void Function(int level) onNext;
+  final VoidCallback onBack;
 
   const EmotionWheel({
     super.key,
-    required this.onFlip,
-    required this.cardSwiperController,
-    required this.index,
+    required this.emotionItems,
+    required this.levels,
+    required this.onEmotionSelected,
+    required this.canSelectNext,
+    required this.onNext,
+    required this.onBack,
   });
 
   @override
@@ -24,6 +27,7 @@ class EmotionWheel extends StatefulWidget {
 class EmotionWheelState extends State<EmotionWheel> {
   final PageController pageController = PageController();
   int currentLevel = 0;
+  late List<String?> selectedEmotions;
 
   @override
   void dispose() {
@@ -31,10 +35,42 @@ class EmotionWheelState extends State<EmotionWheel> {
     super.dispose();
   }
 
+  void goNext() {
+    widget.onNext(currentLevel);
+
+    if (currentLevel < widget.levels - 1) {
+      setState(() => currentLevel++);
+      pageController.animateToPage(
+        currentLevel,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    }
+  }
+
+  void goBack() {
+    if (currentLevel == 0) {
+      widget.onBack();
+    } else {
+      setState(() => currentLevel--);
+      pageController.animateToPage(
+        currentLevel,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    selectedEmotions = List.filled(widget.levels, null);
+  }
+
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final logic = context.watch<GuidedModeLogic>();
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -56,29 +92,19 @@ class EmotionWheelState extends State<EmotionWheel> {
               PageView(
                 controller: pageController,
                 physics: const NeverScrollableScrollPhysics(),
-                children: [
-                    EmotionsGrid(
-                      items: logic.items,
-                      emotionLevel: 0,
-                      onPressed: (value) {
-                        print("Selected: $value");
-                      },
-                    ),
-                  EmotionsGrid(
-                    items: logic.items,
-                    emotionLevel: 1,
-                    onPressed: (value) {
-                      print("Selected: $value");
-                    },
-                  ),
-                  EmotionsGrid(
-                    items: logic.items,
-                    emotionLevel: 2,
-                    onPressed: (value) {
-                      print("Selected: $value");
-                    },
-                  ),
-                ],
+                children: List.generate(
+                  widget.levels,
+                      (level) => EmotionsGrid(
+                        items: widget.emotionItems[level],
+                        selectedItem: selectedEmotions[level],
+                        onChanged: (value) {
+                          setState(() {
+                            selectedEmotions[level] = value;
+                          });
+                          widget.onEmotionSelected(level, value ?? "");
+                        },
+                      ),
+                ),
              ),
           ),
         ),
@@ -105,21 +131,7 @@ class EmotionWheelState extends State<EmotionWheel> {
                     ),
                     padding: const EdgeInsets.symmetric(vertical: 14), // match heights
                   ),
-                  onPressed: () {
-                    if(currentLevel == 0)
-                      {
-                        widget.onFlip();
-                      }
-                    else {
-                      currentLevel--;
-                      logic.updateCanSelectNextForLevel(currentLevel);
-                      pageController.animateToPage(
-                        currentLevel,
-                        duration: const Duration(milliseconds: 350),
-                        curve: Curves.easeOut,
-                      );
-                    }
-                  },
+                  onPressed: goBack,
                   child: Text(
                     "back",
                     textAlign: TextAlign.center,
@@ -141,30 +153,11 @@ class EmotionWheelState extends State<EmotionWheel> {
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                       side: BorderSide.none,
                     ),
-                    onPressed: logic.canSelectNext ? () async {
-                      print("current level $currentLevel!?");
-                      if(currentLevel == logic.emotionLevels - 1)
-                      {
-                        widget.onFlip();
-                        logic.submitEmotion(currentLevel);
-                        widget.cardSwiperController.swipe(CardSwiperDirection.left);
-                        await Future.delayed(const Duration(milliseconds: 300));
-                        logic.submit(widget.index, widget.cardSwiperController);
-                      }
-                      else {
-                        currentLevel++;
-                        logic.updateCanSelectNextForLevel(currentLevel);
-                        pageController.animateToPage(
-                          currentLevel,
-                          duration: const Duration(milliseconds: 350),
-                          curve: Curves.easeOut,
-                        );
-                      }
-                    } : null,
+                    onPressed: widget.canSelectNext ? goNext : null,
                     child: Ink(
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
-                          colors:  logic.canSelectNext
+                          colors:  widget.canSelectNext
                               ? [colorScheme.inversePrimary, colorScheme.primaryContainer]
                               : [colorScheme.surfaceContainerHighest, colorScheme.surfaceContainerHighest],
                         ),
@@ -176,7 +169,7 @@ class EmotionWheelState extends State<EmotionWheel> {
                         child: Text(
                           "next",
                           style: TextStyle(
-                            color: logic.canSelectNext ? colorScheme.secondary : colorScheme.onSurface.withAlpha(160),
+                            color: widget.canSelectNext ? colorScheme.secondary : colorScheme.onSurface.withAlpha(160),
                             fontWeight: FontWeight.w600,
                           ),
                         ),
