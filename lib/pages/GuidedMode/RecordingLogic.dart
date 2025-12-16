@@ -32,7 +32,9 @@ class RecordingLogic extends ChangeNotifier {
   // ---------------------------------------------------
   // Toggle Recording
   Future<void> toggleRecording() async {
-    if (guidedLogic.isDone[guidedLogic.currentPrompt]) {
+    final prompt = guidedLogic.currentPromptInfo;
+
+    if (prompt.isDone) {
       return;
     }
 
@@ -96,7 +98,8 @@ class RecordingLogic extends ChangeNotifier {
     await recorder.stop();
 
     // print("Final elapsed: ${elapsed.inSeconds} seconds");
-    guidedLogic.isTextLocked[guidedLogic.currentPrompt] = canContinue;
+    final prompt = guidedLogic.currentPromptInfo;
+    prompt.isTextLocked = canContinue;
     guidedLogic.updateCanContinue(canContinue);
 
     elapsed = Duration.zero;

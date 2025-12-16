@@ -87,25 +87,23 @@ class GuidedModeUI extends StatelessWidget {
                 },
                 cardBuilder: (context, index, percentThresholdX, percentThresholdY) {
                   // if (index >= logic.totalPrompts) return SizedBox.shrink();
-                  final prompt = logic.prompts[index];
-                  final category = logic.promptsCategory[index];
-                  final initialText = logic.userInputs[index];
-                  bool isDone = (index < logic.isDone.length) ? logic.isDone[index] : false;
+                  final promptInfo = logic.prompts[index];
+
                   return PromptCard(
-                    key: ValueKey(prompt),
+                    key: ValueKey(promptInfo.prompt),
                     index: index,
-                    category: category,
-                    prompt: prompt,
-                    canContinue: logic.canContinue[index],
-                    isDone: isDone,
-                    initialText: initialText,
+                    category: promptInfo.category,
+                    prompt: promptInfo.prompt,
+                    canContinue: promptInfo.canContinue,
+                    isDone: promptInfo.isDone,
+                    initialText: promptInfo.userInput,
                     cardSwiperController : cardSwiperController,
                     onTextChanged: (value) {
                       logic.updatePromptInput(index, value);
                       logic.updateCanContinue(value.trim().isNotEmpty);
                     },
                     onContinuePressed: (entry) {
-                      logic.submit(cardSwiperController);
+                      logic.submit(index, cardSwiperController);
                     },
                   );
                 },

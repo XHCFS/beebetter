@@ -43,24 +43,26 @@ class PromptInputState extends State<PromptInput> with TickerProviderStateMixin 
     final logic = context.read<GuidedModeLogic>();
     int initialIndex = 1;
 
+    final prompt = logic.currentPromptInfo;
+
     // fallback if initial tab is locked
-    if (initialIndex == 0 && logic.isTextLocked[logic.currentPrompt]) initialIndex = 1;
-    if (initialIndex == 1 && logic.isVoiceLocked[logic.currentPrompt]) initialIndex = 0;
+    if (initialIndex == 0 && prompt.isTextLocked) initialIndex = 1;
+    if (initialIndex == 1 && prompt.isVoiceLocked) initialIndex = 0;
 
     tabController = TabController(length: 2, vsync: this, initialIndex: initialIndex);
 
     tabController.addListener(() {
       if (!tabController.indexIsChanging) return;
       int i = tabController.index;
-      bool textLocked  = logic.isTextLocked[logic.currentPrompt];
-      bool voiceLocked = logic.isVoiceLocked[logic.currentPrompt];
+      bool textLocked  = prompt.isTextLocked;
+      bool voiceLocked = prompt.isVoiceLocked;
 
       if ((i == 0 && textLocked) || (i == 1 && voiceLocked)) {
         tabController.index = tabController.previousIndex;
         return;
       }
 
-      logic.lastActiveTab[logic.currentPrompt] = i;
+      prompt.lastActiveTab = i;
     });
   }
 
@@ -76,9 +78,10 @@ class PromptInputState extends State<PromptInput> with TickerProviderStateMixin 
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
     final logic = context.watch<GuidedModeLogic>();
+    final prompt = logic.currentPromptInfo;
 
-    bool textLocked = logic.isTextLocked[logic.currentPrompt];
-    bool voiceLocked = logic.isVoiceLocked[logic.currentPrompt];
+    bool textLocked = prompt.isTextLocked;
+    bool voiceLocked = prompt.isVoiceLocked;
 
     bool isDoneCard = logic.currentPromptText == "Done!";
 

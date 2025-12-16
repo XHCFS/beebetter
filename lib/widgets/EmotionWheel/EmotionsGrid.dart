@@ -35,7 +35,7 @@ class EmotionsGridState extends State<EmotionsGrid> {
         childAspectRatio: 2.5,
         children: List.generate( widget.items.length, (index) {
 
-          selectedItem = logic.Emotions[logic.currentPrompt][widget.emotionLevel];
+          selectedItem = logic.currentPromptInfo.emotions[widget.emotionLevel];
 
           final item = widget.items[index];
           final isSelected = selectedItem == item;

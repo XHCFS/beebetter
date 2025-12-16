@@ -90,6 +90,7 @@ class PromptCardState extends State<PromptCard>
         child: EmotionWheel(
           onFlip: () => cardController.flipcard(),
           cardSwiperController : widget.cardSwiperController,
+          index : widget.index,
         ),
       ),
     );

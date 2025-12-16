@@ -8,11 +8,13 @@ import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 class EmotionWheel extends StatefulWidget {
   final VoidCallback onFlip;
   final CardSwiperController cardSwiperController;
+  final int index;
 
   const EmotionWheel({
     super.key,
     required this.onFlip,
     required this.cardSwiperController,
+    required this.index,
   });
 
   @override
@@ -147,7 +149,7 @@ class EmotionWheelState extends State<EmotionWheel> {
                         logic.submitEmotion(currentLevel);
                         widget.cardSwiperController.swipe(CardSwiperDirection.left);
                         await Future.delayed(const Duration(milliseconds: 300));
-                        logic.submit(widget.cardSwiperController);
+                        logic.submit(widget.index, widget.cardSwiperController);
                       }
                       else {
                         currentLevel++;
