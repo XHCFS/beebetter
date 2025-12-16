@@ -23,56 +23,60 @@ class BackgroundGradient extends StatefulWidget {
 }
 
 class _BackgroundGradientState extends State<BackgroundGradient> {
-  late final HoneycombPainter honeycombPainter;
-  bool initialized = false;
-  late final Size canvasSize;
+  HoneycombPainter? honeycombPainter;
+  Size? lastSize;
 
   @override
   Widget build(BuildContext context) {
-    if (!initialized) {
-      canvasSize = MediaQuery.of(context).size;
-      honeycombPainter = HoneycombPainter(
-        size: canvasSize,
-        color: Theme.of(context).colorScheme.inversePrimary.withAlpha(40),
-        // to control pattern parameters
-        hexagonRadius: 25,      // size of the hexagon
-        fillProbability: 0.2,
-        removeProbability: 0.7,
-      );
-      initialized = true;
-    }
-
     Color surfaceContainerDark = Color.alphaBlend(
       Theme.of(context).colorScheme.inversePrimary.withAlpha(20),
       Theme.of(context).colorScheme.surface,
     );
 
-    return Stack(
-      children: [
-        // Gradient background
-        Container(
-          width: double.infinity,
-          height: double.infinity,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [surfaceContainerDark, Theme.of(context).colorScheme.surface],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final canvasSize = Size(constraints.maxWidth, constraints.maxHeight);
+
+        // Create the painter only if size changed or it's null
+        if (honeycombPainter == null || lastSize != canvasSize) {
+          honeycombPainter = HoneycombPainter(
+            size: canvasSize,
+            color: Theme.of(context).colorScheme.inversePrimary.withAlpha(40),
+            hexagonRadius: 37,
+            fillProbability: 0.25,
+            removeProbability: 0.7,
+          );
+          lastSize = canvasSize;
+        }
+
+        return Stack(
+          children: [
+            // Gradient background
+            Container(
+              width: double.infinity,
+              height: double.infinity,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [surfaceContainerDark, Theme.of(context).colorScheme.surface],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+              ),
             ),
-          ),
-        ),
 
-        // hexagon pattern
-        SizedBox(
-          width: canvasSize.width,
-          height: canvasSize.height,
-          child: CustomPaint(
-            painter: honeycombPainter,
-          ),
-        ),
+            // Hexagon pattern
+            SizedBox(
+              width: canvasSize.width,
+              height: canvasSize.height,
+              child: CustomPaint(
+                painter: honeycombPainter!,
+              ),
+            ),
 
-        widget.body,
-      ],
+            widget.body,
+          ],
+        );
+      },
     );
   }
 }
@@ -93,7 +97,7 @@ class HoneycombPainter extends CustomPainter {
     required Size size,
     required this.color,
     this.hexagonRadius = 30,
-    this.fillProbability = 0.1,
+    this.fillProbability = 0.15,
     this.removeProbability = 0.1,
   }) : hexagons = [] {
     // Compute pattern only once
@@ -126,7 +130,7 @@ class HoneycombPainter extends CustomPainter {
     final paint = Paint()
       ..color = color
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 2;
+      ..strokeWidth = 4;
 
     final fillPaint = Paint()
       ..color = color.withAlpha(40)
@@ -140,18 +144,41 @@ class HoneycombPainter extends CustomPainter {
     }
   }
 
-  Path _hexagonPath(Offset center, double radius) {
+  Path _hexagonPath(Offset center, double radius, {double cornerRadius = 3}) {
     final path = Path();
-    for (int i = 0; i < 6; i++) {
+
+    // Compute all 6 points of the hexagon
+    List<Offset> points = List.generate(6, (i) {
       double angle = pi / 3 * i - pi / 6; // flat-top orientation
-      double x = center.dx + radius * cos(angle);
-      double y = center.dy + radius * sin(angle);
-      if (i == 0) path.moveTo(x, y);
-      else path.lineTo(x, y);
+      return Offset(center.dx + radius * cos(angle), center.dy + radius * sin(angle));
+    });
+
+    for (int i = 0; i < 6; i++) {
+      Offset p1 = points[i];
+      Offset p2 = points[(i + 1) % 6];
+
+      // Compute vector from p1 to p2
+      final vector = p2 - p1;
+      final length = vector.distance;
+
+      // Determine the start and end points for the arc
+      final offset = vector / length * cornerRadius;
+      final start = p1 + offset;
+      final end = p2 - offset;
+
+      if (i == 0) {
+        path.moveTo(start.dx, start.dy);
+      } else {
+        path.lineTo(start.dx, start.dy);
+      }
+
+      path.quadraticBezierTo(p2.dx, p2.dy, end.dx, end.dy);
     }
+
     path.close();
     return path;
   }
+
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
