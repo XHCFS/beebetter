@@ -231,7 +231,14 @@ class PromptInputState extends State<PromptInput> with TickerProviderStateMixin 
                 AbsorbPointer(
                   absorbing: voiceLocked,
                   child: ChangeNotifierProvider(
-                    create: (_) => RecordingLogic(logic),
+                    create: (_) => RecordingLogic(
+                      onRecordingComplete: (canContinue) {
+                        final logic = context.read<GuidedModeLogic>();
+                        final prompt = logic.currentPromptInfo;
+                        prompt.isTextLocked = canContinue;
+                        logic.updateCanContinue(canContinue);
+                      },
+                    ),
                     child: RecordingCard(),
                   ),
                 ),

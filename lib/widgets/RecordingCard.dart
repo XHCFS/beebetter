@@ -63,9 +63,6 @@ class RecordingCardState extends State<RecordingCard> with SingleTickerProviderS
                         color: Theme.of(context).colorScheme.inversePrimary,
                       ),
 
-                      // logic.isRecording ?
-                      // SizedBox.shrink() :
-
                       Icon(
                         Symbols.mic,
                         size: 36,

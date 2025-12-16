@@ -2,18 +2,13 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:record/record.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:beebetter/pages/GuidedMode/GuidedModeLogic.dart';
 
 class RecordingLogic extends ChangeNotifier {
-
-  final GuidedModeLogic guidedLogic;
-  RecordingLogic(this.guidedLogic);
-
   // ---------------------------------------------------
   // Variables Initialization
   // ---------------------------------------------------
 
-  final minRecordingTime = 20;  // seconds
+  final minRecordingTime = 20; // seconds
   final recorder = AudioRecorder();
   bool isRecording = false;
   bool isPaused = false;
@@ -27,17 +22,15 @@ class RecordingLogic extends ChangeNotifier {
   final CircularBuffer amplitudes = CircularBuffer(80);
   final int amplitudePollIntervalMs = 80;
 
+  final void Function(bool canContinue)? onRecordingComplete;
+
+  RecordingLogic({this.onRecordingComplete});
+
   // ---------------------------------------------------
   // Recording Functions
   // ---------------------------------------------------
-  // Toggle Recording
+
   Future<void> toggleRecording() async {
-    final prompt = guidedLogic.currentPromptInfo;
-
-    if (prompt.isDone) {
-      return;
-    }
-
     if (isRecording) {
       await stop();
       return;
@@ -76,17 +69,16 @@ class RecordingLogic extends ChangeNotifier {
     // Poll amplitudes
     amplitudeTimer =
         Timer.periodic(Duration(milliseconds: amplitudePollIntervalMs), (_) async {
-          if (isRecording &&!isPaused) {
+          if (isRecording && !isPaused) {
             final amp = await recorder.getAmplitude();
             double normalized = ((amp.current + 60) / 60).clamp(0.0, 1.0);
             amplitudes.add(normalized);
-            print(normalized);
+            notifyListeners();
           }
-        });
+      },);
   }
 
   Future<void> stop() async {
-    print("stop!");
     if (!isRecording) return;
 
     isRecording = false;
@@ -97,16 +89,15 @@ class RecordingLogic extends ChangeNotifier {
 
     await recorder.stop();
 
-    // print("Final elapsed: ${elapsed.inSeconds} seconds");
-    final prompt = guidedLogic.currentPromptInfo;
-    prompt.isTextLocked = canContinue;
-    guidedLogic.updateCanContinue(canContinue);
+    // Notify parent if recording reached min time
+    if (canContinue) {
+      onRecordingComplete?.call(true);
+    }
 
     elapsed = Duration.zero;
 
     notifyListeners();
   }
-
 
   void togglePause() {
     isPaused = !isPaused;
