@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:beebetter/pages/TodayPage/TodayPageLogic.dart';
 import 'package:beebetter/pages/GuidedMode/GuidedMode.dart';
+import 'package:beebetter/pages/NewEntryPage/NewEntryPage.dart';
 
 class TodayPageUI extends StatelessWidget {
   final VoidCallback openGuidedMode;
@@ -56,7 +57,7 @@ class TodayPageUI extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => GuidedMode()),
+                  MaterialPageRoute(builder: (context) => NewEntryPage()),
                 );
               },
               child: Container(
