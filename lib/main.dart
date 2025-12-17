@@ -25,6 +25,7 @@ class MyApp extends StatelessWidget {
     final lightInversePrimary = lighten(baseInversePrimary, 0.08);
     final colorScheme = ColorScheme.fromSeed(seedColor: colorAccent).copyWith(
       inversePrimary: lightInversePrimary,
+      error: Colors.redAccent,
     );
 
     return MaterialApp(

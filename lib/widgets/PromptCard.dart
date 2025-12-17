@@ -39,6 +39,17 @@ class PromptCardState extends State<PromptCard>
   late TextEditingController controller;
   final cardController = FlipCardController();
 
+  // Swipe down tracking for deleting prompt
+  double dragOffset = 0.0;
+  bool showDeleteHint = false;
+
+  void resetDrag() {
+    setState(() {
+      dragOffset = 0.0;
+      showDeleteHint = false;
+    });
+  }
+
   @override
   void initState() {
     super.initState();

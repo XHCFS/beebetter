@@ -13,6 +13,9 @@ class GuidedModeLogic extends ChangeNotifier {
   bool canSelectNext = false;
   late final int originalTotalPrompts;
 
+  double deleteDragProgress = 0.0;
+  bool isDraggingToDelete = false;
+
   // ---------------------------------------------------
   // Later will be loaded from Database or prompt generator
   // ---------------------------------------------------
@@ -168,6 +171,46 @@ class GuidedModeLogic extends ChangeNotifier {
 
     canSelectNext = prompt.emotions[level].isNotEmpty;
     notifyListeners();
+  }
+
+
+  // ---------------------------------------------------
+  // Delete Prompt
+  // ---------------------------------------------------
+
+  void updateDeleteDrag(double dy) {
+    deleteDragProgress = (dy / 150).clamp(0.0, 1.0);
+    isDraggingToDelete = deleteDragProgress > 0.15;
+    notifyListeners();
+  }
+
+  void resetDeleteDrag() {
+    deleteDragProgress = 0.0;
+    isDraggingToDelete = false;
+    notifyListeners();
+  }
+
+  void deletePrompt(int index) {
+    if (index < 0 || index >= prompts.length) return;
+    prompts.removeAt(index);
+    prompts.add(createNewPrompt());
+
+    if (currentPrompt >= prompts.length) {
+      currentPrompt = prompts.length - 1;
+    }
+
+    notifyListeners();
+  }
+
+  PromptCardInfo createNewPrompt() {
+    final id = DateTime.now().millisecondsSinceEpoch.toString();
+
+    return PromptCardInfo(
+      id: id,
+      prompt: "New prompt!!", // TODO: get a new prompt from prompt generator
+      category: "reflection",
+      emotionLevels: emotionLevels,
+    );
   }
 
 
