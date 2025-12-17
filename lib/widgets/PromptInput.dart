@@ -252,7 +252,7 @@ class PromptInputState extends State<PromptInput> with TickerProviderStateMixin 
           // Continue Button
           // ---------------------------------------------------
           OutlinedButton(
-            onPressed: (widget.canContinue || !widget.isDone)
+            onPressed: widget.canContinue
                 ? ()  {
               widget.onFlip();
             }

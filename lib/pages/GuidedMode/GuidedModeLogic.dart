@@ -194,6 +194,8 @@ class GuidedModeLogic extends ChangeNotifier {
     if (currentIndex == null) return;
     if (currentIndex < 0 || currentIndex >= prompts.length) return;
 
+    updateCanSelectNextForLevel(0);
+
     currentPrompt = currentIndex;
     notifyListeners();
   }

@@ -15,6 +15,7 @@ class NewEntryPageLogic extends ChangeNotifier {
   int lastActiveTab = 1;
   int emotionLevels = 3;
   bool canContinue = false;
+  bool canSelectNext = false;
   String userInput = "";
   String title = "";
 
@@ -53,6 +54,11 @@ class NewEntryPageLogic extends ChangeNotifier {
 
   void updateCanContinue(bool value) {
     canContinue = value;
+    notifyListeners();
+  }
+
+  void updateCanSelectNextForLevel(int level) {
+    canSelectNext = emotions[level].isNotEmpty;
     notifyListeners();
   }
 

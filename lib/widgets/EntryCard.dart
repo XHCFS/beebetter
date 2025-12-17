@@ -82,11 +82,12 @@ class EntryCardState extends State<EntryCard>
         child: EmotionWheel(
           emotionItems: logic.emotionItems,
           levels: logic.emotionLevels,
-          canSelectNext: logic.canContinue,
+          selectedEmotions: logic.emotions,
+          canSelectNext: logic.canSelectNext,
           onBack: () => cardController.flipcard(),
           onEmotionSelected: (level, emotion) {
             logic.emotions[level] = emotion;
-            setState(() => logic.canContinue = emotion.isNotEmpty);
+            logic.updateCanSelectNextForLevel(level);
           },
           onNext: (level) {
             if (level == logic.emotionLevels - 1) {
@@ -94,6 +95,7 @@ class EntryCardState extends State<EntryCard>
               cardController.flipcard();
             };
           },
+          onLevelChanged: logic.updateCanSelectNextForLevel,
         ),
       ),
     );

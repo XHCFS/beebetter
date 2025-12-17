@@ -5,19 +5,23 @@ import 'package:beebetter/widgets/EmotionWheel/EmotionsGrid.dart';
 class EmotionWheel extends StatefulWidget {
   final List<List<String>> emotionItems;
   final int levels;
+  final List<String?> selectedEmotions;
   final void Function(int level, String emotion) onEmotionSelected;
   final bool canSelectNext;
   final void Function(int level) onNext;
   final VoidCallback onBack;
+  final void Function(int level) onLevelChanged;
 
   const EmotionWheel({
     super.key,
     required this.emotionItems,
     required this.levels,
+    required this.selectedEmotions,
     required this.onEmotionSelected,
     required this.canSelectNext,
     required this.onNext,
     required this.onBack,
+    required this.onLevelChanged,
   });
 
   @override
@@ -27,7 +31,7 @@ class EmotionWheel extends StatefulWidget {
 class EmotionWheelState extends State<EmotionWheel> {
   final PageController pageController = PageController();
   int currentLevel = 0;
-  late List<String?> selectedEmotions;
+  // late List<String?> selectedEmotions;
 
   @override
   void dispose() {
@@ -40,6 +44,7 @@ class EmotionWheelState extends State<EmotionWheel> {
 
     if (currentLevel < widget.levels - 1) {
       setState(() => currentLevel++);
+      widget.onLevelChanged(currentLevel);
       pageController.animateToPage(
         currentLevel,
         duration: const Duration(milliseconds: 300),
@@ -53,6 +58,7 @@ class EmotionWheelState extends State<EmotionWheel> {
       widget.onBack();
     } else {
       setState(() => currentLevel--);
+      widget.onLevelChanged(currentLevel);
       pageController.animateToPage(
         currentLevel,
         duration: const Duration(milliseconds: 300),
@@ -60,13 +66,6 @@ class EmotionWheelState extends State<EmotionWheel> {
       );
     }
   }
-
-  @override
-  void initState() {
-    super.initState();
-    selectedEmotions = List.filled(widget.levels, null);
-  }
-
 
   @override
   Widget build(BuildContext context) {
@@ -96,10 +95,10 @@ class EmotionWheelState extends State<EmotionWheel> {
                   widget.levels,
                       (level) => EmotionsGrid(
                         items: widget.emotionItems[level],
-                        selectedItem: selectedEmotions[level],
+                        selectedItem: widget.selectedEmotions[level],
                         onChanged: (value) {
                           setState(() {
-                            selectedEmotions[level] = value;
+                            widget.selectedEmotions[level] = value;
                           });
                           widget.onEmotionSelected(level, value ?? "");
                         },

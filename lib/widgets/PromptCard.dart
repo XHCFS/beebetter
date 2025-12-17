@@ -93,6 +93,7 @@ class PromptCardState extends State<PromptCard>
         child: EmotionWheel(
           emotionItems: logic.emotionItems,
           levels: logic.emotionLevels,
+          selectedEmotions: logic.currentPromptInfo.emotions,
           canSelectNext: logic.canSelectNext,
           onBack: () => cardController.flipcard(),
           onEmotionSelected: (level, emotion) {
@@ -109,6 +110,7 @@ class PromptCardState extends State<PromptCard>
               logic.updateCanSelectNextForLevel(level + 1);
             }
           },
+          onLevelChanged: logic.updateCanSelectNextForLevel,
         )
       ),
     );
