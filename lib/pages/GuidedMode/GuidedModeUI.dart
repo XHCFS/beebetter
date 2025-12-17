@@ -16,22 +16,9 @@ class GuidedModeUI extends StatelessWidget {
     TextTheme textTheme = Theme.of(context).textTheme;
     return Column(
           children: [
-            // ---------------------------------------------------
-            // Swipe Gesture Indication Bar
-            // ---------------------------------------------------
-            Padding(
-            padding: const EdgeInsets.only(bottom: 8),
-            child: Container(
-              width: 60,
-              height: 4,
-              decoration: BoxDecoration(
-                color: colorScheme.primary.withAlpha(80),
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-          ),
+            const SizedBox(height: 8),
 
-          Padding(
+            Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -72,116 +59,136 @@ class GuidedModeUI extends StatelessWidget {
               ),
           ),
 
-            // ---------------------------------------------------
-            // Prompt Cards
-            // ---------------------------------------------------
             Expanded(
-              child: CardSwiper(
-                key: ValueKey(logic.prompts.length),
-                cardsCount: logic.prompts.length,
-                numberOfCardsDisplayed: logic.prompts.length > 1 ? 2 : 1,
-                controller: cardSwiperController,
-                onSwipe: (prevIndex, currentIndex, direction) {
-                  logic.onSwipe(currentIndex);
-                  return true;
-                },
-                cardBuilder: (context, index, percentThresholdX, percentThresholdY) {
-                  // if (index >= logic.totalPrompts) return SizedBox.shrink();
-                  final promptInfo = logic.prompts[index];
-
-                  return PromptCard(
-                    key: ValueKey(promptInfo.prompt),
-                    index: index,
-                    category: promptInfo.category,
-                    prompt: promptInfo.prompt,
-                    canContinue: promptInfo.canContinue,
-                    isDone: promptInfo.isDone,
-                    initialText: promptInfo.userInput,
-                    cardSwiperController : cardSwiperController,
-                    onTextChanged: (value) {
-                      logic.updatePromptInput(index, value);
-                      logic.updateCanContinue(value.trim().isNotEmpty);
-                    },
-                    onContinuePressed: (entry) {
-                      logic.submit(index, cardSwiperController);
-                    },
-                  );
-                },
-              ),
-            ),
-
-          // Navigation Buttons
-          Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: Stack(
+                clipBehavior: Clip.none,
                 children: [
                   // ---------------------------------------------------
                   // Navigation Buttons
                   // ---------------------------------------------------
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      // Back
-                      ElevatedButton(
-                        onPressed: () {
-                          logic.previousPrompt(cardSwiperController);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: logic.currentPrompt <= 0
-                              ? colorScheme.inversePrimary.withAlpha(100)
-                              : colorScheme.inversePrimary,
-                          foregroundColor: colorScheme.surface,
-                          shape: const CircleBorder(),
-                          padding: const EdgeInsets.all(16),
-                        ),
-                        child: const Icon(Icons.arrow_back_ios_rounded),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    bottom: 8,
+                    child:Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text("${logic.currentPrompt + 1} / ${logic.totalPrompts}", style: textTheme.titleMedium
-                              ?.copyWith(color: colorScheme.primary.withAlpha(160)),),
-                          const SizedBox(width: 4),
-                          Material(
-                            color: Colors.transparent,
-                            shape: const CircleBorder(),
-                            child: InkWell(
-                              customBorder: const CircleBorder(),
-                              onTap: logic.shufflePrompts,
-                              splashColor: colorScheme.primary.withAlpha(50),
-                              highlightColor: Colors.transparent,
-                              child: Padding(
-                                padding: const EdgeInsets.all(8),
-                                child: Icon(
-                                  Icons.shuffle_rounded,
-                                  color: colorScheme.primary.withAlpha(160),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              // ---------------------------------------------------
+                              // Back
+                              // ---------------------------------------------------
+                              ElevatedButton(
+                                onPressed: () {
+                                  logic.previousPrompt(cardSwiperController);
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: logic.currentPrompt <= 0
+                                      ? colorScheme.inversePrimary.withAlpha(100)
+                                      : colorScheme.inversePrimary,
+                                  foregroundColor: colorScheme.surface,
+                                  shape: const CircleBorder(),
+                                  padding: const EdgeInsets.all(16),
                                 ),
+                                child: const Icon(Icons.arrow_back_ios_rounded),
                               ),
-                            ),
-                          ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text("${logic.currentPrompt + 1} / ${logic.totalPrompts}", style: textTheme.titleMedium
+                                      ?.copyWith(color: colorScheme.primary.withAlpha(160)),),
+                                  const SizedBox(width: 4),
+                                  Material(
+                                    color: Colors.transparent,
+                                    shape: const CircleBorder(),
+                                    child: InkWell(
+                                      customBorder: const CircleBorder(),
+                                      onTap: logic.shufflePrompts,
+                                      splashColor: colorScheme.primary.withAlpha(50),
+                                      highlightColor: Colors.transparent,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8),
+                                        child: Icon(
+                                          Icons.shuffle_rounded,
+                                          color: colorScheme.primary.withAlpha(160),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              // ---------------------------------------------------
+                              // Next
+                              // ---------------------------------------------------
+                              ElevatedButton(
+                                onPressed: () {
+                                  if (logic.currentPrompt + 1 < logic.totalPrompts) {
+                                    cardSwiperController.swipe(CardSwiperDirection.right);
+                                  }
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: logic.currentPrompt >= logic.totalPrompts -1
+                                      ? colorScheme.inversePrimary.withAlpha(100)
+                                      : colorScheme.inversePrimary,
+                                  foregroundColor: colorScheme.surface,
+                                  shape: const CircleBorder(),
+                                  padding: const EdgeInsets.all(16),
+                                ),
+                                child: const Icon(Icons.arrow_forward_ios_rounded),
+                              ),
+                            ],
+                          )
                         ],
                       ),
-                      // Next
-                      ElevatedButton(
-                        onPressed: () {
-                          if (logic.currentPrompt + 1 < logic.totalPrompts) {
-                            cardSwiperController.swipe(CardSwiperDirection.right);
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: logic.currentPrompt >= logic.totalPrompts -1
-                              ? colorScheme.inversePrimary.withAlpha(100)
-                              : colorScheme.inversePrimary,
-                          foregroundColor: colorScheme.surface,
-                          shape: const CircleBorder(),
-                          padding: const EdgeInsets.all(16),
+                    ),
+                  ),
+
+                  // ---------------------------------------------------
+                  // Prompts Cards
+                  // ---------------------------------------------------
+                  Column(
+                    children: [
+                      Expanded(
+                        child:CardSwiper(
+                          key: ValueKey(logic.prompts.length),
+                          cardsCount: logic.prompts.length,
+                          numberOfCardsDisplayed: logic.prompts.length > 1 ? 2 : 1,
+                          controller: cardSwiperController,
+                          onSwipe: (prevIndex, currentIndex, direction) {
+                            logic.onSwipe(currentIndex);
+                            return true;
+                          },
+                          cardBuilder: (context, index, percentThresholdX, percentThresholdY) {
+                            // if (index >= logic.totalPrompts) return SizedBox.shrink();
+                            final promptInfo = logic.prompts[index];
+
+                            return PromptCard(
+                              key: ValueKey(promptInfo.prompt),
+                              index: index,
+                              category: promptInfo.category,
+                              prompt: promptInfo.prompt,
+                              canContinue: promptInfo.canContinue,
+                              isDone: promptInfo.isDone,
+                              initialText: promptInfo.userInput,
+                              cardSwiperController : cardSwiperController,
+                              onTextChanged: (value) {
+                                logic.updatePromptInput(index, value);
+                                logic.updateCanContinue(value.trim().isNotEmpty);
+                              },
+                              onContinuePressed: (entry) {
+                                logic.submit(index, cardSwiperController);
+                              },
+                            );
+                          },
                         ),
-                        child: const Icon(Icons.arrow_forward_ios_rounded),
                       ),
-                    ],
-                  )
-                ],
+                      SizedBox(height: 72), // area for navigation bar
+                    ]
+                  ),
+                ]
               ),
             ),
         ]

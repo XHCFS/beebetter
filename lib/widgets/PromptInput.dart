@@ -104,7 +104,7 @@ class PromptInputState extends State<PromptInput> with TickerProviderStateMixin 
             ),
             child: Text(
               widget.category,
-              style: textTheme.titleSmall?.copyWith(color: colorScheme.inversePrimary),
+              style: textTheme.titleSmall?.copyWith(color: colorScheme.primary.withAlpha(200)),
             ),
           ),
           const SizedBox(height: 16),
