@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
-import 'package:beebetter/widgets/PromptCardInfo.dart';
+import 'package:beebetter/widgets/Cards/PromptCard/PromptCardInfo.dart';
 
 class GuidedModeLogic extends ChangeNotifier {
   // ---------------------------------------------------

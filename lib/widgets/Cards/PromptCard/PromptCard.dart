@@ -1,36 +1,54 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:beebetter/widgets/EntryInput.dart';
-import 'package:beebetter/widgets/EmotionWheel/EmotionWheel.dart';
-import 'package:beebetter/pages/NewEntryPage/NewEntryPageLogic.dart';
+import 'package:beebetter/widgets/Cards/PromptCard/PromptInput.dart';
+import 'package:beebetter/widgets/Cards/EmotionWheel/EmotionWheel.dart';
 import 'package:flutter_flip_card/flutter_flip_card.dart';
+import 'package:flutter_card_swiper/flutter_card_swiper.dart';
+import 'package:beebetter/pages/GuidedMode/GuidedModeLogic.dart';
 
-class EntryCard extends StatefulWidget {
+class PromptCard extends StatefulWidget {
   final int index;
   final String category;
+  final String prompt;
   final bool canContinue;
+  final bool isDone;
   final void Function(String) onContinuePressed;
   final void Function(String) onTextChanged;
   final String initialText;
+  final CardSwiperController cardSwiperController;
 
-  const EntryCard({
+  const PromptCard({
     super.key,
     required this.index,
     required this.category,
+    required this.prompt,
     required this.canContinue,
+    required this.isDone,
     required this.onContinuePressed,
     required this.onTextChanged,
     required this.initialText,
+    required this.cardSwiperController,
   });
 
   @override
-  State<EntryCard> createState() => EntryCardState();
+  State<PromptCard> createState() => PromptCardState();
 }
 
-class EntryCardState extends State<EntryCard>
+class PromptCardState extends State<PromptCard>
     with AutomaticKeepAliveClientMixin {
   late TextEditingController controller;
   final cardController = FlipCardController();
+
+  // Swipe down tracking for deleting prompt
+  double dragOffset = 0.0;
+  bool showDeleteHint = false;
+
+  void resetDrag() {
+    setState(() {
+      dragOffset = 0.0;
+      showDeleteHint = false;
+    });
+  }
 
   @override
   void initState() {
@@ -39,7 +57,7 @@ class EntryCardState extends State<EntryCard>
   }
 
   @override
-  void didUpdateWidget(covariant EntryCard oldWidget) {
+  void didUpdateWidget(covariant PromptCard oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.initialText != widget.initialText) {
       controller.text = widget.initialText;
@@ -52,7 +70,8 @@ class EntryCardState extends State<EntryCard>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final logic = context.watch<NewEntryPageLogic>();
+    final logic = context.watch<GuidedModeLogic>();
+
     final colorScheme = Theme.of(context).colorScheme;
 
     return FlipCard(
@@ -65,8 +84,11 @@ class EntryCardState extends State<EntryCard>
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: EntryInput(
+          child: PromptInput(
+            category: widget.category,
+            prompt: widget.prompt,
             canContinue: widget.canContinue,
+            isDone: widget.isDone,
             controller: controller,
             onTextChanged: widget.onTextChanged,
             onContinuePressed: widget.onContinuePressed,
@@ -82,21 +104,25 @@ class EntryCardState extends State<EntryCard>
         child: EmotionWheel(
           emotionItems: logic.emotionItems,
           levels: logic.emotionLevels,
-          selectedEmotions: logic.emotions,
+          selectedEmotions: logic.currentPromptInfo.emotions,
           canSelectNext: logic.canSelectNext,
           onBack: () => cardController.flipcard(),
           onEmotionSelected: (level, emotion) {
-            logic.emotions[level] = emotion;
-            logic.updateCanSelectNextForLevel(level);
+            logic.selectEmotion(level, emotion);
           },
-          onNext: (level) {
+          onNext: (level) async {
             if (level == logic.emotionLevels - 1) {
-              logic.saveEntry();
               cardController.flipcard();
-            };
+              logic.submitEmotion(level);
+              widget.cardSwiperController.swipe(CardSwiperDirection.left);
+              await Future.delayed(const Duration(milliseconds: 300));
+              logic.submit(widget.index, widget.cardSwiperController);
+            } else {
+              logic.updateCanSelectNextForLevel(level + 1);
+            }
           },
           onLevelChanged: logic.updateCanSelectNextForLevel,
-        ),
+        )
       ),
     );
   }

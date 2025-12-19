@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:material_symbols_icons/symbols.dart';
-import 'package:beebetter/pages/GuidedMode/RecordingLogic.dart';
-import 'package:beebetter/widgets/RecordingIndicator.dart';
+import 'package:beebetter/widgets/Cards/RecordingCard/RecordingLogic.dart';
+import 'package:beebetter/widgets/Cards/RecordingCard/RecordingIndicator.dart';
 import 'package:flutter/scheduler.dart';
 
 class RecordingCard extends StatefulWidget {

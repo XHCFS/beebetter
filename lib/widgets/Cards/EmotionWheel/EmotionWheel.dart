@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import 'package:beebetter/widgets/EmotionWheel/EmotionsGrid.dart';
+import 'package:beebetter/widgets/Cards/EmotionWheel/EmotionsGrid.dart';
 
 class EmotionWheel extends StatefulWidget {
   final List<List<String>> emotionItems;

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:beebetter/pages/NewEntryPage/NewEntryPageLogic.dart';
-import 'package:beebetter/widgets/EntryCard.dart';
+import 'package:beebetter/widgets/Cards/EntryCard/EntryCard.dart';
 
 class NewEntryPageUI extends StatelessWidget {
   const NewEntryPageUI({super.key});
