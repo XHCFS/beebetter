@@ -4,6 +4,7 @@ import 'package:beebetter/widgets/Cards/RecordingCard/RecordingLogic.dart';
 import 'package:beebetter/widgets/Cards/RecordingCard/RecordingCard.dart';
 import 'package:beebetter/pages/GuidedMode/GuidedModeLogic.dart';
 import 'package:beebetter/widgets/Cards/PromptCard/DoneCard.dart';
+import 'package:beebetter/widgets/Cards/ExpandingTextOverlay.dart';
 
 class PromptInput extends StatefulWidget {
   final String category;
@@ -37,6 +38,9 @@ class PromptInputState extends State<PromptInput> with TickerProviderStateMixin 
 
   late final TabController tabController;
 
+  final GlobalKey textCardKey = GlobalKey();
+  OverlayEntry? overlayEntry;
+
   @override
   void initState() {
     super.initState();
@@ -66,12 +70,39 @@ class PromptInputState extends State<PromptInput> with TickerProviderStateMixin 
     });
   }
 
-
   @override
   void dispose() {
     tabController.dispose();
     super.dispose();
   }
+
+  void openExpandingTextInput() {
+    final renderBox =
+    textCardKey.currentContext!.findRenderObject() as RenderBox;
+
+    final offset = renderBox.localToGlobal(Offset.zero);
+    final size = renderBox.size;
+
+    overlayEntry = OverlayEntry(
+      builder: (context) {
+        return ExpandingTextOverlay(
+          startOffset: offset,
+          startSize: size,
+          prompt: widget.prompt,
+          initialText: widget.controller.text,
+          onClose: (text) {
+            widget.controller.text = text;
+            widget.onTextChanged(text);
+            overlayEntry?.remove();
+            overlayEntry = null;
+          },
+        );
+      },
+    );
+
+    Overlay.of(context).insert(overlayEntry!);
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -197,29 +228,36 @@ class PromptInputState extends State<PromptInput> with TickerProviderStateMixin 
                 AbsorbPointer(
                   absorbing: textLocked,
                   child: Card(
+                    key: textCardKey,
                     elevation: 0,
                     margin: EdgeInsets.zero,
                     color: colorScheme.surfaceBright,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
-
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: TextField(
-                        controller: widget.controller,
-                        readOnly: widget.isDone,
-                        onChanged: widget.onTextChanged,
-                        maxLines: null,
-                        decoration: InputDecoration(
-                          hintText: "Share your thoughts...",
-                          hintStyle: textTheme.bodyMedium?.copyWith(
-                            color: colorScheme.primary.withAlpha(128),
+                    child: InkWell(
+                      onTap: () {
+                        openExpandingTextInput();
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child:TextField(
+                          controller: widget.controller,
+                          readOnly: true,
+                          enabled: false,
+                          maxLines: null,
+                          decoration: InputDecoration(
+                            isCollapsed: true,
+                            border: InputBorder.none,
+                            hintText: "Share your thoughts...",
+                            hintStyle: textTheme.bodyMedium?.copyWith(
+                              color: colorScheme.primary.withAlpha(128),
+                            ),
                           ),
-                          border: InputBorder.none,
-                          isDense: true,
+                          style: textTheme.bodyMedium?.copyWith(
+                            color: colorScheme.primary,
+                          ),
                         ),
-                        style: textTheme.bodyMedium?.copyWith(color: colorScheme.primary),
                       ),
                     ),
                   ),
