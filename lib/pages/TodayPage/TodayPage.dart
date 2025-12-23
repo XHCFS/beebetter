@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:beebetter/widgets/BackgroundGradient.dart';
 import 'package:beebetter/pages/TodayPage/TodayPageLogic.dart';
 import 'package:beebetter/pages/TodayPage/TodayPageUI.dart';
+import 'package:beebetter/pages/TodayPage/NewEntryPageLogic.dart';
 
 class TodayPage extends StatelessWidget {
   final VoidCallback openGuidedMode;
@@ -10,8 +11,11 @@ class TodayPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-        create: (_) => TodayPageLogic(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => TodayPageLogic()),
+        ChangeNotifierProvider(create: (_) => NewEntryPageLogic()),
+      ],
         child: Scaffold(
           body: BackgroundGradient(
             body:

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:beebetter/pages/TodayPage/TodayPageLogic.dart';
-import 'package:beebetter/pages/GuidedMode/GuidedMode.dart';
-import 'package:beebetter/pages/NewEntryPage/NewEntryPage.dart';
+import 'package:beebetter/widgets/Cards/EntryCard/EntryCard.dart';
+import 'package:beebetter/pages/TodayPage/NewEntryPageLogic.dart';
+
 
 class TodayPageUI extends StatelessWidget {
   final VoidCallback openGuidedMode;
@@ -11,12 +12,13 @@ class TodayPageUI extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final logic = context.watch<TodayPageLogic>();
+    final entryLogic = context.watch<NewEntryPageLogic>();
 
     ColorScheme colorScheme = Theme.of(context).colorScheme;
     TextTheme textTheme = Theme.of(context).textTheme;
     Color surfaceContainerDark = Color.alphaBlend(
-      Theme.of(context).colorScheme.inversePrimary.withAlpha(20),
-      Theme.of(context).colorScheme.surfaceContainerLow,
+      Theme.of(context).colorScheme.inversePrimary.withAlpha(100),
+      Theme.of(context).colorScheme.surfaceContainerLowest,
     );
 
     return SingleChildScrollView(
@@ -37,64 +39,35 @@ class TodayPageUI extends StatelessWidget {
                   ?.copyWith(color: colorScheme.primary),),
             ],
           ),
-          const SizedBox(height: 32),
-          Text(logic.formattedDay, style: textTheme.titleMedium
-              ?.copyWith(color: colorScheme.primary),),
-          Text(logic.formattedDate, style: textTheme.titleMedium
-              ?.copyWith(color: colorScheme.primary.withAlpha(160)),),
+          const SizedBox(height: 16),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(logic.formattedDay, style: textTheme.titleMedium
+                  ?.copyWith(color: colorScheme.primary),),
+              const SizedBox(width: 8),
+              Text(logic.formattedDate, style: textTheme.titleMedium
+                  ?.copyWith(color: colorScheme.primary.withAlpha(160)),),
+            ],
+          ),
+
           const SizedBox(height: 16),
 
-          Card(
-            // elevation: 2,
-            color: colorScheme.onPrimary,
-            shadowColor: colorScheme.inversePrimary,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-              // side: BorderSide(color: colorScheme.inversePrimary, width: 1),
-            ),
-            child: InkWell(
-              borderRadius: BorderRadius.circular(12),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => NewEntryPage()),
-                );
+          SizedBox(
+            height: 400, // important: EntryCard needs a bounded height
+            child: EntryCard(
+              index: 0,
+              category: "Free Entry",
+              canContinue: entryLogic.canContinue,
+              initialText: "",
+              onTextChanged: (text) {
+                entryLogic.updatePromptInput(text);
+                entryLogic.updateCanContinue(text.trim().isNotEmpty);
               },
-              child: Container(
-                width: double.infinity,
-                height: 200,
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      child: Icon(
-                        Icons.edit_outlined,
-                        size: 32,
-                        color: colorScheme.primary.withAlpha(240),
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      "New Entry",
-                      style: textTheme.titleMedium
-                          ?.copyWith(color: colorScheme.primary),
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      "Journal your thoughts and mood",
-                      style: textTheme.titleSmall
-                          ?.copyWith(color: colorScheme.primary.withAlpha(100)),
-                    ),
-                  ],
-                ),
-              ),
+              onContinuePressed: (text) {},
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 20),
           Card(
             elevation: 2,
             color: surfaceContainerDark,
@@ -108,7 +81,7 @@ class TodayPageUI extends StatelessWidget {
               onTap: openGuidedMode,
               child: Container(
                 width: double.infinity,
-                height: 120,
+                height: 100,
                 padding: const EdgeInsets.all(16),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,

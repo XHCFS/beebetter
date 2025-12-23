@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:beebetter/widgets/Cards/EntryCard/EntryInput.dart';
 import 'package:beebetter/widgets/Cards/EmotionWheel/EmotionWheel.dart';
-import 'package:beebetter/pages/NewEntryPage/NewEntryPageLogic.dart';
+import 'package:beebetter/pages/TodayPage/NewEntryPageLogic.dart';
 import 'package:flutter_flip_card/flutter_flip_card.dart';
 
 class EntryCard extends StatefulWidget {
