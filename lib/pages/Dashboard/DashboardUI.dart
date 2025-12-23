@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:beebetter/pages/Dashboard/DashboardLogic.dart';
 import 'package:beebetter/pages/Dashboard/InsightsTab.dart';
+import 'package:beebetter/pages/Dashboard/BrowseTab.dart';
 
 class DashboardUI extends StatelessWidget {
   const DashboardUI({super.key});
@@ -80,12 +81,7 @@ class DashboardUI extends StatelessWidget {
                     // ---------------------------------------------------
                     // Browse Tab
                     // ---------------------------------------------------
-                    Center(
-                      child: Text(
-                        "calendar and previous entries",
-                        style: textTheme.titleMedium,
-                      ),
-                    ),
+                    const BrowseTab(),
                 ]
               ),
             ),

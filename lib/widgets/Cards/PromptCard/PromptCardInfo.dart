@@ -11,12 +11,14 @@ class PromptCardInfo {
   bool isDone;
   int lastActiveTab;
   List<String> emotions;
+  bool isText;
 
   PromptCardInfo({
     required this.id,
     required this.prompt,
     required this.category,
     required int emotionLevels,
+    this.isText = false,
   })  : userInput = "",
         canContinue = false,
         isTextLocked = false,
