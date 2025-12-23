@@ -1,10 +1,9 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:beebetter/widgets/Cards/RecordingCard/RecordingLogic.dart';
 import 'package:beebetter/pages/NewEntryPage/NewEntryPageLogic.dart';
 import 'package:beebetter/widgets/Cards/RecordingCard/RecordingCard.dart';
+import 'package:beebetter/widgets/Cards/ExpandingTextOverlay.dart';
 
 class EntryInput extends StatefulWidget {
   final bool canContinue;
@@ -29,6 +28,9 @@ class EntryInput extends StatefulWidget {
 }
 
 class EntryInputState extends State<EntryInput> with TickerProviderStateMixin {
+
+  final GlobalKey textCardKey = GlobalKey();
+  OverlayEntry? overlayEntry;
 
   late final TabController tabController;
 
@@ -60,12 +62,39 @@ class EntryInputState extends State<EntryInput> with TickerProviderStateMixin {
     });
   }
 
-
   @override
   void dispose() {
     tabController.dispose();
     super.dispose();
   }
+
+  void openExpandingTextInput() {
+    final renderBox =
+    textCardKey.currentContext!.findRenderObject() as RenderBox;
+
+    final offset = renderBox.localToGlobal(Offset.zero);
+    final size = renderBox.size;
+
+    overlayEntry = OverlayEntry(
+      builder: (context) {
+        return ExpandingTextOverlay(
+          startOffset: offset,
+          startSize: size,
+          prompt: "What’s on your mind?", // or any dynamic prompt you want
+          initialText: widget.controller.text,
+          onClose: (text) {
+            widget.controller.text = text;
+            widget.onTextChanged(text);
+            overlayEntry?.remove();
+            overlayEntry = null;
+          },
+        );
+      },
+    );
+
+    Overlay.of(context).insert(overlayEntry!);
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -194,6 +223,7 @@ class EntryInputState extends State<EntryInput> with TickerProviderStateMixin {
                   AbsorbPointer(
                     absorbing: textLocked,
                     child: Card(
+                      key: textCardKey,
                       elevation: 0,
                       margin: EdgeInsets.zero,
                       color: colorScheme.surfaceBright,
@@ -201,21 +231,21 @@ class EntryInputState extends State<EntryInput> with TickerProviderStateMixin {
                         borderRadius: BorderRadius.circular(12),
                       ),
 
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: TextField(
-                          controller: widget.controller,
-                          onChanged: widget.onTextChanged,
-                          maxLines: null,
-                          decoration: InputDecoration(
-                            hintText: "Share your thoughts...",
-                            hintStyle: textTheme.bodyMedium?.copyWith(
-                              color: colorScheme.primary.withAlpha(128),
+                      child: InkWell(
+                        onTap: openExpandingTextInput,
+                        borderRadius: BorderRadius.circular(12),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Text(
+                            widget.controller.text.isEmpty
+                                ? "Share your thoughts..."
+                                : widget.controller.text,
+                            style: textTheme.bodyMedium?.copyWith(
+                              color: widget.controller.text.isEmpty
+                                  ? colorScheme.primary.withAlpha(128)
+                                  : colorScheme.primary,
                             ),
-                            border: InputBorder.none,
-                            isDense: true,
                           ),
-                          style: textTheme.bodyMedium?.copyWith(color: colorScheme.primary),
                         ),
                       ),
                     ),
