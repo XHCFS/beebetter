@@ -241,23 +241,18 @@ class PromptInputState extends State<PromptInput> with TickerProviderStateMixin 
                       },
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
-                        child:TextField(
-                          controller: widget.controller,
-                          readOnly: true,
-                          enabled: false,
-                          maxLines: null,
-                          decoration: InputDecoration(
-                            isCollapsed: true,
-                            border: InputBorder.none,
-                            hintText: "Share your thoughts...",
-                            hintStyle: textTheme.bodyMedium?.copyWith(
-                              color: colorScheme.primary.withAlpha(128),
+                        child:SingleChildScrollView(
+                          child: Text(
+                            widget.controller.text.isEmpty
+                                ? "Share your thoughts..."
+                                : widget.controller.text,
+                            style: textTheme.bodyMedium?.copyWith(
+                              color: widget.controller.text.isEmpty
+                                  ? colorScheme.primary.withAlpha(128) : colorScheme.primary,
                             ),
                           ),
-                          style: textTheme.bodyMedium?.copyWith(
-                            color: colorScheme.primary,
-                          ),
-                        ),
+                        )
+
                       ),
                     ),
                   ),

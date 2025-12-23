@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:beebetter/widgets/HexagonPattern.dart';
 
 class ExpandingTextOverlay extends StatefulWidget {
   final Offset startOffset;
@@ -21,6 +22,7 @@ class ExpandingTextOverlay extends StatefulWidget {
 
 class ExpandingTextOverlayState extends State<ExpandingTextOverlay> {
   late TextEditingController controller;
+  late ScrollController scrollController;
   bool expanded = false;
   bool closing = false;
   bool showHeader = false;
@@ -30,6 +32,20 @@ class ExpandingTextOverlayState extends State<ExpandingTextOverlay> {
   void initState() {
     super.initState();
     controller = TextEditingController(text: widget.initialText);
+    scrollController = ScrollController();
+
+    controller.addListener(() {
+      if (!scrollController.hasClients) return;
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!scrollController.hasClients) return;
+
+        scrollController.jumpTo(
+          scrollController.position.maxScrollExtent,
+        );
+      });
+    });
+
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       setState(() => expanded = true);
@@ -62,6 +78,7 @@ class ExpandingTextOverlayState extends State<ExpandingTextOverlay> {
     final screen = MediaQuery.of(context).size;
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
+    final keyboardInset = MediaQuery.of(context).viewInsets.bottom;
 
     return Stack(
       children: [
@@ -163,29 +180,58 @@ class ExpandingTextOverlayState extends State<ExpandingTextOverlay> {
                     ),
                   ),
 
-                // -----------------------------------
-                // Text Field
-                // -----------------------------------
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.all(16),
-                    child: TextField(
-                      controller: controller,
-                      maxLines: null,
-                      textAlignVertical: TextAlignVertical.top,
-                      expands: true,
-                      autofocus: true,
-                      decoration: InputDecoration(
-                        isCollapsed: true,
-                        hintText: "Share your thoughts...",
-                        hintStyle: textTheme.bodyMedium?.copyWith(
-                          color: colorScheme.primary.withAlpha(128),
+                    child: Stack(
+                      children: [
+                        // -----------------------------------
+                        // Hexagon pattern at the bottom
+                        // -----------------------------------
+                        Positioned(
+                          bottom: 0,
+                          left: 0,
+                          right: 0,
+                          height: 200,
+                          child: AnimatedOpacity(
+                            opacity: expanded && !closing ? 1.0 : 0.0,
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeOut,
+                            child: CustomPaint(
+                              painter: HexagonPatternPainter(
+                                intensity: 1.0,
+                                color: colorScheme.inversePrimary.withAlpha(50),
+                                maxHexes: 30,
+                              ),
+                            ),
+                          ),
                         ),
-                        border: InputBorder.none,
-                      ),
-                      style: textTheme.bodyMedium?.copyWith(
-                        color: colorScheme.primary,
-                      ),
+                        // -----------------------------------
+                        // Text Field
+                        // -----------------------------------
+                        Expanded(
+                          child: AnimatedPadding(
+                            duration: const Duration(milliseconds: 200),
+                            curve: Curves.easeOut,
+                            padding: EdgeInsets.fromLTRB(0, 0, 0, keyboardInset,),
+                            child: TextField(
+                              controller: controller,
+                              maxLines: null,
+                              expands: true,
+                              textAlignVertical: TextAlignVertical.top,
+                              decoration: InputDecoration(
+                                isCollapsed: true,
+                                hintText: "Share your thoughts...",
+                                border: InputBorder.none,
+                                hintStyle: textTheme.bodyMedium?.copyWith( color: colorScheme.primary.withAlpha(128), ),
+                              ),
+                              style: textTheme.bodyMedium?.copyWith(
+                                color: colorScheme.primary,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
