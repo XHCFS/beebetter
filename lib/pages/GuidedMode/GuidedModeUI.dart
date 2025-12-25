@@ -18,6 +18,14 @@ class GuidedModeUI extends StatelessWidget {
       Column(
         children: [
           const SizedBox(height: 8),
+          Container(
+            width: 60,
+            height: 4,
+            decoration: BoxDecoration(
+              color: colorScheme.primary.withAlpha(80),
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
 
           Padding(
             padding: const EdgeInsets.all(8.0),

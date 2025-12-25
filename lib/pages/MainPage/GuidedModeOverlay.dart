@@ -55,19 +55,11 @@ class GuidedModeOverlay extends StatelessWidget {
                   }
                 },
                 child: Container(
-                  height: 60,
+                  height: 150,
                   alignment: Alignment.center,
-                  child: Container(
-                    width: 60,
-                    height: 4,
-                    decoration: BoxDecoration(
-                      color: colorScheme.primary.withAlpha(80),
-                      borderRadius: BorderRadius.circular(2),
-                    ),
                   ),
                 ),
               ),
-            ),
           ],
         ),
       ),
