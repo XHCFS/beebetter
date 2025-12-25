@@ -50,11 +50,15 @@ class PromptCardState extends State<PromptCard>
   }
 
   @override
+  @override
   void initState() {
     super.initState();
     controller = TextEditingController(text: widget.initialText);
-    final logic = context.read<GuidedModeLogic>();
-    logic.updateCanSelectNextForLevel(0);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final logic = context.read<GuidedModeLogic>();
+      logic.updateCanSelectNextForLevel(0);
+    });
   }
 
   @override

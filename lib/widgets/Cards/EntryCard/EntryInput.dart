@@ -80,7 +80,7 @@ class EntryInputState extends State<EntryInput> with TickerProviderStateMixin {
         return ExpandingTextOverlay(
           startOffset: offset,
           startSize: size,
-          prompt: "What’s on your mind?", // or any dynamic prompt you want
+          title: "What’s on your mind?",
           initialText: widget.controller.text,
           onClose: (text) {
             widget.controller.text = text;

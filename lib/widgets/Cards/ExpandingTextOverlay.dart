@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:beebetter/widgets/HexagonPattern.dart';
+import 'package:beebetter/widgets/DottedPattern.dart';
 
 class ExpandingTextOverlay extends StatefulWidget {
   final Offset startOffset;
   final Size startSize;
-  final String prompt;
+  final String title;
   final String initialText;
   final void Function(String) onClose;
 
   const ExpandingTextOverlay({
     required this.startOffset,
     required this.startSize,
-    required this.prompt,
+    required this.title,
     required this.initialText,
     required this.onClose,
   });
@@ -49,7 +50,7 @@ class ExpandingTextOverlayState extends State<ExpandingTextOverlay> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       setState(() => expanded = true);
-      headerHeight = calculateHeaderHeight(context, widget.prompt);
+      headerHeight = calculateHeaderHeight(context, widget.title);
 
       // header appears near the end of expansion
       await Future.delayed(const Duration(milliseconds: 240));
@@ -135,49 +136,50 @@ class ExpandingTextOverlayState extends State<ExpandingTextOverlay> {
                           child: Align(
                             alignment: Alignment.topCenter,
                             child: Transform.translate(
-                              offset: Offset(0, (1 - height / headerHeight) * 20),
-                              child: child,
+                              offset: Offset(0, -(1 - height / headerHeight) * 20),
+                              child: Container(
+                                height: headerHeight,
+                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context).colorScheme.surfaceContainerLow,
+                                  borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                                ),
+                                child: Transform.translate(
+                                  offset: Offset(0, -(1 - height / headerHeight) * 20), // slide down
+                                  child: Row(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      // -----------------------------------
+                                      // Icon
+                                      // -----------------------------------
+                                      IconButton(
+                                        icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.primary),
+                                        padding: EdgeInsets.zero,
+                                        onPressed: close,
+                                      ),
+                                      // -----------------------------------
+                                      // Text
+                                      // -----------------------------------
+                                      Expanded(
+                                        child: Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(
+                                            widget.title,
+                                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                              color: Theme.of(context).colorScheme.primary,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
                         ),
                       );
                     },
-
-                    child: Container(
-                      height: headerHeight,
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.surfaceBright,
-                        borderRadius: const BorderRadius.vertical(
-                          top: Radius.circular(12),
-                        ),
-                        border: Border(
-                          bottom: BorderSide(
-                            color: Theme.of(context).primaryColor.withAlpha(150),
-                            width: 0.5,
-                          ),
-                        ),
-                      ),
-                      child: Row(
-                        children: [
-                          IconButton(
-                            icon: Icon(
-                              Icons.arrow_back,
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
-                            onPressed: close,
-                          ),
-                          Expanded(
-                            child: Text(
-                              widget.prompt,
-                              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
                   ),
 
                 Expanded(
@@ -186,22 +188,22 @@ class ExpandingTextOverlayState extends State<ExpandingTextOverlay> {
                     child: Stack(
                       children: [
                         // -----------------------------------
-                        // Hexagon pattern at the bottom
+                        // Pattern
                         // -----------------------------------
                         Positioned(
                           bottom: 0,
                           left: 0,
                           right: 0,
-                          height: 200,
+                          top: 0,
                           child: AnimatedOpacity(
                             opacity: expanded && !closing ? 1.0 : 0.0,
                             duration: const Duration(milliseconds: 300),
                             curve: Curves.easeOut,
                             child: CustomPaint(
-                              painter: HexagonPatternPainter(
-                                intensity: 1.0,
-                                color: colorScheme.inversePrimary.withAlpha(50),
-                                maxHexes: 30,
+                              painter: DottedPatternPainter(
+                                color: colorScheme.inversePrimary.withAlpha(100),
+                                spacing: 20,
+                                radius: 1.5,
                               ),
                             ),
                           ),

@@ -88,7 +88,7 @@ class PromptInputState extends State<PromptInput> with TickerProviderStateMixin 
         return ExpandingTextOverlay(
           startOffset: offset,
           startSize: size,
-          prompt: widget.prompt,
+          title: widget.prompt,
           initialText: widget.controller.text,
           onClose: (text) {
             widget.controller.text = text;
