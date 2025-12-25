@@ -42,8 +42,8 @@ class NewEntryPageLogic extends ChangeNotifier {
 
   NewEntryPageLogic() {
     entryInfo = EntryInfo(
-      id: "temp_id",
-      title: "",
+      id: "entry",
+      title: DateFormat('MMMM d, yyyy HH:mm').format(DateTime.now()),
       category: "default",
       emotionLevels: emotionLevels,
       isText: false,
@@ -64,16 +64,21 @@ class NewEntryPageLogic extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updatePromptInput(String value) {
+  void updateEntryInput(String value) {
     entryInfo.userInput = value;
     entryInfo.isVoiceLocked = value.isNotEmpty;
     notifyListeners();
   }
 
   void updateTitle(String value) {
-    entryInfo.title = value;
+    if (value.isEmpty) {
+      entryInfo.title = DateFormat('MMMM d, yyyy hh:mm a').format(DateTime.now());
+    } else {
+      entryInfo.title = value;
+    }
     notifyListeners();
   }
+
 
   void saveEntry() {
 

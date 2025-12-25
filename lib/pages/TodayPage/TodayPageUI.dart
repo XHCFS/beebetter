@@ -69,7 +69,7 @@ class TodayPageUI extends StatelessWidget {
               canContinue: entryLogic.entryInfo.canContinue,
               initialText: "",
               onTextChanged: (text) {
-                entryLogic.updatePromptInput(text);
+                entryLogic.updateEntryInput(text);
                 entryLogic.updateCanContinue(text.trim().isNotEmpty);
               },
               onContinuePressed: (text) {},

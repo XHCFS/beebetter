@@ -68,7 +68,7 @@ class EntryInputState extends State<EntryInput> with TickerProviderStateMixin {
     super.dispose();
   }
 
-  void openExpandingTextInput() {
+  void openExpandingTextInput(NewEntryPageLogic logic) {
     final renderBox =
     textCardKey.currentContext!.findRenderObject() as RenderBox;
 
@@ -80,7 +80,7 @@ class EntryInputState extends State<EntryInput> with TickerProviderStateMixin {
         return ExpandingTextOverlay(
           startOffset: offset,
           startSize: size,
-          title: "What’s on your mind?",
+          title: logic.entryInfo.title,
           initialText: widget.controller.text,
           onClose: (text) {
             widget.controller.text = text;
@@ -131,7 +131,7 @@ class EntryInputState extends State<EntryInput> with TickerProviderStateMixin {
                   onChanged: (text) => logic.updateTitle(text),
                   maxLines: 1,
                   decoration: InputDecoration(
-                    hintText: "Title (optional)",
+                    hintText: "Title",
                     hintStyle: textTheme.bodyMedium?.copyWith(
                       color: colorScheme.primary.withAlpha(128),
                     ),
@@ -234,7 +234,10 @@ class EntryInputState extends State<EntryInput> with TickerProviderStateMixin {
                       ),
 
                       child: InkWell(
-                        onTap: openExpandingTextInput,
+                        onTap: () {
+                          FocusScope.of(context).unfocus();
+                          openExpandingTextInput(logic);
+                        },
                         borderRadius: BorderRadius.circular(12),
                         child: Padding(
                           padding: const EdgeInsets.all(16.0),
