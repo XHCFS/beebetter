@@ -106,7 +106,9 @@ class EntryInputState extends State<EntryInput> with TickerProviderStateMixin {
     bool voiceLocked = logic.isVoiceLocked;
 
 
-    return Column(
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child:Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
 
@@ -309,6 +311,7 @@ class EntryInputState extends State<EntryInput> with TickerProviderStateMixin {
               ),
             )
           ]
+      ),
     );
   }
 }

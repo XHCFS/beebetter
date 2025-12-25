@@ -17,6 +17,7 @@ class EmotionsGrid extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     return GridView.count(
+      shrinkWrap: true,
       padding: const EdgeInsets.symmetric(horizontal: 8),
       crossAxisCount: 2,
       crossAxisSpacing: 12,

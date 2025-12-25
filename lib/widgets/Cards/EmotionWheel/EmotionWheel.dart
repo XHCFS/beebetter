@@ -71,132 +71,135 @@ class EmotionWheelState extends State<EmotionWheel> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        const SizedBox(height: 32),
-        Text(
-          "How are you feeling?",
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(color: colorScheme.primary),
-        ),
-        const SizedBox(height: 16),
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          const SizedBox(height: 4),
+          Text(
+            "How are you feeling?",
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(color: colorScheme.primary),
+          ),
+          const SizedBox(height: 8),
 
-        // ---------------------------------------------------
-        // Emotions Selection
-        // ---------------------------------------------------
-        Expanded(
-          child: Padding(
-            padding: EdgeInsets.all(16.0),
-            child:
+          // ---------------------------------------------------
+          // Emotions Selection
+          // ---------------------------------------------------
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child:
               PageView(
                 controller: pageController,
                 physics: const NeverScrollableScrollPhysics(),
                 children: List.generate(
                   widget.levels,
                       (level) => EmotionsGrid(
-                        items: widget.emotionItems[level],
-                        selectedItem: widget.selectedEmotions[level],
-                        onChanged: (value) {
-                          setState(() {
-                            widget.selectedEmotions[level] = value;
-                          });
-                          widget.onEmotionSelected(level, value ?? "");
-                        },
-                      ),
-                ),
-             ),
-          ),
-        ),
-
-        const SizedBox(height: 16),
-        // ---------------------------------------------------
-        // Back Button
-        // ---------------------------------------------------
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 0),
-          child: Row(
-            children: [
-              // Back
-              Expanded(
-                child: OutlinedButton(
-                  style: OutlinedButton.styleFrom(
-                    backgroundColor: Colors.transparent,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    side: BorderSide(
-                      color: colorScheme.secondary.withAlpha(90),
-                      width: 1.2,
-                    ),
-                    padding: const EdgeInsets.symmetric(vertical: 14), // match heights
-                  ),
-                  onPressed: goBack,
-                  child: Text(
-                    "back",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: colorScheme.secondary.withAlpha(160),
-                      fontWeight: FontWeight.w600,
-                    ),
+                    items: widget.emotionItems[level],
+                    selectedItem: widget.selectedEmotions[level],
+                    onChanged: (value) {
+                      setState(() {
+                        widget.selectedEmotions[level] = value;
+                      });
+                      widget.onEmotionSelected(level, value ?? "");
+                    },
                   ),
                 ),
               ),
+            ),
+          ),
 
-              const SizedBox(width: 12),
-              // Next
-              Expanded(
-                child:
-                  OutlinedButton(
-                    style: OutlinedButton.styleFrom(
-                      padding: EdgeInsets.zero,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                      side: BorderSide.none,
-                    ),
-                    onPressed: widget.canSelectNext ? goNext : null,
-                    child: Ink(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors:  widget.canSelectNext
-                              ? [colorScheme.inversePrimary, colorScheme.primaryContainer]
-                              : [colorScheme.surfaceContainerHighest, colorScheme.surfaceContainerHighest],
+          // ---------------------------------------------------
+          // Back Button
+          // ---------------------------------------------------
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+            child: Row(
+                children: [
+                  // Back
+                  Expanded(
+                    child: OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                        backgroundColor: Colors.transparent,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                        borderRadius: BorderRadius.circular(12),
+                        side: BorderSide(
+                          color: colorScheme.secondary.withAlpha(90),
+                          width: 1.2,
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 14), // match heights
                       ),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        alignment: Alignment.center,
-                        child: Text(
-                          "next",
-                          style: TextStyle(
-                            color: widget.canSelectNext ? colorScheme.secondary : colorScheme.onSurface.withAlpha(160),
-                            fontWeight: FontWeight.w600,
+                      onPressed: goBack,
+                      child: Text(
+                        "back",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: colorScheme.secondary.withAlpha(160),
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(width: 12),
+                  // Next
+                  Expanded(
+                    child:
+                    OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                        padding: EdgeInsets.zero,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        side: BorderSide.none,
+                      ),
+                      onPressed: widget.canSelectNext ? goNext : null,
+                      child: Ink(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors:  widget.canSelectNext
+                                ? [colorScheme.inversePrimary, colorScheme.primaryContainer]
+                                : [colorScheme.surfaceContainerHighest, colorScheme.surfaceContainerHighest],
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          alignment: Alignment.center,
+                          child: Text(
+                            "next",
+                            style: TextStyle(
+                              color: widget.canSelectNext ? colorScheme.secondary : colorScheme.onSurface.withAlpha(160),
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
                       ),
                     ),
                   ),
-              ),
-            ]
+                ]
+            ),
           ),
-        ),
-        const SizedBox(height: 16),
-        // ---------------------------------------------------
-        // Page Indicator
-        // ---------------------------------------------------
-        SmoothPageIndicator(
-          controller: pageController,
-          count: 3,
-          effect: ExpandingDotsEffect(
-            activeDotColor: colorScheme.inversePrimary,
-            dotColor: colorScheme.primary.withAlpha(50),
-            dotHeight: 8,
-            dotWidth: 8,
-            spacing: 8,
-            expansionFactor: 3,
+          const SizedBox(height: 8),
+          // ---------------------------------------------------
+          // Page Indicator
+          // ---------------------------------------------------
+          SmoothPageIndicator(
+            controller: pageController,
+            count: 3,
+            effect: ExpandingDotsEffect(
+              activeDotColor: colorScheme.inversePrimary,
+              dotColor: colorScheme.primary.withAlpha(50),
+              dotHeight: 8,
+              dotWidth: 8,
+              spacing: 8,
+              expansionFactor: 3,
+            ),
           ),
-        ),
-        const SizedBox(height: 16),
-      ],
+          // const SizedBox(height: 16),
+        ],
+      ),
     );
   }
 }

@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:beebetter/pages/TodayPage/TodayPageLogic.dart';
 import 'package:beebetter/widgets/Cards/EntryCard/EntryCard.dart';
 import 'package:beebetter/pages/TodayPage/NewEntryPageLogic.dart';
+import 'package:beebetter/widgets/HexagonPattern.dart';
 
 
 class TodayPageUI extends StatelessWidget {
@@ -16,7 +17,11 @@ class TodayPageUI extends StatelessWidget {
 
     ColorScheme colorScheme = Theme.of(context).colorScheme;
     TextTheme textTheme = Theme.of(context).textTheme;
-    Color surfaceContainerDark = Color.alphaBlend(
+    Color inversePrimaryBright = Color.alphaBlend(
+      Theme.of(context).colorScheme.inversePrimary.withAlpha(20),
+      Theme.of(context).colorScheme.surfaceContainerLowest,
+    );
+    Color inversePrimaryBrighter = Color.alphaBlend(
       Theme.of(context).colorScheme.inversePrimary.withAlpha(100),
       Theme.of(context).colorScheme.surfaceContainerLowest,
     );
@@ -53,8 +58,11 @@ class TodayPageUI extends StatelessWidget {
 
           const SizedBox(height: 16),
 
+          // ---------------------------------------------------
+          // New Entry
+          // ---------------------------------------------------
           SizedBox(
-            height: 400, // important: EntryCard needs a bounded height
+            height: 400,
             child: EntryCard(
               index: 0,
               category: "Free Entry",
@@ -68,9 +76,13 @@ class TodayPageUI extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 20),
+
+          // ---------------------------------------------------
+          // Daily Prompts
+          // ---------------------------------------------------
           Card(
             elevation: 2,
-            color: surfaceContainerDark,
+            color: colorScheme.inversePrimary,
             shadowColor: colorScheme.inversePrimary,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
@@ -79,47 +91,86 @@ class TodayPageUI extends StatelessWidget {
             child: InkWell(
               borderRadius: BorderRadius.circular(12),
               onTap: openGuidedMode,
-              child: Container(
-                width: double.infinity,
-                height: 100,
-                padding: const EdgeInsets.all(16),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
+              child: Ink(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      inversePrimaryBright,
+                      inversePrimaryBrighter
+                    ],
+                    stops: const [0.1, 1,],
+                  ),
+                ),
+                child: Stack(
                   children: [
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      child: Icon(
-                        Icons.lightbulb_outline_rounded,
-                        size: 32,
-                        color: colorScheme.primary.withAlpha(200),
+                    // ---------------------------------------------------
+                    // Hexagons Pattern
+                    // ---------------------------------------------------
+                    Positioned.fill(
+                      child: IgnorePointer(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: CustomPaint(
+                            painter: HexagonPatternPainter(
+                              intensity: 1,
+                              color: colorScheme.inversePrimary,
+                              maxHexes: 10,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
-                    const SizedBox(width: 20),
-                    Column(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Daily prompts",
-                          style: textTheme.titleMedium
-                              ?.copyWith(color: colorScheme.primary),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          "${logic.completedEntries} / ${logic.totalEntries} completed",
-                          style: textTheme.titleSmall
-                              ?.copyWith(color: colorScheme.primary.withAlpha(120)),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(width: 32),
-                    Icon(
-                      Icons.keyboard_arrow_up_rounded,
-                      size: 32,
-                      color: colorScheme.inversePrimary,
+
+                    // ---------------------------------------------------
+                    // Text and Icons
+                    // ---------------------------------------------------
+                    Container(
+                      width: double.infinity,
+                      height: 100,
+                      padding: const EdgeInsets.all(16),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(16),
+                            child: Icon(
+                              Icons.edit_note_rounded,
+                              size: 32,
+                              color: colorScheme.primary.withAlpha(200),
+                            ),
+                          ),
+                          Column(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Daily Prompts",
+                                style: textTheme.titleMedium
+                                    ?.copyWith(color: colorScheme.primary),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                "${logic.completedEntries} / ${logic.totalEntries} completed",
+                                style: textTheme.titleSmall
+                                    ?.copyWith(color: colorScheme.primary.withAlpha(120)),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(width: 8),
+                          Icon(
+                            Icons.keyboard_arrow_up_rounded,
+                            size: 32,
+                            color: colorScheme.inversePrimary,
+                          ),
+                          const SizedBox(width: 8),
+                        ],
+                      ),
                     ),
                   ],
                 ),

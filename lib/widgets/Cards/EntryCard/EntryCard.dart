@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:beebetter/widgets/Cards/EntryCard/EntryInput.dart';
 import 'package:beebetter/widgets/Cards/EmotionWheel/EmotionWheel.dart';
 import 'package:beebetter/pages/TodayPage/NewEntryPageLogic.dart';
-import 'package:flutter_flip_card/flutter_flip_card.dart';
 
 class EntryCard extends StatefulWidget {
   final int index;
@@ -30,7 +29,7 @@ class EntryCard extends StatefulWidget {
 class EntryCardState extends State<EntryCard>
     with AutomaticKeepAliveClientMixin {
   late TextEditingController controller;
-  final cardController = FlipCardController();
+  bool showEmotions = false;
 
   @override
   void initState() {
@@ -46,6 +45,42 @@ class EntryCardState extends State<EntryCard>
     }
   }
 
+  Widget buildInput() {
+    return EntryInput(
+      key: const ValueKey('input'),
+      canContinue: widget.canContinue,
+      controller: controller,
+      onTextChanged: widget.onTextChanged,
+      onContinuePressed: widget.onContinuePressed,
+      parentContext: context,
+      onFlip: () => setState(() => showEmotions = true),
+    );
+  }
+
+
+  Widget buildEmotionWheel(NewEntryPageLogic logic) {
+    return EmotionWheel(
+      key: const ValueKey('emotion'),
+      emotionItems: logic.emotionItems,
+      levels: logic.emotionLevels,
+      selectedEmotions: logic.emotions,
+      canSelectNext: logic.canSelectNext,
+      onBack: () => setState(() => showEmotions = false),
+      onEmotionSelected: (level, emotion) {
+        logic.emotions[level] = emotion;
+        logic.updateCanSelectNextForLevel(level);
+      },
+      onNext: (level) {
+        if (level == logic.emotionLevels - 1) {
+          logic.saveEntry();
+          setState(() => showEmotions = false);
+        }
+      },
+      onLevelChanged: logic.updateCanSelectNextForLevel,
+    );
+  }
+
+
   @override
   bool get wantKeepAlive => true;
 
@@ -55,49 +90,28 @@ class EntryCardState extends State<EntryCard>
     final logic = context.watch<NewEntryPageLogic>();
     final colorScheme = Theme.of(context).colorScheme;
 
-    return FlipCard(
-      controller: cardController,
-      rotateSide: RotateSide.right,
-      axis: FlipAxis.vertical,
-      frontWidget: Card(
-        margin: EdgeInsets.zero,
-        color: colorScheme.onPrimary,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: EntryInput(
-            canContinue: widget.canContinue,
-            controller: controller,
-            onTextChanged: widget.onTextChanged,
-            onContinuePressed: widget.onContinuePressed,
-            parentContext: context,
-            onFlip: () => cardController.flipcard(), // flip to back
-          ),
-        ),
-      ),
-      backWidget: Card(
-        margin: EdgeInsets.zero,
-        color: colorScheme.onPrimary,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        child: EmotionWheel(
-          emotionItems: logic.emotionItems,
-          levels: logic.emotionLevels,
-          selectedEmotions: logic.emotions,
-          canSelectNext: logic.canSelectNext,
-          onBack: () => cardController.flipcard(),
-          onEmotionSelected: (level, emotion) {
-            logic.emotions[level] = emotion;
-            logic.updateCanSelectNextForLevel(level);
+    return Card(
+      margin: EdgeInsets.zero,
+      color: colorScheme.onPrimary,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 250),
+          switchInCurve: Curves.easeOut,
+          switchOutCurve: Curves.easeIn,
+          transitionBuilder: (child, animation) {
+            return FadeTransition(
+              opacity: animation,
+              child: SizeTransition(
+                sizeFactor: animation,
+                axisAlignment: -1.0,
+                child: child,
+              ),
+            );
           },
-          onNext: (level) {
-            if (level == logic.emotionLevels - 1) {
-              logic.saveEntry();
-              cardController.flipcard();
-            };
-          },
-          onLevelChanged: logic.updateCanSelectNextForLevel,
+          child: showEmotions
+              ? buildEmotionWheel(logic)
+              : buildInput(),
         ),
-      ),
     );
   }
 }
