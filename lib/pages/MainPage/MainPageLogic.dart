@@ -34,8 +34,15 @@ class MainPageLogic extends ChangeNotifier {
     guidedModeController.dispose();
   }
 
-  void openGuidedMode() => guidedModeController.forward();
-  void closeGuidedMode() => guidedModeController.reverse();
+  void openGuidedMode() {
+    FocusManager.instance.primaryFocus?.unfocus();
+    guidedModeController.forward();
+  }
+
+  void closeGuidedMode() {
+    guidedModeController.reverse();
+  }
+
 
 }
 

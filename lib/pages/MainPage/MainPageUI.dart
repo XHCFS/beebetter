@@ -11,11 +11,13 @@ import 'dart:ui';
 class MainPageUI extends StatelessWidget {
   const MainPageUI({super.key});
 
+
   @override
   Widget build(BuildContext context) {
     final logic = context.watch<MainPageLogic>();
     final height = MediaQuery.of(context).size.height;
     final navBarHeight = 40.0;
+    final keyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
 
     final pages = [
       Dashboard(),
@@ -24,6 +26,7 @@ class MainPageUI extends StatelessWidget {
     ];
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Stack(
         children: [
           // ---------------------------------------------------
@@ -31,9 +34,13 @@ class MainPageUI extends StatelessWidget {
           // ---------------------------------------------------
           GestureDetector(
           onVerticalDragUpdate: (details) {
+            if(keyboardOpen) return;
+
             logic.guidedModeController.value -= details.delta.dy / height;
           },
             onVerticalDragEnd: (details) {
+              if(keyboardOpen) return;
+
               if (logic.guidedModeController.value < 0.15) {
                 logic.closeGuidedMode();   // snap closed
               } else {
@@ -43,10 +50,15 @@ class MainPageUI extends StatelessWidget {
           // ---------------------------------------------------
           // Page View
           // ---------------------------------------------------
-            child:PageView(
-              controller: logic.pageController,
-              onPageChanged: (index) => logic.onItemTapped(index),
-              children: pages,
+            child: MediaQuery.removeViewInsets(
+              context: context,
+              removeBottom: true,
+              child: ClipRect(
+                child: PageView(
+                  controller: logic.pageController,
+                  children: pages,
+                ),
+              ),
             ),
           ),
 
