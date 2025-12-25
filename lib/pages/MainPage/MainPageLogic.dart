@@ -9,13 +9,18 @@ class MainPageLogic extends ChangeNotifier {
 
   void onItemTapped(int index) {
     selectedIndex = index;
+
+    if ((pageController.page ?? selectedIndex).round() == index) return;
+
     pageController.animateToPage(
       index,
-      duration: Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,
     );
+
     notifyListeners();
   }
+
 
   // ---------------------------------------------------
   // Swipe Up Guided Mode
