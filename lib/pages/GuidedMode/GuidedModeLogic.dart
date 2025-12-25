@@ -136,6 +136,7 @@ class GuidedModeLogic extends ChangeNotifier {
         cardController.moveTo(currentPrompt);
       }
     });
+    updateCanSelectNextForLevel(0);
   }
 
 

@@ -45,12 +45,18 @@ class EmotionsGrid extends StatelessWidget {
             ),
           ),
           onPressed: () {
-            onChanged(isSelected ? null : item);
+            onChanged(isSelected ? "" : item);
           },
-          child: Text(
-            item,
-            textAlign: TextAlign.center,
-            style: TextStyle(color: colorScheme.primary),
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              item,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: colorScheme.primary,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
           ),
         );
       }).toList(),
