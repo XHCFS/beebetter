@@ -3,10 +3,12 @@ import 'package:fl_chart/fl_chart.dart';
 
 class MoodTrendChart extends StatelessWidget {
   final color;
+  final secondaryColor;
   final moodValues;
 
   MoodTrendChart({
     required this.color,
+    required this.secondaryColor,
     required this.moodValues,
   });
 
@@ -91,6 +93,23 @@ class MoodTrendChart extends StatelessWidget {
               dotData: FlDotData(show: true),
             ),
           ],
+          lineTouchData: LineTouchData(
+            enabled: true,
+            touchTooltipData: LineTouchTooltipData(
+              tooltipBgColor: secondaryColor,
+              getTooltipItems: (touchedSpots) {
+                return touchedSpots.map((spot) {
+                  return LineTooltipItem(
+                    spot.y.toString(),
+                    TextStyle(
+                      color: color,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  );
+                }).toList();
+              },
+            ),
+          ),
         ),
       ),
     );
