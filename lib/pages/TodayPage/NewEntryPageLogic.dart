@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:beebetter/classes/EntryInfo.dart';
 
 class NewEntryPageLogic extends ChangeNotifier {
   // ---------------------------------------------------
@@ -10,16 +11,11 @@ class NewEntryPageLogic extends ChangeNotifier {
   String get formattedDay => DateFormat('EEEE').format(today);
   String get formattedDate => DateFormat('MMMM d, yyyy').format(today);
 
-  bool isTextLocked = false;
-  bool isVoiceLocked = false;
-  int lastActiveTab = 1;
-  int emotionLevels = 3;
-  bool canContinue = false;
-  bool canSelectNext = false;
-  String userInput = "";
-  String title = "";
+  final int emotionLevels = 3;
 
-  late List<String> emotions;
+  bool canSelectNext = false;
+  late EntryInfo entryInfo;
+
 
   // ---------------------------------------------------
   // Later will be loaded from Database or prompt generator
@@ -45,7 +41,13 @@ class NewEntryPageLogic extends ChangeNotifier {
   // ---------------------------------------------------
 
   NewEntryPageLogic() {
-    emotions = List.generate(emotionLevels, (_) => "");
+    entryInfo = EntryInfo(
+      id: "temp_id",
+      title: "",
+      category: "default",
+      emotionLevels: emotionLevels,
+      isText: false,
+    );
   }
 
   // ---------------------------------------------------
@@ -53,28 +55,27 @@ class NewEntryPageLogic extends ChangeNotifier {
   // ---------------------------------------------------
 
   void updateCanContinue(bool value) {
-    canContinue = value;
+    entryInfo.canContinue = value;
     notifyListeners();
   }
 
   void updateCanSelectNextForLevel(int level) {
-    canSelectNext = emotions[level].isNotEmpty;
+    canSelectNext = entryInfo.emotions[level].isNotEmpty;
     notifyListeners();
   }
 
   void updatePromptInput(String value) {
-    userInput = value;
-    isVoiceLocked = value.isNotEmpty;
-
+    entryInfo.userInput = value;
+    entryInfo.isVoiceLocked = value.isNotEmpty;
     notifyListeners();
   }
+
   void updateTitle(String value) {
-    title = value;
-
+    entryInfo.title = value;
     notifyListeners();
   }
 
-  void saveEntry(){
+  void saveEntry() {
 
   }
 

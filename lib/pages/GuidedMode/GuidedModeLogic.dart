@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
-import 'package:beebetter/widgets/Cards/PromptCard/PromptCardInfo.dart';
+import 'package:beebetter/classes/EntryInfo.dart';
 
 class GuidedModeLogic extends ChangeNotifier {
   // ---------------------------------------------------
@@ -40,10 +40,10 @@ class GuidedModeLogic extends ChangeNotifier {
   // Inputs
   // ---------------------------------------------------
 
-  List<PromptCardInfo> prompts = [];
-  PromptCardInfo get currentPromptInfo => prompts[currentPrompt];
+  List<EntryInfo> prompts = [];
+  EntryInfo get currentPromptInfo => prompts[currentPrompt];
 
-  String get currentPromptText => currentPromptInfo.prompt;
+  String get currentPromptText => currentPromptInfo.title;
   String get currentPromptCategory => currentPromptInfo.category;
   int get totalPrompts => prompts.length;
 
@@ -53,27 +53,27 @@ class GuidedModeLogic extends ChangeNotifier {
 
   GuidedModeLogic() {
     prompts = [
-      PromptCardInfo(
+      EntryInfo(
         id: "p1",
-        prompt: "What's one small win you had today?",
+        title: "What's one small win you had today?",
         category: "productivity",
         emotionLevels: emotionLevels,
       ),
-      PromptCardInfo(
+      EntryInfo(
         id: "p2",
-        prompt: "Reflect on your energy levels today.",
+        title: "Reflect on your energy levels today.",
         category: "productivity",
         emotionLevels: emotionLevels,
       ),
-      PromptCardInfo(
+      EntryInfo(
         id: "p3",
-        prompt: "Create a story using these three words.",
+        title: "Create a story using these three words.",
         category: "creativity",
         emotionLevels: emotionLevels,
       ),
-      PromptCardInfo(
+      EntryInfo(
         id: "p4",
-        prompt: "What made you smile today?",
+        title: "What made you smile today?",
         category: "gratitude practice",
         emotionLevels: emotionLevels,
       ),
@@ -111,9 +111,9 @@ class GuidedModeLogic extends ChangeNotifier {
     final removeIndex = index.clamp(0, prompts.length - 1);
 
     if (prompts.length == 1) {
-      prompts[0] = PromptCardInfo(
+      prompts[0] = EntryInfo(
         id: "done",
-        prompt: "Done!",
+        title: "Done!",
         category: "",
         emotionLevels: emotionLevels,
       );
@@ -203,12 +203,12 @@ class GuidedModeLogic extends ChangeNotifier {
     notifyListeners();
   }
 
-  PromptCardInfo createNewPrompt() {
+  EntryInfo createNewPrompt() {
     final id = DateTime.now().millisecondsSinceEpoch.toString();
 
-    return PromptCardInfo(
+    return EntryInfo(
       id: id,
-      prompt: "New prompt!!", // TODO: get a new prompt from prompt generator
+      title: "New prompt!!", // TODO: get a new prompt from prompt generator
       category: "reflection",
       emotionLevels: emotionLevels,
     );

@@ -42,23 +42,23 @@ class EntryInputState extends State<EntryInput> with TickerProviderStateMixin {
 
 
     // fallback if initial tab is locked
-    if (initialIndex == 0 && logic.isTextLocked) initialIndex = 1;
-    if (initialIndex == 1 && logic.isVoiceLocked) initialIndex = 0;
+    if (initialIndex == 0 && logic.entryInfo.isTextLocked) initialIndex = 1;
+    if (initialIndex == 1 && logic.entryInfo.isVoiceLocked) initialIndex = 0;
 
     tabController = TabController(length: 2, vsync: this, initialIndex: initialIndex);
 
     tabController.addListener(() {
       if (!tabController.indexIsChanging) return;
       int i = tabController.index;
-      bool textLocked  = logic.isTextLocked;
-      bool voiceLocked = logic.isVoiceLocked;
+      bool textLocked  = logic.entryInfo.isTextLocked;
+      bool voiceLocked = logic.entryInfo.isVoiceLocked;
 
       if ((i == 0 && textLocked) || (i == 1 && voiceLocked)) {
         tabController.index = tabController.previousIndex;
         return;
       }
 
-      logic.lastActiveTab = i;
+      logic.entryInfo.lastActiveTab = i;
     });
   }
 
@@ -102,8 +102,8 @@ class EntryInputState extends State<EntryInput> with TickerProviderStateMixin {
     final textTheme = Theme.of(context).textTheme;
     final logic = context.watch<NewEntryPageLogic>();
 
-    bool textLocked = logic.isTextLocked;
-    bool voiceLocked = logic.isVoiceLocked;
+    bool textLocked = logic.entryInfo.isTextLocked;
+    bool voiceLocked = logic.entryInfo.isVoiceLocked;
 
 
     return Padding(
@@ -262,7 +262,7 @@ class EntryInputState extends State<EntryInput> with TickerProviderStateMixin {
                       create: (_) => RecordingLogic(
                         onRecordingComplete: (canContinue) {
                           logic.updateCanContinue(canContinue);
-                          logic.isTextLocked = canContinue;
+                          logic.entryInfo.isTextLocked = canContinue;
                         },
                       ),
                       child: RecordingCard(),

@@ -1,9 +1,9 @@
 
-class PromptCardInfo {
+class EntryInfo {
   final String id;
-  final String prompt;
   final String category;
 
+  String title;
   String userInput;
   bool canContinue;
   bool isTextLocked;
@@ -13,9 +13,9 @@ class PromptCardInfo {
   List<String> emotions;
   bool isText;
 
-  PromptCardInfo({
+  EntryInfo({
     required this.id,
-    required this.prompt,
+    required this.title,
     required this.category,
     required int emotionLevels,
     this.isText = false,

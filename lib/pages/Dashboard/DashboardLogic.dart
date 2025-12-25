@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:beebetter/widgets/Cards/PromptCard/PromptCardInfo.dart';
+import 'package:beebetter/classes/EntryInfo.dart';
 
 class DashboardLogic extends ChangeNotifier {
 
@@ -17,35 +17,35 @@ class DashboardLogic extends ChangeNotifier {
   DateTime? get selectedDay => _selectedDay;
   DateTime get focusedDay => _focusedDay;
 
-  List<PromptCardInfo> prompts = [];
+  List<EntryInfo> prompts = [];
   final int emotionLevels = 3;
 
   DashboardLogic() {
     prompts = [
-      PromptCardInfo(
+      EntryInfo(
         id: "p1",
-        prompt: "What's one small win you had today?",
+        title: "What's one small win you had today?",
         category: "productivity",
         emotionLevels: emotionLevels,
         isText: false,
       ),
-      PromptCardInfo(
+      EntryInfo(
         id: "p2",
-        prompt: "Reflect on your energy levels today.",
+        title: "Reflect on your energy levels today.",
         category: "productivity",
         emotionLevels: emotionLevels,
         isText: true,
       ),
-      PromptCardInfo(
+      EntryInfo(
         id: "p3",
-        prompt: "Create a story using these three words.",
+        title: "Create a story using these three words.",
         category: "creativity",
         emotionLevels: emotionLevels,
         isText: false,
       ),
-      PromptCardInfo(
+      EntryInfo(
         id: "p4",
-        prompt: "What made you smile today?",
+        title: "What made you smile today?",
         category: "gratitude practice",
         emotionLevels: emotionLevels,
         isText: true,

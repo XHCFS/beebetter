@@ -167,7 +167,7 @@ class BrowseTab extends StatelessWidget {
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 12),
                           child: PreviousEntry(
-                            prompt: prompt.prompt,
+                            prompt: prompt.title,
                             category: prompt.category,
                             isText: prompt.isText ?? false,
                           ),

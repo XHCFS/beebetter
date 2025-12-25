@@ -66,7 +66,7 @@ class TodayPageUI extends StatelessWidget {
             child: EntryCard(
               index: 0,
               category: "Free Entry",
-              canContinue: entryLogic.canContinue,
+              canContinue: entryLogic.entryInfo.canContinue,
               initialText: "",
               onTextChanged: (text) {
                 entryLogic.updatePromptInput(text);

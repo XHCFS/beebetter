@@ -63,11 +63,11 @@ class EntryCardState extends State<EntryCard>
       key: const ValueKey('emotion'),
       emotionItems: logic.emotionItems,
       levels: logic.emotionLevels,
-      selectedEmotions: logic.emotions,
+      selectedEmotions: logic.entryInfo.emotions,
       canSelectNext: logic.canSelectNext,
       onBack: () => setState(() => showEmotions = false),
       onEmotionSelected: (level, emotion) {
-        logic.emotions[level] = emotion;
+        logic.entryInfo.emotions[level] = emotion;
         logic.updateCanSelectNextForLevel(level);
       },
       onNext: (level) {

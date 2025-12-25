@@ -189,10 +189,10 @@ class GuidedModeUI extends StatelessWidget {
                           final promptInfo = logic.prompts[index];
 
                           return PromptCard(
-                            key: ValueKey(promptInfo.prompt),
+                            key: ValueKey(promptInfo.title),
                             index: index,
                             category: promptInfo.category,
-                            prompt: promptInfo.prompt,
+                            prompt: promptInfo.title,
                             canContinue: promptInfo.canContinue,
                             isDone: promptInfo.isDone,
                             initialText: promptInfo.userInput,
