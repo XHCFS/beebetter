@@ -219,12 +219,13 @@ class GuidedModeLogic extends ChangeNotifier {
   // Cards Navigation
   // ---------------------------------------------------
 
-  // void nextPrompt() {
-  //   if (currentPrompt < totalPrompts - 1) {
-  //     currentPrompt++;
-  //     notifyListeners();
-  //   }
-  // }
+  void updateAllCardsLastActiveTab(int tabIndex) {
+    for (var prompt in prompts) {
+      prompt.lastActiveTab = tabIndex;
+    }
+    notifyListeners();
+  }
+
 
   void previousPrompt(CardSwiperController controller) {
     if (currentPrompt <= 0) return;

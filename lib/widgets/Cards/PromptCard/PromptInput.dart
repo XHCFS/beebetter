@@ -35,8 +35,7 @@ class PromptInput extends StatefulWidget {
 }
 
 class PromptInputState extends State<PromptInput> with TickerProviderStateMixin {
-
-  late final TabController tabController;
+  late TabController tabController;
 
   final GlobalKey textCardKey = GlobalKey();
   OverlayEntry? overlayEntry;
@@ -45,9 +44,9 @@ class PromptInputState extends State<PromptInput> with TickerProviderStateMixin 
   void initState() {
     super.initState();
     final logic = context.read<GuidedModeLogic>();
-    int initialIndex = 1;
-
     final prompt = logic.currentPromptInfo;
+
+    int initialIndex = prompt.lastActiveTab;
 
     // fallback if initial tab is locked
     if (initialIndex == 0 && prompt.isTextLocked) initialIndex = 1;
@@ -66,8 +65,24 @@ class PromptInputState extends State<PromptInput> with TickerProviderStateMixin 
         return;
       }
 
-      prompt.lastActiveTab = i;
+      logic.updateAllCardsLastActiveTab(i);
     });
+  }
+
+  @override
+  void didUpdateWidget(covariant PromptInput oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final logic = context.read<GuidedModeLogic>();
+    final prompt = logic.currentPromptInfo;
+
+    if (tabController.index != prompt.lastActiveTab) {
+      tabController.animateTo(
+        prompt.lastActiveTab,
+        duration: Duration(milliseconds: 0),
+        curve: Curves.easeInOut,
+      );
+    }
+
   }
 
   @override
