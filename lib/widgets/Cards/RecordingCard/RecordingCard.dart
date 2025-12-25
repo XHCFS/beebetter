@@ -46,33 +46,25 @@ class RecordingCardState extends State<RecordingCard> with SingleTickerProviderS
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
+          child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                GestureDetector(
-                  onTap: logic.toggleRecording,
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      RecordingIndicator(
-                        isRecording: logic.isRecording,
-                        amplitudes: logic.amplitudes.toList(),
-                        color: Theme.of(context).colorScheme.inversePrimary,
-                      ),
-
+               logic.isRecording ?
+                  RecordingIndicator(
+                    isRecording: logic.isRecording,
+                    amplitudes: logic.amplitudes.toList(),
+                    color: Theme.of(context).colorScheme.inversePrimary,
+                  ) :
+                   GestureDetector(
+                     onTap: logic.toggleRecording,
+                     child:
                       Icon(
                         Symbols.mic,
                         size: 36,
                         color: colorScheme.primary.withAlpha(200),
                       ),
-                    ],
                   ),
-
-                ),
-                const SizedBox(height: 8),
                 Consumer<RecordingLogic>(
                 builder: (_, logic, __) {
                 return
@@ -85,7 +77,6 @@ class RecordingCardState extends State<RecordingCard> with SingleTickerProviderS
                     ),
                   ); }
                 ),
-                const SizedBox(height: 8),
                 if (logic.isRecording)
                   Wrap(
                     spacing: 16,
@@ -94,19 +85,19 @@ class RecordingCardState extends State<RecordingCard> with SingleTickerProviderS
                     children: [
                       IconButton(
                         onPressed: logic.stop,
-                        icon: Icon(Symbols.stop),
+                        icon: Icon(Symbols.stop_rounded),
                         color: colorScheme.error,
                         iconSize: 30,
                       ),
                       IconButton(
                         onPressed: logic.togglePause,
-                        icon: Icon(logic.isPaused ? Symbols.play_arrow : Symbols.pause),
+                        icon: Icon(logic.isPaused ? Symbols.play_arrow_rounded : Symbols.pause_rounded),
                         color: colorScheme.primary,
                         iconSize: 30,
                       ),
                       IconButton(
                         onPressed: logic.delete,
-                        icon: Icon(Symbols.delete),
+                        icon: Icon(Symbols.delete_rounded),
                         color: colorScheme.secondary,
                         iconSize: 30,
                       ),
@@ -114,7 +105,6 @@ class RecordingCardState extends State<RecordingCard> with SingleTickerProviderS
                   ),
               ],
             ),
-          ),
         );
   }
 }
