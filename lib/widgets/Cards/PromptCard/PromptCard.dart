@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:beebetter/widgets/Cards/PromptCard/PromptInput.dart';
 import 'package:beebetter/widgets/Cards/EmotionWheel/EmotionWheel.dart';
-import 'package:flutter_flip_card/flutter_flip_card.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 import 'package:beebetter/pages/GuidedMode/GuidedModeLogic.dart';
 
@@ -37,7 +36,7 @@ class PromptCard extends StatefulWidget {
 class PromptCardState extends State<PromptCard>
     with AutomaticKeepAliveClientMixin {
   late TextEditingController controller;
-  final cardController = FlipCardController();
+  bool showEmotions = false;
 
   // Swipe down tracking for deleting prompt
   double dragOffset = 0.0;
@@ -64,6 +63,48 @@ class PromptCardState extends State<PromptCard>
     }
   }
 
+  Widget buildInput() {
+    return PromptInput(
+      key: const ValueKey('input'),
+      category: widget.category,
+      prompt: widget.prompt,
+      canContinue: widget.canContinue,
+      isDone: widget.isDone,
+      controller: controller,
+      onTextChanged: widget.onTextChanged,
+      onContinuePressed: widget.onContinuePressed,
+      parentContext: context,
+      onFlip: () => setState(() => showEmotions = true),
+    );
+  }
+
+  Widget buildEmotionWheel(GuidedModeLogic logic) {
+    return EmotionWheel(
+      key: const ValueKey('emotion'),
+      emotionItems: logic.emotionItems,
+      levels: logic.emotionLevels,
+      selectedEmotions: logic.currentPromptInfo.emotions,
+      canSelectNext: logic.canSelectNext,
+      onBack: () => setState(() => showEmotions = false),
+      onEmotionSelected: (level, emotion) {
+        logic.currentPromptInfo.emotions[level] = emotion;
+        logic.selectEmotion(level, emotion);
+      },
+      onNext: (level) async {
+        if (level == logic.emotionLevels - 1) {
+          setState(() => showEmotions = false);
+          logic.submitEmotion(level);
+          widget.cardSwiperController.swipe(CardSwiperDirection.left);
+          await Future.delayed(const Duration(milliseconds: 300));
+          logic.submit(widget.index, widget.cardSwiperController);
+        } else {
+          logic.updateCanSelectNextForLevel(level + 1);
+        }
+      },
+      onLevelChanged: logic.updateCanSelectNextForLevel,
+    );
+  }
+
   @override
   bool get wantKeepAlive => true;
 
@@ -74,56 +115,28 @@ class PromptCardState extends State<PromptCard>
 
     final colorScheme = Theme.of(context).colorScheme;
 
-    return FlipCard(
-      controller: cardController,
-      rotateSide: RotateSide.right,
-      axis: FlipAxis.vertical,
-      frontWidget: Card(
-        margin: EdgeInsets.zero,
-        color: colorScheme.onPrimary,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: PromptInput(
-            category: widget.category,
-            prompt: widget.prompt,
-            canContinue: widget.canContinue,
-            isDone: widget.isDone,
-            controller: controller,
-            onTextChanged: widget.onTextChanged,
-            onContinuePressed: widget.onContinuePressed,
-            parentContext: context,
-            onFlip: () => cardController.flipcard(), // flip to back
-          ),
+    return Card(
+      margin: EdgeInsets.zero,
+      color: colorScheme.onPrimary,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 250),
+          switchInCurve: Curves.easeOut,
+          switchOutCurve: Curves.easeIn,
+          transitionBuilder: (child, animation) {
+            return FadeTransition(
+              opacity: animation,
+              child: SizeTransition(
+                sizeFactor: animation,
+                axisAlignment: -1.0,
+                child: child,
+              ),
+            );
+          },
+          child: showEmotions
+              ? buildEmotionWheel(logic)
+              : buildInput(),
         ),
-      ),
-      backWidget: Card(
-        margin: EdgeInsets.zero,
-        color: colorScheme.onPrimary,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        child: EmotionWheel(
-          emotionItems: logic.emotionItems,
-          levels: logic.emotionLevels,
-          selectedEmotions: logic.currentPromptInfo.emotions,
-          canSelectNext: logic.canSelectNext,
-          onBack: () => cardController.flipcard(),
-          onEmotionSelected: (level, emotion) {
-            logic.selectEmotion(level, emotion);
-          },
-          onNext: (level) async {
-            if (level == logic.emotionLevels - 1) {
-              cardController.flipcard();
-              logic.submitEmotion(level);
-              widget.cardSwiperController.swipe(CardSwiperDirection.left);
-              await Future.delayed(const Duration(milliseconds: 300));
-              logic.submit(widget.index, widget.cardSwiperController);
-            } else {
-              logic.updateCanSelectNextForLevel(level + 1);
-            }
-          },
-          onLevelChanged: logic.updateCanSelectNextForLevel,
-        )
-      ),
     );
   }
 }

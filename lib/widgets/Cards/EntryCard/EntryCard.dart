@@ -109,8 +109,11 @@ class EntryCardState extends State<EntryCard>
             );
           },
           child: showEmotions
-              ? buildEmotionWheel(logic)
-              : buildInput(),
+              ? KeyedSubtree(
+                  key: const ValueKey('emotion'),
+                  child: buildEmotionWheel(logic),
+                )
+          : buildInput(),
         ),
     );
   }

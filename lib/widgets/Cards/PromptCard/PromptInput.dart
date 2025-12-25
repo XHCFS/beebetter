@@ -116,7 +116,9 @@ class PromptInputState extends State<PromptInput> with TickerProviderStateMixin 
 
     bool isDoneCard = logic.currentPromptText == "Done!";
 
-    return Column(
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (!isDoneCard)...[
@@ -322,6 +324,7 @@ class PromptInputState extends State<PromptInput> with TickerProviderStateMixin 
           DoneCard()
         ]
       ]
+    ),
     );
   }
 }
