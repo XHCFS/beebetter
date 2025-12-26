@@ -174,6 +174,20 @@ class GuidedModeLogic extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> onNextEmotionLevel(int level, int promptIndex, CardSwiperController cardController) async {
+    if (level >= emotionLevels) return;
+
+    if (level == emotionLevels - 1) {
+      submitEmotion(level);
+      cardController.swipe(CardSwiperDirection.left);
+      await Future.delayed(const Duration(milliseconds: 300));
+      submit(promptIndex, cardController);
+    } else {
+      updateCanSelectNextForLevel(level + 1);
+    }
+  }
+
+
 
   // ---------------------------------------------------
   // Delete Prompt

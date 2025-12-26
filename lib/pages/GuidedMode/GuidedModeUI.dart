@@ -201,9 +201,6 @@ class GuidedModeUI extends StatelessWidget {
                               logic.updatePromptInput(index, value);
                               logic.updateCanContinue(value.trim().isNotEmpty);
                             },
-                            onContinuePressed: (entry) {
-                              logic.submit(index, cardSwiperController);
-                            },
                           );
                         },
                       ),

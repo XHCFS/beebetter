@@ -14,7 +14,6 @@ class PromptInput extends StatefulWidget {
   final TextEditingController controller;
   final void Function(String) onTextChanged;
   final BuildContext parentContext;
-  final void Function(String) onContinuePressed;
   final VoidCallback onFlip;
 
   const PromptInput({
@@ -26,7 +25,6 @@ class PromptInput extends StatefulWidget {
     required this.controller,
     required this.onTextChanged,
     required this.parentContext,
-    required this.onContinuePressed,
     required this.onFlip,
   });
 

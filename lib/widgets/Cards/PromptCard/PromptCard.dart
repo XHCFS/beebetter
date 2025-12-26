@@ -11,7 +11,6 @@ class PromptCard extends StatefulWidget {
   final String prompt;
   final bool canContinue;
   final bool isDone;
-  final void Function(String) onContinuePressed;
   final void Function(String) onTextChanged;
   final String initialText;
   final CardSwiperController cardSwiperController;
@@ -23,7 +22,6 @@ class PromptCard extends StatefulWidget {
     required this.prompt,
     required this.canContinue,
     required this.isDone,
-    required this.onContinuePressed,
     required this.onTextChanged,
     required this.initialText,
     required this.cardSwiperController,
@@ -78,7 +76,6 @@ class PromptCardState extends State<PromptCard>
       isDone: widget.isDone,
       controller: controller,
       onTextChanged: widget.onTextChanged,
-      onContinuePressed: widget.onContinuePressed,
       parentContext: context,
       onFlip: () => setState(() => showEmotions = true),
     );
@@ -96,17 +93,7 @@ class PromptCardState extends State<PromptCard>
         logic.currentPromptInfo.emotions[level] = emotion;
         logic.selectEmotion(level, emotion);
       },
-      onNext: (level) async {
-        if (level == logic.emotionLevels - 1) {
-          setState(() => showEmotions = false);
-          logic.submitEmotion(level);
-          widget.cardSwiperController.swipe(CardSwiperDirection.left);
-          await Future.delayed(const Duration(milliseconds: 300));
-          logic.submit(widget.index, widget.cardSwiperController);
-        } else {
-          logic.updateCanSelectNextForLevel(level + 1);
-        }
-      },
+      onNext: (level) => logic.onNextEmotionLevel(level, widget.index, widget.cardSwiperController),
       onLevelChanged: logic.updateCanSelectNextForLevel,
     );
   }
