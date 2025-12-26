@@ -40,7 +40,13 @@ jobs:
       continue-on-error: true
     
     - name: Build APK
-      run: flutter build apk --release
+      run: |
+        # Cargokit requires CARGOKIT_DARWIN_PLATFORM_NAME even for Android builds
+        # Flutter's Gradle plugin overrides CARGOKIT_TARGET_PLATFORMS, so we need to
+        # configure Flutter to only build for Android 64-bit targets
+        # Xet only supports 64-bit: android-arm64 and android-x64
+        export CARGOKIT_DARWIN_PLATFORM_NAME="x86_64"
+        flutter build apk --release --target-platform android-arm64,android-x64
     
     # Get branch name and commit info for all pushes
     - name: Get branch name
