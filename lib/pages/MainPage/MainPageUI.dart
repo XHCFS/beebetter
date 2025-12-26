@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:beebetter/widgets/BackgroundGradient.dart';
 import 'package:beebetter/widgets/NavigationBar.dart';
 import 'package:beebetter/pages/TodayPage/TodayPage.dart';
 import 'package:beebetter/pages/MainPage/GuidedModeOverlay.dart';
@@ -27,8 +28,12 @@ class MainPageUI extends StatelessWidget {
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
+      backgroundColor: Colors.transparent,
       body: Stack(
         children: [
+          BackgroundGradient(
+            body: const SizedBox.expand(),
+          ),
           // ---------------------------------------------------
           // Swipe Gesture Detector
           // ---------------------------------------------------
