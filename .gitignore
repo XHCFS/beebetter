@@ -107,6 +107,9 @@ unlinked_spec.ds
 # Coverage
 coverage/
 
+# Notebooks (development/experimental code)
+notebooks/
+
 # Symbols
 app.*.symbols
 
@@ -117,3 +120,8 @@ app.*.symbols
 !**/ios/**/default.perspectivev3
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
 !/dev/ci/**/Gemfile.lock
+lib/screens/
+check_tensor_names.py
+devtools_options.yaml
+*.py
+!download_vocab.py

@@ -34,9 +34,13 @@ dependencies:
   drift_flutter:
   path_provider:
   path:
+  onnxruntime: ^1.4.1
+  record: ^6.1.2
+  permission_handler: ^11.3.1
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
+  transformers: ^0.0.2
 
 dev_dependencies:
   flutter_test:
@@ -55,6 +59,12 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
+  assets:
+    - assets/models/mobile_text_model/emotion_model.onnx
+    - assets/models/mobile_text_model/config.json
+    - assets/models/mobile_text_model/vocab.txt
+    - assets/models/mobile_voice_model/emotion_model_quantized.onnx
+    - assets/models/mobile_voice_model/config.json
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
