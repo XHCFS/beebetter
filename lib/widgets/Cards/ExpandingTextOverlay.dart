@@ -108,14 +108,14 @@ class ExpandingTextOverlayState extends State<ExpandingTextOverlay> {
             curve: Curves.easeOut,
             shape: BoxShape.rectangle,
             elevation: expanded && !closing ? 12 : 0,
-            color: Colors.transparent,
+            color: Theme.of(context).colorScheme.surface,
             shadowColor: Theme.of(context).colorScheme.inversePrimary,
             borderRadius: BorderRadius.circular(12),
-            clipBehavior: Clip.antiAlias,
+            clipBehavior: Clip.none,
             child: Material(
               color: Theme.of(context).colorScheme.surface,
               borderRadius: BorderRadius.circular(12),
-              clipBehavior: Clip.antiAlias,
+              clipBehavior: Clip.none,
               child: Column(
 
                 children: [
@@ -211,7 +211,7 @@ class ExpandingTextOverlayState extends State<ExpandingTextOverlay> {
                         // -----------------------------------
                         // Text Field
                         // -----------------------------------
-                        Expanded(
+                        Positioned.fill(
                           child: AnimatedPadding(
                             duration: const Duration(milliseconds: 200),
                             curve: Curves.easeOut,
