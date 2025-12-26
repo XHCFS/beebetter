@@ -4,8 +4,9 @@ import 'dart:math' as math;
 import 'package:onnxruntime/onnxruntime.dart';
 import 'package:flutter/services.dart';
 
-/// Service for voice-based emotion inference using DistilHuBERT model
-/// Trained on IEMOCAP dataset
+/// Batch voice emotion inference service
+/// Processes pre-recorded audio bytes (used by EmotionInferenceService)
+/// For real-time recording, use VoiceEmotionRecordingService
 class VoiceEmotionService {
   OrtSession? _session;
   bool _isInitialized = false;
