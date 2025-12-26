@@ -12,6 +12,7 @@ class RecordingLogic extends ChangeNotifier {
   final recorder = AudioRecorder();
   bool isRecording = false;
   bool isPaused = false;
+  bool isPlayback = false;
   Duration elapsed = Duration.zero;
 
   bool get canContinue => elapsed.inSeconds >= minRecordingTime;
@@ -103,6 +104,10 @@ class RecordingLogic extends ChangeNotifier {
     isPaused = !isPaused;
     notifyListeners();
   }
+  void pause() {
+    isPaused = true;
+    notifyListeners();
+  }
 
   void delete() {
     isRecording = false;
@@ -111,6 +116,16 @@ class RecordingLogic extends ChangeNotifier {
     amplitudes.count = 0;
     notifyListeners();
   }
+  // ---------------------------------------------------
+  // Playback
+  // ---------------------------------------------------
+  // TODO: playback logic
+
+  void togglePlayback()
+  {
+    isPlayback = !isPlayback;
+  }
+
 
   @override
   void dispose() {
