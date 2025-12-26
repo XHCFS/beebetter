@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'screens/voice_emotion_test_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -11,11 +10,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Voice Emotion Test',
+      title: 'BEEbetter',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const VoiceEmotionTestScreen(),
+      home: const MyHomePage(title: 'BEEbetter'),
     );
   }
 }
