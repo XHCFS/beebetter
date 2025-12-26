@@ -62,7 +62,7 @@ class TodayPageUI extends StatelessWidget {
           // New Entry
           // ---------------------------------------------------
           SizedBox(
-            height: 400,
+            height: 420,
             child: EntryCard(
               index: 0,
               category: "Free Entry",
@@ -172,6 +172,7 @@ class TodayPageUI extends StatelessWidget {
                         ],
                       ),
                     ),
+                    const SizedBox(height: 40),
                   ],
                 ),
               ),

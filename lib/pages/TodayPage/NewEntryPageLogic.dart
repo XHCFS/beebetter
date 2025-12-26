@@ -43,7 +43,7 @@ class NewEntryPageLogic extends ChangeNotifier {
   NewEntryPageLogic() {
     entryInfo = EntryInfo(
       id: "entry",
-      title: DateFormat('MMMM d, yyyy HH:mm').format(DateTime.now()),
+      title: DateFormat('MMMM d, yyyy hh:mm a').format(DateTime.now()),
       category: "default",
       emotionLevels: emotionLevels,
       isText: false,
