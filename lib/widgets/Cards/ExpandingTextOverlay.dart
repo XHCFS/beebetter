@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:beebetter/widgets/DottedPattern.dart';
 import 'package:beebetter/widgets/Cards/MarkdownToolbar.dart';
+import 'package:beebetter/widgets/Cards/MarkdownFormatter.dart';
 
 class ExpandingTextOverlay extends StatefulWidget {
   final Offset startOffset;
@@ -273,6 +274,7 @@ class ExpandingTextOverlayState extends State<ExpandingTextOverlay> {
                                   controller: controller,
                                   maxLines: null,
                                   expands: true,
+                                  inputFormatters: [MarkdownFormatter()],
                                   textAlignVertical: TextAlignVertical.top,
                                   decoration: InputDecoration(
                                     isCollapsed: true,
