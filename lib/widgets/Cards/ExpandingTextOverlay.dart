@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:beebetter/widgets/HexagonPattern.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:beebetter/widgets/DottedPattern.dart';
+import 'package:beebetter/widgets/Cards/MarkdownToolbar.dart';
 
 class ExpandingTextOverlay extends StatefulWidget {
   final Offset startOffset;
@@ -28,6 +29,7 @@ class ExpandingTextOverlayState extends State<ExpandingTextOverlay> {
   bool closing = false;
   bool showHeader = false;
   double headerHeight = 0;
+  bool showToolbar = false;
 
   @override
   void initState() {
@@ -57,6 +59,11 @@ class ExpandingTextOverlayState extends State<ExpandingTextOverlay> {
       if (mounted && !closing) {
         setState(() => showHeader = true);
       }
+
+      await Future.delayed(const Duration(milliseconds: 300));
+      if (mounted && !closing) {
+        setState(() => showToolbar = true);
+      }
     });
   }
 
@@ -65,12 +72,19 @@ class ExpandingTextOverlayState extends State<ExpandingTextOverlay> {
       closing = true;
       expanded = false;
       showHeader = false;
+      showToolbar = false;
     });
 
     // wait for the reverse animation to finish
     await Future.delayed(const Duration(milliseconds: 300));
-
     widget.onClose(controller.text);
+  }
+
+  void toggleToolbar() {
+    if (closing) return;
+    setState(() {
+      showToolbar = !showToolbar;
+    });
   }
 
 
@@ -171,6 +185,15 @@ class ExpandingTextOverlayState extends State<ExpandingTextOverlay> {
                                           ),
                                         ),
                                       ),
+                                      IconButton(
+                                        tooltip: 'Markdown',
+                                        icon: Icon(
+                                          showToolbar ? Symbols.code_off_rounded : Symbols.code_rounded,
+                                          color: colorScheme.primary,
+                                        ),
+                                        padding: EdgeInsets.zero,
+                                        onPressed: toggleToolbar,
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -183,64 +206,120 @@ class ExpandingTextOverlayState extends State<ExpandingTextOverlay> {
                   ),
 
                 Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Stack(
+                  child: Stack(
                       children: [
                         // -----------------------------------
                         // Pattern
                         // -----------------------------------
-                        Positioned(
-                          bottom: 0,
-                          left: 0,
-                          right: 0,
-                          top: 0,
-                          child: AnimatedOpacity(
-                            opacity: expanded && !closing ? 1.0 : 0.0,
-                            duration: const Duration(milliseconds: 300),
-                            curve: Curves.easeOut,
-                            child: CustomPaint(
-                              painter: DottedPatternPainter(
-                                color: colorScheme.inversePrimary.withAlpha(100),
-                                spacing: 20,
-                                radius: 1.5,
-                              ),
-                            ),
-                          ),
-                        ),
-                        // -----------------------------------
-                        // Text Field
-                        // -----------------------------------
                         Positioned.fill(
-                          child: AnimatedPadding(
-                            duration: const Duration(milliseconds: 200),
-                            curve: Curves.easeOut,
-                            padding: EdgeInsets.fromLTRB(0, 0, 0, keyboardInset,),
-                            child: TextField(
-                              controller: controller,
-                              maxLines: null,
-                              expands: true,
-                              textAlignVertical: TextAlignVertical.top,
-                              decoration: InputDecoration(
-                                isCollapsed: true,
-                                hintText: "Share your thoughts...",
-                                border: InputBorder.none,
-                                hintStyle: textTheme.bodyMedium?.copyWith( color: colorScheme.primary.withAlpha(128), ),
-                              ),
-                              style: textTheme.bodyMedium?.copyWith(
-                                color: colorScheme.primary,
+                          child: Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: AnimatedOpacity(
+                              opacity: expanded && !closing ? 1.0 : 0.0,
+                              duration: const Duration(milliseconds: 300),
+                              curve: Curves.easeOut,
+                              child: CustomPaint(
+                                painter: DottedPatternPainter(
+                                  color: colorScheme.inversePrimary.withAlpha(100),
+                                  spacing: 20,
+                                  radius: 1.5,
+                                ),
                               ),
                             ),
                           ),
                         ),
+
+                        // -----------------------------------
+                        // Markdown and Text Field
+                        // -----------------------------------
+                        Column(
+                          children: [
+                            // -----------------------------------
+                            // Markdown
+                            // -----------------------------------
+                            TweenAnimationBuilder<double>(
+                              tween: Tween<double>(
+                                begin: 0,
+                                end: showToolbar ? 1 : 0,
+                              ),
+                              duration: const Duration(milliseconds: 250),
+                              curve: Curves.easeOutCubic,
+                              builder: (context, value, child) {
+                                return ClipRect(
+                                  child: Align(
+                                    heightFactor: value,
+                                    child: Transform.translate(
+                                      offset: Offset(0, -12 * (1 - value)),
+                                      child: Opacity(
+                                        opacity: value,
+                                        child: child,
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: MarkdownToolbar(controller: controller),
+                            ),
+
+                            // -----------------------------------
+                            // Text Field
+                            // -----------------------------------
+                            Expanded(
+                              child: AnimatedPadding(
+                                duration: const Duration(milliseconds: 200),
+                                curve: Curves.easeOut,
+                                padding: EdgeInsets.fromLTRB(16, 16, 16, keyboardInset,),
+                                child: TextField(
+                                  controller: controller,
+                                  maxLines: null,
+                                  expands: true,
+                                  textAlignVertical: TextAlignVertical.top,
+                                  decoration: InputDecoration(
+                                    isCollapsed: true,
+                                    hintText: "Share your thoughts...",
+                                    border: InputBorder.none,
+                                    hintStyle: textTheme.bodyMedium?.copyWith(
+                                      color: colorScheme.primary.withAlpha(128),
+                                    ),
+                                  ),
+                                  style: textTheme.bodyMedium?.copyWith(
+                                    color: colorScheme.primary,
+                                  ),
+                                ),
+                              ),
+                            ),
+                             keyboardInset > 0 ?
+                             SizedBox(height: 4) : SizedBox(height: 52),
+                          ],
+                        ),
+                        // -----------------------------------
+                        // Toggle Markdown Toolbar
+                        // -----------------------------------
+                        // Positioned(
+                        //   right: 8,
+                        //   bottom:keyboardInset > 0 ? keyboardInset - 32 : 8,
+                        //   child: AnimatedOpacity(
+                        //     opacity: expanded && !closing ? 1.0 : 0.0,
+                        //     duration: const Duration(milliseconds: 300),
+                        //     curve: Curves.easeOut,
+                        //     child: IconButton(
+                        //       tooltip: 'Markdown',
+                        //       icon: Icon(
+                        //         showToolbar ? Symbols.code_off_rounded : Symbols.code_rounded,
+                        //         color: colorScheme.primary,
+                        //       ),
+                        //       onPressed: toggleToolbar,
+                        //     ),
+                        //   ),
+                        // ),
+
                       ],
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
-        ),
         ),
       ],
     );
