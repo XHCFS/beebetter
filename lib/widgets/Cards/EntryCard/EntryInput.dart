@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:beebetter/widgets/Cards/RecordingCard/RecordingLogic.dart';
 import 'package:beebetter/pages/TodayPage/NewEntryPageLogic.dart';
 import 'package:beebetter/widgets/Cards/RecordingCard/RecordingCard.dart';
@@ -241,14 +242,44 @@ class EntryInputState extends State<EntryInput> with TickerProviderStateMixin {
                         borderRadius: BorderRadius.circular(12),
                         child: Padding(
                           padding: const EdgeInsets.all(16.0),
-                          child: Text(
-                            widget.controller.text.isEmpty
-                                ? "Share your thoughts..."
-                                : widget.controller.text,
+                          child:  widget.controller.text.isEmpty
+                              ? Text(
+                            "Share your thoughts...",
                             style: textTheme.bodyMedium?.copyWith(
-                              color: widget.controller.text.isEmpty
-                                  ? colorScheme.primary.withAlpha(128)
-                                  : colorScheme.primary,
+                              color: colorScheme.primary.withAlpha(128),
+                            ),
+                          )
+                              : MarkdownBody(
+                            data: widget.controller.text.trimLeft(),
+                            styleSheet: MarkdownStyleSheet.fromTheme(
+                              Theme.of(context),
+                            ).copyWith(
+                              p: textTheme.bodyMedium?.copyWith(
+                                color: colorScheme.primary,
+                              ),
+                              h1: textTheme.headlineSmall?.copyWith(
+                                color: colorScheme.primary,
+                              ),
+                              h2: textTheme.titleLarge?.copyWith(
+                                color: colorScheme.primary,
+                              ),
+                              h3: textTheme.titleMedium?.copyWith(
+                                color: colorScheme.primary,
+                              ),
+                              strong: TextStyle(
+                                color: colorScheme.primary,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              em: TextStyle(
+                                color: colorScheme.primary,
+                                fontStyle: FontStyle.italic,
+                              ),
+                              listBullet: textTheme.bodyMedium?.copyWith(
+                                color: colorScheme.primary,
+                              ),
+                              checkbox: textTheme.bodyMedium?.copyWith(
+                                color: colorScheme.primary,
+                              ),
                             ),
                           ),
                         ),
