@@ -191,6 +191,7 @@ class ExpandingTextOverlayState extends State<ExpandingTextOverlay> {
                                         icon: Icon(
                                           showToolbar ? Symbols.code_off_rounded : Symbols.code_rounded,
                                           color: colorScheme.primary,
+                                          weight: 600,
                                         ),
                                         padding: EdgeInsets.zero,
                                         onPressed: toggleToolbar,
