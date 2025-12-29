@@ -19,11 +19,11 @@ class EntryInfo {
     required this.category,
     required int emotionLevels,
     this.isText = false,
+    this.lastActiveTab = 1,
   })  : userInput = "",
         canContinue = false,
         isTextLocked = false,
         isVoiceLocked = false,
         isDone = false,
-        lastActiveTab = 1,
         emotions = List.generate(emotionLevels, (_) => "");
 }

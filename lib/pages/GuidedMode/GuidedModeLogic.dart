@@ -119,14 +119,15 @@ class GuidedModeLogic extends ChangeNotifier {
       );
       currentPrompt = 0;
     } else {
-      prompts.removeAt(removeIndex);
+      if (prompts[removeIndex].id != "done") {
+        prompts.removeAt(removeIndex);
 
-      // If we removed a card before the current index, shift back
-      if (currentPrompt > removeIndex) {
-        currentPrompt--;
+        if (currentPrompt > removeIndex) {
+          currentPrompt--;
+        }
+
+        currentPrompt = currentPrompt.clamp(0, prompts.length - 1);
       }
-
-      currentPrompt = currentPrompt.clamp(0, prompts.length - 1);
     }
 
     notifyListeners();
@@ -207,6 +208,9 @@ class GuidedModeLogic extends ChangeNotifier {
 
   void deletePrompt(int index) {
     if (index < 0 || index >= prompts.length) return;
+
+    if (prompts[index].id == "done") return;
+
     prompts.removeAt(index);
     prompts.add(createNewPrompt());
 
@@ -217,14 +221,17 @@ class GuidedModeLogic extends ChangeNotifier {
     notifyListeners();
   }
 
+
   EntryInfo createNewPrompt() {
     final id = DateTime.now().millisecondsSinceEpoch.toString();
+    int lastTab = prompts.isNotEmpty ? prompts[0].lastActiveTab : 0;
 
     return EntryInfo(
       id: id,
       title: "New prompt!!", // TODO: get a new prompt from prompt generator
       category: "reflection",
       emotionLevels: emotionLevels,
+      lastActiveTab: lastTab,
     );
   }
 
