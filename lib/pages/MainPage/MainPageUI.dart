@@ -61,6 +61,7 @@ class MainPageUI extends StatelessWidget {
               child: ClipRect(
                 child: PageView(
                   controller: logic.pageController,
+                  onPageChanged: logic.onPageChanged,
                   children: pages,
                 ),
               ),
