@@ -31,6 +31,9 @@ class ExpandingTextOverlayState extends State<ExpandingTextOverlay> {
   bool showHeader = false;
   double headerHeight = 0;
   bool showToolbar = false;
+  double dragOffset = 0;
+  double dragDistance = 0;
+  double scaleFactor = 1.0;
 
   @override
   void initState() {
@@ -118,208 +121,235 @@ class ExpandingTextOverlayState extends State<ExpandingTextOverlay> {
           left: expanded ? 24 : widget.startOffset.dx,
           width: expanded ? screen.width - 48 : widget.startSize.width,
           height: expanded ? screen.height - 72 : widget.startSize.height,
-          child: AnimatedPhysicalModel(
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeOut,
-            shape: BoxShape.rectangle,
-            elevation: expanded && !closing ? 12 : 0,
-            color: Theme.of(context).colorScheme.surface,
-            shadowColor: Theme.of(context).colorScheme.inversePrimary,
-            borderRadius: BorderRadius.circular(12),
-            clipBehavior: Clip.none,
-            child: Material(
-              color: Theme.of(context).colorScheme.surface,
-              borderRadius: BorderRadius.circular(12),
-              clipBehavior: Clip.none,
-              child: Column(
+          child: GestureDetector(
+            onVerticalDragUpdate: (details) {
+              if (closing) return;
 
-                children: [
-                  // -----------------------------------
-                  // Header
-                  // -----------------------------------
-                  TweenAnimationBuilder<double>(
-                    tween: Tween<double>(
-                      begin: 0,
-                      end: showHeader ? headerHeight : 0,
-                    ),
-                    duration: const Duration(milliseconds: 300),
-                    curve: Curves.easeOutCubic,
-                    builder: (context, height, child) {
-                      return ClipRect(
-                        child: SizedBox(
-                          height: height,
-                          child: Align(
-                            alignment: Alignment.topCenter,
-                            child: Transform.translate(
-                              offset: Offset(0, -(1 - height / headerHeight) * 20),
-                              child: Container(
-                                height: headerHeight,
-                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                                decoration: BoxDecoration(
-                                  color: Theme.of(context).colorScheme.surfaceContainerLow,
-                                  borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-                                ),
+              setState(() {
+                dragDistance += details.delta.dy;
+
+                // Calculate a subtle shrink effect (max 5% shrink)
+                scaleFactor = (1 - (dragDistance / 600)).clamp(0.95, 1.0);
+              });
+            },
+            onVerticalDragEnd: (details) {
+              if (dragDistance > 100 || (details.primaryVelocity ?? 0) > 300) {
+                close(); // plays your shrinking + fading animation
+              } else {
+                // Animate back to normal size
+                setState(() {
+                  dragDistance = 0;
+                  scaleFactor = 1.0;
+                });
+              }
+            },
+            child: Transform(
+              alignment: Alignment.center,
+              transform: Matrix4.diagonal3Values(1.0, scaleFactor, 1.0),
+              child: AnimatedPhysicalModel(
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeOut,
+                shape: BoxShape.rectangle,
+                elevation: expanded && !closing ? 12 : 0,
+                color: Theme.of(context).colorScheme.surface,
+                shadowColor: Theme.of(context).colorScheme.inversePrimary,
+                borderRadius: BorderRadius.circular(12),
+                clipBehavior: Clip.none,
+                child: Material(
+                  color: Theme.of(context).colorScheme.surface,
+                  borderRadius: BorderRadius.circular(12),
+                  clipBehavior: Clip.none,
+                  child: Column(
+
+                    children: [
+                      // -----------------------------------
+                      // Header
+                      // -----------------------------------
+                      TweenAnimationBuilder<double>(
+                        tween: Tween<double>(
+                          begin: 0,
+                          end: showHeader ? headerHeight : 0,
+                        ),
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeOutCubic,
+                        builder: (context, height, child) {
+                          return ClipRect(
+                            child: SizedBox(
+                              height: height,
+                              child: Align(
+                                alignment: Alignment.topCenter,
                                 child: Transform.translate(
-                                  offset: Offset(0, -(1 - height / headerHeight) * 20), // slide down
-                                  child: Row(
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: [
-                                      // -----------------------------------
-                                      // Icon
-                                      // -----------------------------------
-                                      IconButton(
-                                        icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.primary),
-                                        padding: EdgeInsets.zero,
-                                        onPressed: close,
-                                      ),
-                                      // -----------------------------------
-                                      // Text
-                                      // -----------------------------------
-                                      Expanded(
-                                        child: Align(
-                                          alignment: Alignment.centerLeft,
-                                          child: Text(
-                                            widget.title,
-                                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                              color: Theme.of(context).colorScheme.primary,
+                                  offset: Offset(0, -(1 - height / headerHeight) * 20),
+                                  child: Container(
+                                    height: headerHeight,
+                                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                    decoration: BoxDecoration(
+                                      color: Theme.of(context).colorScheme.surfaceContainerLow,
+                                      borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                                    ),
+                                    child: Transform.translate(
+                                      offset: Offset(0, -(1 - height / headerHeight) * 20), // slide down
+                                      child: Row(
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          // -----------------------------------
+                                          // Icon
+                                          // -----------------------------------
+                                          IconButton(
+                                            icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.primary),
+                                            padding: EdgeInsets.zero,
+                                            onPressed: close,
+                                          ),
+                                          // -----------------------------------
+                                          // Text
+                                          // -----------------------------------
+                                          Expanded(
+                                            child: Align(
+                                              alignment: Alignment.centerLeft,
+                                              child: Text(
+                                                widget.title,
+                                                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                                  color: Theme.of(context).colorScheme.primary,
+                                                ),
+                                              ),
                                             ),
+                                          ),
+                                          IconButton(
+                                            tooltip: 'Markdown',
+                                            icon: Icon(
+                                              showToolbar ? Symbols.code_off_rounded : Symbols.code_rounded,
+                                              color: colorScheme.primary,
+                                              weight: 600,
+                                            ),
+                                            padding: EdgeInsets.zero,
+                                            onPressed: toggleToolbar,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+
+                    Expanded(
+                      child: Stack(
+                          children: [
+                            // -----------------------------------
+                            // Pattern
+                            // -----------------------------------
+                            Positioned.fill(
+                              child: Padding(
+                                padding: const EdgeInsets.all(16),
+                                child: AnimatedOpacity(
+                                  opacity: expanded && !closing ? 1.0 : 0.0,
+                                  duration: const Duration(milliseconds: 300),
+                                  curve: Curves.easeOut,
+                                  child: CustomPaint(
+                                    painter: DottedPatternPainter(
+                                      color: colorScheme.inversePrimary.withAlpha(100),
+                                      spacing: 20,
+                                      radius: 1.5,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                            // -----------------------------------
+                            // Markdown and Text Field
+                            // -----------------------------------
+                            Column(
+                              children: [
+                                // -----------------------------------
+                                // Markdown
+                                // -----------------------------------
+                                TweenAnimationBuilder<double>(
+                                  tween: Tween<double>(
+                                    begin: 0,
+                                    end: showToolbar ? 1 : 0,
+                                  ),
+                                  duration: const Duration(milliseconds: 250),
+                                  curve: Curves.easeOutCubic,
+                                  builder: (context, value, child) {
+                                    return ClipRect(
+                                      child: Align(
+                                        heightFactor: value,
+                                        child: Transform.translate(
+                                          offset: Offset(0, -12 * (1 - value)),
+                                          child: Opacity(
+                                            opacity: value,
+                                            child: child,
                                           ),
                                         ),
                                       ),
-                                      IconButton(
-                                        tooltip: 'Markdown',
-                                        icon: Icon(
-                                          showToolbar ? Symbols.code_off_rounded : Symbols.code_rounded,
-                                          color: colorScheme.primary,
-                                          weight: 600,
+                                    );
+                                  },
+                                  child: MarkdownToolbar(controller: controller),
+                                ),
+
+                                // -----------------------------------
+                                // Text Field
+                                // -----------------------------------
+                                Expanded(
+                                  child: AnimatedPadding(
+                                    duration: const Duration(milliseconds: 200),
+                                    curve: Curves.easeOut,
+                                    padding: EdgeInsets.fromLTRB(16, 16, 16, keyboardInset,),
+                                    child: TextField(
+                                      controller: controller,
+                                      maxLines: null,
+                                      expands: true,
+                                      inputFormatters: [MarkdownFormatter()],
+                                      textAlignVertical: TextAlignVertical.top,
+                                      decoration: InputDecoration(
+                                        isCollapsed: true,
+                                        hintText: "Share your thoughts...",
+                                        border: InputBorder.none,
+                                        hintStyle: textTheme.bodyMedium?.copyWith(
+                                          color: colorScheme.primary.withAlpha(128),
                                         ),
-                                        padding: EdgeInsets.zero,
-                                        onPressed: toggleToolbar,
                                       ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-
-                Expanded(
-                  child: Stack(
-                      children: [
-                        // -----------------------------------
-                        // Pattern
-                        // -----------------------------------
-                        Positioned.fill(
-                          child: Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: AnimatedOpacity(
-                              opacity: expanded && !closing ? 1.0 : 0.0,
-                              duration: const Duration(milliseconds: 300),
-                              curve: Curves.easeOut,
-                              child: CustomPaint(
-                                painter: DottedPatternPainter(
-                                  color: colorScheme.inversePrimary.withAlpha(100),
-                                  spacing: 20,
-                                  radius: 1.5,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-
-                        // -----------------------------------
-                        // Markdown and Text Field
-                        // -----------------------------------
-                        Column(
-                          children: [
-                            // -----------------------------------
-                            // Markdown
-                            // -----------------------------------
-                            TweenAnimationBuilder<double>(
-                              tween: Tween<double>(
-                                begin: 0,
-                                end: showToolbar ? 1 : 0,
-                              ),
-                              duration: const Duration(milliseconds: 250),
-                              curve: Curves.easeOutCubic,
-                              builder: (context, value, child) {
-                                return ClipRect(
-                                  child: Align(
-                                    heightFactor: value,
-                                    child: Transform.translate(
-                                      offset: Offset(0, -12 * (1 - value)),
-                                      child: Opacity(
-                                        opacity: value,
-                                        child: child,
+                                      style: textTheme.bodyMedium?.copyWith(
+                                        color: colorScheme.primary,
                                       ),
                                     ),
                                   ),
-                                );
-                              },
-                              child: MarkdownToolbar(controller: controller),
-                            ),
-
-                            // -----------------------------------
-                            // Text Field
-                            // -----------------------------------
-                            Expanded(
-                              child: AnimatedPadding(
-                                duration: const Duration(milliseconds: 200),
-                                curve: Curves.easeOut,
-                                padding: EdgeInsets.fromLTRB(16, 16, 16, keyboardInset,),
-                                child: TextField(
-                                  controller: controller,
-                                  maxLines: null,
-                                  expands: true,
-                                  inputFormatters: [MarkdownFormatter()],
-                                  textAlignVertical: TextAlignVertical.top,
-                                  decoration: InputDecoration(
-                                    isCollapsed: true,
-                                    hintText: "Share your thoughts...",
-                                    border: InputBorder.none,
-                                    hintStyle: textTheme.bodyMedium?.copyWith(
-                                      color: colorScheme.primary.withAlpha(128),
-                                    ),
-                                  ),
-                                  style: textTheme.bodyMedium?.copyWith(
-                                    color: colorScheme.primary,
-                                  ),
                                 ),
-                              ),
+                                 keyboardInset > 0 ?
+                                 SizedBox(height: 4) : SizedBox(height: 52),
+                              ],
                             ),
-                             keyboardInset > 0 ?
-                             SizedBox(height: 4) : SizedBox(height: 52),
+                            // -----------------------------------
+                            // Toggle Markdown Toolbar
+                            // -----------------------------------
+                            // Positioned(
+                            //   right: 8,
+                            //   bottom:keyboardInset > 0 ? keyboardInset - 32 : 8,
+                            //   child: AnimatedOpacity(
+                            //     opacity: expanded && !closing ? 1.0 : 0.0,
+                            //     duration: const Duration(milliseconds: 300),
+                            //     curve: Curves.easeOut,
+                            //     child: IconButton(
+                            //       tooltip: 'Markdown',
+                            //       icon: Icon(
+                            //         showToolbar ? Symbols.code_off_rounded : Symbols.code_rounded,
+                            //         color: colorScheme.primary,
+                            //       ),
+                            //       onPressed: toggleToolbar,
+                            //     ),
+                            //   ),
+                            // ),
+
                           ],
                         ),
-                        // -----------------------------------
-                        // Toggle Markdown Toolbar
-                        // -----------------------------------
-                        // Positioned(
-                        //   right: 8,
-                        //   bottom:keyboardInset > 0 ? keyboardInset - 32 : 8,
-                        //   child: AnimatedOpacity(
-                        //     opacity: expanded && !closing ? 1.0 : 0.0,
-                        //     duration: const Duration(milliseconds: 300),
-                        //     curve: Curves.easeOut,
-                        //     child: IconButton(
-                        //       tooltip: 'Markdown',
-                        //       icon: Icon(
-                        //         showToolbar ? Symbols.code_off_rounded : Symbols.code_rounded,
-                        //         color: colorScheme.primary,
-                        //       ),
-                        //       onPressed: toggleToolbar,
-                        //     ),
-                        //   ),
-                        // ),
-
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
           ),
