@@ -10,6 +10,7 @@ class ExpandingTextOverlay extends StatefulWidget {
   final String title;
   final String initialText;
   final void Function(String) onClose;
+  final bool isGuided;
 
   const ExpandingTextOverlay({
     required this.startOffset,
@@ -17,6 +18,7 @@ class ExpandingTextOverlay extends StatefulWidget {
     required this.title,
     required this.initialText,
     required this.onClose,
+    required this.isGuided,
   });
 
   @override
@@ -31,6 +33,7 @@ class ExpandingTextOverlayState extends State<ExpandingTextOverlay> {
   bool showHeader = false;
   double headerHeight = 0;
   bool showToolbar = false;
+  bool showPrompt = false;
   double dragOffset = 0;
   double dragDistance = 0;
   double scaleFactor = 1.0;
@@ -56,7 +59,7 @@ class ExpandingTextOverlayState extends State<ExpandingTextOverlay> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       setState(() => expanded = true);
-      headerHeight = calculateHeaderHeight(context, widget.title);
+      headerHeight = calculateHeaderHeight(context, widget.isGuided ? "Guided Mode" : widget.title);
 
       // header appears near the end of expansion
       await Future.delayed(const Duration(milliseconds: 240));
@@ -67,6 +70,7 @@ class ExpandingTextOverlayState extends State<ExpandingTextOverlay> {
       await Future.delayed(const Duration(milliseconds: 300));
       if (mounted && !closing) {
         setState(() => showToolbar = true);
+        setState(() => showPrompt = true);
       }
     });
   }
@@ -77,6 +81,7 @@ class ExpandingTextOverlayState extends State<ExpandingTextOverlay> {
       expanded = false;
       showHeader = false;
       showToolbar = false;
+      showPrompt = false;
     });
 
     // wait for the reverse animation to finish
@@ -207,7 +212,9 @@ class ExpandingTextOverlayState extends State<ExpandingTextOverlay> {
                                             child: Align(
                                               alignment: Alignment.centerLeft,
                                               child: Text(
-                                                widget.title,
+                                                widget.isGuided ? "Guided Mode" : widget.title,
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
                                                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                                                   color: Theme.of(context).colorScheme.primary,
                                                 ),
@@ -292,6 +299,42 @@ class ExpandingTextOverlayState extends State<ExpandingTextOverlay> {
                                 ),
 
                                 // -----------------------------------
+                                // Prompt
+                                // -----------------------------------
+                                if(widget.isGuided)
+                                TweenAnimationBuilder<double>(
+                                  tween: Tween<double>(
+                                    begin: 0,
+                                    end: showPrompt ? 1 : 0,
+                                  ),
+                                  duration: const Duration(milliseconds: 250),
+                                  curve: Curves.easeOutCubic,
+                                  builder: (context, value, child) {
+                                    return ClipRect(
+                                      child: Align(
+                                        heightFactor: value,
+                                        child: Transform.translate(
+                                          offset: Offset(0, -12 * (1 - value)),
+                                          child: Opacity(
+                                            opacity: value,
+                                            child: child,
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(top: 16),
+                                    child: Text(
+                                        widget.title,
+                                        style: textTheme.titleMedium?.copyWith(
+                                          color: colorScheme.primary,)
+                                    ),
+                                  ),
+
+                                ),
+
+                                // -----------------------------------
                                 // Text Field
                                 // -----------------------------------
                                 Expanded(
@@ -323,27 +366,6 @@ class ExpandingTextOverlayState extends State<ExpandingTextOverlay> {
                                  SizedBox(height: 4) : SizedBox(height: 52),
                               ],
                             ),
-                            // -----------------------------------
-                            // Toggle Markdown Toolbar
-                            // -----------------------------------
-                            // Positioned(
-                            //   right: 8,
-                            //   bottom:keyboardInset > 0 ? keyboardInset - 32 : 8,
-                            //   child: AnimatedOpacity(
-                            //     opacity: expanded && !closing ? 1.0 : 0.0,
-                            //     duration: const Duration(milliseconds: 300),
-                            //     curve: Curves.easeOut,
-                            //     child: IconButton(
-                            //       tooltip: 'Markdown',
-                            //       icon: Icon(
-                            //         showToolbar ? Symbols.code_off_rounded : Symbols.code_rounded,
-                            //         color: colorScheme.primary,
-                            //       ),
-                            //       onPressed: toggleToolbar,
-                            //     ),
-                            //   ),
-                            // ),
-
                           ],
                         ),
                       ),
@@ -364,7 +386,7 @@ class ExpandingTextOverlayState extends State<ExpandingTextOverlay> {
 
     final textPainter = TextPainter(
       text: TextSpan(text: text, style: textStyle),
-      maxLines: null,
+      maxLines: 1,
       textDirection: TextDirection.ltr,
     );
 

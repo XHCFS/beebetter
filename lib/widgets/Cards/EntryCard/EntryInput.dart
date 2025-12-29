@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:beebetter/widgets/Cards/RecordingCard/RecordingLogic.dart';
 import 'package:beebetter/pages/TodayPage/NewEntryPageLogic.dart';
@@ -89,6 +90,7 @@ class EntryInputState extends State<EntryInput> with TickerProviderStateMixin {
             overlayEntry?.remove();
             overlayEntry = null;
           },
+          isGuided: false,
         );
       },
     );
@@ -131,6 +133,10 @@ class EntryInputState extends State<EntryInput> with TickerProviderStateMixin {
                 child: TextField(
                   onChanged: (text) => logic.updateTitle(text),
                   maxLines: 1,
+                  inputFormatters: [
+                    LengthLimitingTextInputFormatter(40),
+                  ],
+                  textAlignVertical: TextAlignVertical.center,
                   decoration: InputDecoration(
                     hintText: "Title",
                     hintStyle: textTheme.bodyMedium?.copyWith(
