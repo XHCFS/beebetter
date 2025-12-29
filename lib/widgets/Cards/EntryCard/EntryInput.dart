@@ -40,8 +40,7 @@ class EntryInputState extends State<EntryInput> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     final logic = context.read<NewEntryPageLogic>();
-    int initialIndex = 1;
-
+    int initialIndex = logic.entryInfo.lastActiveTab;
 
     // fallback if initial tab is locked
     if (initialIndex == 0 && logic.entryInfo.isTextLocked) initialIndex = 1;
@@ -62,6 +61,21 @@ class EntryInputState extends State<EntryInput> with TickerProviderStateMixin {
 
       logic.entryInfo.lastActiveTab = i;
     });
+  }
+
+  @override
+  void didUpdateWidget(covariant EntryInput oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    final logic = context.read<NewEntryPageLogic>();
+    final targetTab = logic.entryInfo.lastActiveTab;
+
+    if (tabController.index != targetTab) {
+      tabController.animateTo(
+        targetTab,
+        duration: Duration.zero,
+      );
+    }
   }
 
   @override

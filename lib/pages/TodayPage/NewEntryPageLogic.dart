@@ -81,7 +81,23 @@ class NewEntryPageLogic extends ChangeNotifier {
 
 
   void saveEntry() {
+    // TODO: save entry logic
+    // right now it just resets fields
 
+
+    final int lastTab = entryInfo.lastActiveTab;
+    entryInfo = EntryInfo(
+      id: "entry",
+      title: DateFormat('MMMM d, yyyy hh:mm a').format(DateTime.now()),
+      category: "default",
+      emotionLevels: emotionLevels,
+      isText: false,
+      lastActiveTab: lastTab == 1 ? 1 : 0,
+    );
+    canSelectNext = false;
+
+    notifyListeners();
   }
+
 
 }

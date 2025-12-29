@@ -73,6 +73,7 @@ class EntryCardState extends State<EntryCard>
       onNext: (level) {
         if (level == logic.emotionLevels - 1) {
           logic.saveEntry();
+          controller.clear();
           setState(() => showEmotions = false);
         }
       },
