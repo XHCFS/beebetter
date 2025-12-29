@@ -332,7 +332,7 @@ class InsightsTab extends StatelessWidget {
                 child:
                 MoodTrendChart(
                   color: colorScheme.primary,
-                  secondaryColor: colorScheme.surfaceBright,
+                  secondaryColor: colorScheme.inversePrimary,
                   moodValues: logic.moodValues,
                 ),
               ),
