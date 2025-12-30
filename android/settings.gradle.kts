@@ -14,6 +14,13 @@ pluginManagement {
         google()
         mavenCentral()
         gradlePluginPortal()
+        // Flutter engine artifacts repository
+        if (flutterSdkPath != null) {
+            maven {
+                url = uri("${flutterSdkPath}/bin/cache/artifacts/engine/android")
+            }
+        }
+        // Flutter hosted Maven repository (fallback)
         maven {
             url = uri("https://storage.googleapis.com/download.flutter.io")
         }

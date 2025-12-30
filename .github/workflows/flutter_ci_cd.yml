@@ -37,6 +37,11 @@ jobs:
     - name: Clean build
       run: flutter clean
     
+    - name: Precache Flutter artifacts
+      run: |
+        flutter precache --android
+        echo "Flutter artifacts precached"
+    
     - name: Verify Flutter setup
       run: |
         flutter doctor -v

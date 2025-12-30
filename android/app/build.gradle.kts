@@ -44,13 +44,8 @@ flutter {
 }
 
 dependencies {
-    // Flutter embedding dependencies - explicitly added as workaround
-    // The Flutter Gradle plugin should provide these automatically, but adding explicitly
-    // to ensure they're available during Kotlin compilation
-    // Note: Version format should match Flutter engine version, not app version
-    // Using 1.0.0 as base version - the Flutter Gradle plugin should handle version resolution
-    debugImplementation("io.flutter:flutter_embedding_debug:1.0.0")
-    releaseImplementation("io.flutter:flutter_embedding_release:1.0.0")
+    // Flutter embedding is automatically provided by the Flutter Gradle plugin
+    // No need to explicitly add io.flutter:flutter_embedding_* dependencies
     
     // Kotlin stdlib
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.1.0")
