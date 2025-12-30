@@ -1,21 +1,64 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:beebetter/widgets/Cards/PromptCard/PromptCard.dart';
 import 'package:beebetter/pages/GuidedMode/GuidedModeLogic.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 
-class GuidedModeUI extends StatelessWidget {
+class GuidedModeUI extends StatefulWidget {
   const GuidedModeUI({super.key});
+
+  @override
+  State<GuidedModeUI> createState() => _GuidedModeUIState();
+}
+
+class _GuidedModeUIState extends State<GuidedModeUI> {
+  late CardSwiperController cardSwiperController;
+  late FocusNode _focusNode;
+
+  @override
+  void initState() {
+    super.initState();
+    cardSwiperController = CardSwiperController();
+    _focusNode = FocusNode();
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final logic = context.watch<GuidedModeLogic>();
-    final CardSwiperController cardSwiperController = CardSwiperController();
 
     ColorScheme colorScheme = Theme.of(context).colorScheme;
     TextTheme textTheme = Theme.of(context).textTheme;
-    return
-      Column(
+    
+    return Focus(
+      autofocus: true,
+      onKeyEvent: (node, event) {
+        if (event is KeyDownEvent) {
+          if (event.logicalKey == LogicalKeyboardKey.arrowLeft) {
+            // Move card to back and go to previous
+            if (logic.currentPrompt > 0) {
+              logic.moveCardToBack(logic.currentPrompt);
+              cardSwiperController.swipe(CardSwiperDirection.left);
+            }
+            return KeyEventResult.handled;
+          } else if (event.logicalKey == LogicalKeyboardKey.arrowRight) {
+            // Move card to back and go to next
+            if (logic.currentPrompt < logic.totalPrompts - 1) {
+              logic.moveCardToBack(logic.currentPrompt);
+              cardSwiperController.swipe(CardSwiperDirection.right);
+            }
+            return KeyEventResult.handled;
+          }
+        }
+        return KeyEventResult.ignored;
+      },
+      child: Column(
         children: [
           const SizedBox(height: 8),
           Container(
@@ -28,7 +71,7 @@ class GuidedModeUI extends StatelessWidget {
           ),
 
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -54,7 +97,7 @@ class GuidedModeUI extends StatelessWidget {
                 SizedBox(
                   width: double.infinity,
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(12),
                     child: LinearProgressIndicator(
                       value: logic.completedPrompts / logic.originalTotalPrompts,
                       backgroundColor: colorScheme.primary.withAlpha(30),
@@ -80,7 +123,7 @@ class GuidedModeUI extends StatelessWidget {
                   right: 0,
                   bottom: 8,
                   child:Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.all(16.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -88,15 +131,18 @@ class GuidedModeUI extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             // ---------------------------------------------------
-                            // Back
+                            // Back (move card to back)
                             // ---------------------------------------------------
                             ElevatedButton(
                               onPressed: () {
-                                logic.previousPrompt(cardSwiperController);
+                                if (logic.currentPrompt > 0) {
+                                  logic.moveCardToBack(logic.currentPrompt);
+                                  cardSwiperController.swipe(CardSwiperDirection.left);
+                                }
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: logic.currentPrompt <= 0
-                                    ? colorScheme.inversePrimary.withAlpha(100)
+                                    ? colorScheme.inversePrimary.withAlpha(128)
                                     : colorScheme.inversePrimary,
                                 foregroundColor: colorScheme.surface,
                                 shape: const CircleBorder(),
@@ -130,17 +176,18 @@ class GuidedModeUI extends StatelessWidget {
                               ],
                             ),
                             // ---------------------------------------------------
-                            // Next
+                            // Next (move card to back)
                             // ---------------------------------------------------
                             ElevatedButton(
                               onPressed: () {
-                                if (logic.currentPrompt + 1 < logic.totalPrompts) {
+                                if (logic.currentPrompt < logic.totalPrompts - 1) {
+                                  logic.moveCardToBack(logic.currentPrompt);
                                   cardSwiperController.swipe(CardSwiperDirection.right);
                                 }
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: logic.currentPrompt >= logic.totalPrompts -1
-                                    ? colorScheme.inversePrimary.withAlpha(100)
+                                    ? colorScheme.inversePrimary.withAlpha(128)
                                     : colorScheme.inversePrimary,
                                 foregroundColor: colorScheme.surface,
                                 shape: const CircleBorder(),
@@ -178,10 +225,27 @@ class GuidedModeUI extends StatelessWidget {
 
                         onSwipe:  (prevIndex, currentIndex, direction) {
                           if (direction == CardSwiperDirection.bottom) {
-                            logic.deletePrompt(prevIndex);
-                            return false;
+                            // Swipe down: skip prompt and get new one
+                            logic.skipPrompt(prevIndex);
+                            return false; // Don't remove, just replace
                           }
 
+                          // Swipe left/right/up: move card to back of deck
+                          if (direction == CardSwiperDirection.left || 
+                              direction == CardSwiperDirection.right ||
+                              direction == CardSwiperDirection.top) {
+                            // Move card to back after a short delay to allow animation
+                            Future.delayed(const Duration(milliseconds: 100), () {
+                              logic.moveCardToBack(prevIndex);
+                            });
+                            // Update current index
+                            if (currentIndex != null && currentIndex < logic.prompts.length) {
+                              logic.onSwipe(currentIndex);
+                            }
+                            return true; // Allow CardSwiper to animate the card away
+                          }
+
+                          // Default: just update index
                           logic.onSwipe(currentIndex);
                           return true;
                         },
@@ -212,6 +276,7 @@ class GuidedModeUI extends StatelessWidget {
             ),
           ),
         ],
+      ),
     );
   }
 }

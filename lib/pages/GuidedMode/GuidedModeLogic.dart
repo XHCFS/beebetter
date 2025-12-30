@@ -266,6 +266,40 @@ class GuidedModeLogic extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Move current card to the back of the deck (shuffle animation)
+  void moveCardToBack(int index) {
+    if (index < 0 || index >= prompts.length) return;
+    if (prompts[index].id == "done") return;
+
+    // Move the card to the end
+    final card = prompts.removeAt(index);
+    prompts.add(card);
+
+    // Adjust current prompt index
+    // After moving a card to the back, the next card takes its place
+    // So if we're at index 0 and move it to back, we stay at 0 (which is now the next card)
+    // If we're at index 2 and move it to back, we stay at 2 (which is now the next card)
+    // But if we move a card before current, we need to adjust
+    if (currentPrompt > index) {
+      currentPrompt--;
+    }
+    // If currentPrompt == index, we want to stay at the same index (which now has the next card)
+    // No adjustment needed in that case
+
+    notifyListeners();
+  }
+
+  /// Skip current prompt and get a new one
+  void skipPrompt(int index) {
+    if (index < 0 || index >= prompts.length) return;
+    if (prompts[index].id == "done") return;
+
+    // Replace with new prompt
+    prompts[index] = createNewPrompt();
+    
+    notifyListeners();
+  }
+
   void shufflePrompts() {
     // TODO: we need to implement actual prompt shuffling logic here
     prompts.shuffle();
