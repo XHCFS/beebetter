@@ -95,25 +95,11 @@ jobs:
     - name: Build APK
       run: |
         echo "Building APK with Flutter..."
-        # Ensure dependencies and plugins are set up right before building
+        # Ensure plugins are set up
         flutter pub get
-        # Verify plugin files are generated
-        echo "Checking for plugin files:"
-        ls -la .flutter-plugins* 2>/dev/null || echo "No .flutter-plugins files found"
-        if [ -f .flutter-plugins-dependencies ]; then
-          echo ".flutter-plugins-dependencies found - Flutter Gradle plugin should read this"
-          # Extract Android plugins from the JSON file
-          echo "Android plugins detected:"
-          cat .flutter-plugins-dependencies | grep -o '"android":\[.*\]' | head -1 || echo "Could not parse Android plugins"
-        else
-          echo "ERROR: .flutter-plugins-dependencies not found - this is required!"
-          exit 1
-        fi
-        # Build the APK
-        # Note: The Flutter Gradle plugin should automatically include plugin dependencies
-        # from .flutter-plugins-dependencies, but there's a known issue where it doesn't
-        # always work in CI environments. If this fails, it's a Flutter Gradle plugin bug.
-        flutter build apk --release
+        # Build APK - use --no-tree-shake-icons to avoid font warnings
+        # The Flutter Gradle plugin should automatically include plugin dependencies
+        flutter build apk --release --no-tree-shake-icons
         echo "APK built successfully"
         echo "APK location: build/app/outputs/flutter-apk/app-release.apk"
     
