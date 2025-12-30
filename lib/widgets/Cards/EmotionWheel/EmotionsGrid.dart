@@ -31,7 +31,7 @@ class EmotionsGrid extends StatelessWidget {
 
         return ElevatedButton(
           style: ElevatedButton.styleFrom(
-            backgroundColor: colorScheme.surfaceBright,
+            backgroundColor: colorScheme.surfaceContainerHigh,
             shadowColor: colorScheme.inversePrimary,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),

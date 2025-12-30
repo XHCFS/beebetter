@@ -144,7 +144,7 @@ class PromptInputState extends State<PromptInput> with TickerProviderStateMixin 
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
             decoration: BoxDecoration(
-              color: colorScheme.surfaceBright,
+              color: colorScheme.surfaceContainerHigh,
               borderRadius: BorderRadius.circular(30),
               border: Border.all(
                 color: colorScheme.inversePrimary,
@@ -174,7 +174,7 @@ class PromptInputState extends State<PromptInput> with TickerProviderStateMixin 
           Container(
             margin: const EdgeInsets.symmetric(vertical: 8),
             decoration: BoxDecoration(
-              color: colorScheme.surfaceBright,
+              color: colorScheme.surfaceContainerHigh,
               borderRadius: BorderRadius.circular(12),
             ),
 
@@ -249,7 +249,7 @@ class PromptInputState extends State<PromptInput> with TickerProviderStateMixin 
                     key: textCardKey,
                     elevation: 0,
                     margin: EdgeInsets.zero,
-                    color: colorScheme.surfaceBright,
+                    color: colorScheme.surfaceContainerHigh,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),

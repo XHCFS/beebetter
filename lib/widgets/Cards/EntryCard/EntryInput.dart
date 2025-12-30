@@ -138,13 +138,13 @@ class EntryInputState extends State<EntryInput> with TickerProviderStateMixin {
             Card(
               elevation: 0,
               margin: EdgeInsets.zero,
-              color: colorScheme.surfaceBright,
+              color: colorScheme.surfaceContainerHigh,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
 
               child: Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(12.0),
                 child: TextField(
                   onChanged: (text) => logic.updateTitle(text),
                   maxLines: 1,
@@ -175,7 +175,7 @@ class EntryInputState extends State<EntryInput> with TickerProviderStateMixin {
             Container(
               margin: const EdgeInsets.symmetric(vertical: 8),
               decoration: BoxDecoration(
-                color: colorScheme.surfaceBright,
+                color: colorScheme.surfaceContainerHigh,
                 borderRadius: BorderRadius.circular(12),
               ),
 
@@ -250,7 +250,7 @@ class EntryInputState extends State<EntryInput> with TickerProviderStateMixin {
                       key: textCardKey,
                       elevation: 0,
                       margin: EdgeInsets.zero,
-                      color: colorScheme.surfaceBright,
+                      color: colorScheme.surfaceContainerHigh,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),

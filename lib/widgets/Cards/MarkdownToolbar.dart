@@ -347,7 +347,7 @@ class MarkdownToolbar extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8),
       decoration: BoxDecoration(
-        color: colorScheme.surfaceBright,
+        color: colorScheme.surfaceContainerHigh,
       ),
       child: SizedBox(
         height: 40,
