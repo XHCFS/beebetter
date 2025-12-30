@@ -14,6 +14,74 @@ class BrowseTabStatefulState extends State<BrowseTab> {
   String? expandedIndex;
   String searchQuery = "";
 
+  Future<bool> confirmDelete(BuildContext context, String title) async {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
+    final result = await showDialog<bool>(
+      context: context,
+      barrierDismissible: true,
+      barrierColor: colorScheme.surfaceContainerLow.withAlpha(128),
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        backgroundColor: colorScheme.onPrimary,
+        title: Row(
+          children: [
+            Icon(
+              Icons.delete_outline,
+              color: colorScheme.error,
+            ),
+            const SizedBox(width: 8),
+            Text(
+              "Delete Entry?",
+              style: textTheme.titleMedium,
+            ),
+          ],
+        ),
+        content: RichText(
+          text: TextSpan(
+            style: textTheme.bodyMedium?.copyWith(
+              color: colorScheme.onSurfaceVariant,
+            ),
+            children: [
+              const TextSpan(text: "You’re about to delete "),
+              TextSpan(
+                text: "“$title”",
+                style: textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: colorScheme.onSurface,
+                ),
+              ),
+              const TextSpan(
+                text: ". This action cannot be undone.",
+              ),
+            ],
+          ),
+        ),
+        actionsPadding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text("Cancel"),
+          ),
+          OutlinedButton(
+            style: OutlinedButton.styleFrom(
+              foregroundColor: colorScheme.error,
+              side: BorderSide(color: colorScheme.error),
+            ),
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text("Delete"),
+          ),
+        ],
+      ),
+    );
+
+    return result ?? false;
+  }
+  
+
   @override
   Widget build(BuildContext context) {
     final logic = context.watch<DashboardLogic>();
@@ -247,6 +315,13 @@ class BrowseTabStatefulState extends State<BrowseTab> {
                               }
                             });
                           },
+                          onDelete: () async {
+                            final confirmed = await confirmDelete(context, entry.title);
+
+                            if (confirmed) {
+                              logic.deleteEntry(entry.id);
+                            }
+                          },
                         ),
                       );
                     }).toList(),
@@ -307,6 +382,13 @@ class BrowseTabStatefulState extends State<BrowseTab> {
                                   expandedIndex = index;
                                 }
                               });
+                            },
+                            onDelete: () async {
+                              final confirmed = await confirmDelete(context, entry.title);
+
+                              if (confirmed) {
+                                logic.deleteEntry(entry.id);
+                              }
                             },
                           ),
                         );

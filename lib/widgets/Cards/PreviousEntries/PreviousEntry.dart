@@ -12,6 +12,7 @@ class PreviousEntry extends StatefulWidget {
   final bool isExpanded;
   final VoidCallback onTap;
   final List<String>? emotions;
+  final VoidCallback? onDelete;
 
   const PreviousEntry({
     required this.prompt,
@@ -21,6 +22,7 @@ class PreviousEntry extends StatefulWidget {
     required this.isExpanded,
     required this.onTap,
     this.emotions,
+    this.onDelete,
     super.key,
   });
 
@@ -127,6 +129,21 @@ class _PreviousEntryState extends State<PreviousEntry>
                       ],
                     ),
                   ),
+
+                  // ---------------------------------------------------
+                  // Delete Icon
+                  // ---------------------------------------------------
+                  if (widget.onDelete != null)
+                    IconButton(
+                      icon: Icon(
+                        Icons.delete_outline,
+                        color: colorScheme.error.withAlpha(200),
+                      ),
+                      splashRadius: 20,
+                      tooltip: "Delete entry",
+                      onPressed: widget.onDelete,
+                    ),
+
                   // ---------------------------------------------------
                   // Arrow Icon
                   // ---------------------------------------------------

@@ -115,4 +115,8 @@ Some mushrooms offered the bunny some carrots and they all enjoyed the yummy car
     notifyListeners();
   }
 
+  void deleteEntry(String id) {
+
+  }
+
 }
