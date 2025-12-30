@@ -111,6 +111,7 @@ class PromptInputState extends State<PromptInput> with TickerProviderStateMixin 
             overlayEntry = null;
           },
           isGuided: true,
+          isReadOnly: false,
         );
       },
     );

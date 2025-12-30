@@ -6,8 +6,12 @@ import 'package:beebetter/pages/Dashboard/DashboardLogic.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:beebetter/widgets/Cards/PreviousEntry.dart';
 
-class BrowseTab extends StatelessWidget {
-  const BrowseTab({super.key});
+class BrowseTab extends StatefulWidget {
+  @override
+  BrowseTabStatefulState createState() => BrowseTabStatefulState();
+}
+class BrowseTabStatefulState extends State<BrowseTab> {
+  String? expandedIndex;
 
   @override
   Widget build(BuildContext context) {
@@ -137,47 +141,52 @@ class BrowseTab extends StatelessWidget {
 
           const SizedBox(height: 16),
 
-          Card(
-            color: colorScheme.onPrimary,
-            shadowColor: colorScheme.inversePrimary,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
+          // ---------------------------------------------------
+          // List of Entries
+          // ---------------------------------------------------
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // ---------------------------------------------------
+              // List of Entries
+              // ---------------------------------------------------
+              if (logic.entries.isEmpty)
+                Text(
+                  "No entries for this day.",
+                  style: textTheme.bodyMedium
+                      ?.copyWith(color: colorScheme.primary.withAlpha(160)),
+                )
+              else
+                Column(
+                  children: logic.entries.map((entry) {
+                    final index = entry.id;
 
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // ---------------------------------------------------
-                  // Prompt List
-                  // ---------------------------------------------------
-                  if (logic.prompts.isEmpty)
-                    Text(
-                      "No entries for this day.",
-                      style: textTheme.bodyMedium
-                          ?.copyWith(color: colorScheme.primary.withAlpha(160)),
-                    )
-                  else
-                    Column(
-                      children: logic.prompts.map((prompt) {
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 12),
-                          child: PreviousEntry(
-                            prompt: prompt.title,
-                            category: prompt.category,
-                            isText: prompt.isText ?? false,
-                          ),
-                        );
-                      }).toList(),
-                  ),
-                ],
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 4),
+                      child: PreviousEntry(
+                        prompt: entry.title,
+                        category: entry.category,
+                        isText: entry.isText ?? false,
+                        userInput: entry.userInput,
+                        emotions: entry.emotions,
+                        isExpanded: expandedIndex == index,
+                        onTap: () {
+                          setState(() {
+                            if (expandedIndex == index) {
+                              expandedIndex = null;
+                            } else {
+                              expandedIndex = index;
+                            }
+                          });
+                        },
+                      ),
+                    );
+                  }).toList(),
               ),
-            ),
-          ),
+            ],
+        ),
 
           const SizedBox(height: 40),
         ],

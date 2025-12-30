@@ -64,8 +64,6 @@ class DashboardUI extends StatelessWidget {
               ],
             ),
 
-            const SizedBox(height: 16),
-
             // ---------------------------------------------------
             // Tab Views
             // ---------------------------------------------------
@@ -76,12 +74,12 @@ class DashboardUI extends StatelessWidget {
                     // ---------------------------------------------------
                     // Insights Tab
                     // ---------------------------------------------------
-                    const InsightsTab(),
+                    InsightsTab(),
 
                     // ---------------------------------------------------
                     // Browse Tab
                     // ---------------------------------------------------
-                    const BrowseTab(),
+                    BrowseTab(),
                 ]
               ),
             ),

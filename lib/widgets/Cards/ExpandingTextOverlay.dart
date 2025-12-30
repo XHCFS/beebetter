@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:beebetter/widgets/DottedPattern.dart';
 import 'package:beebetter/widgets/Cards/MarkdownToolbar.dart';
 import 'package:beebetter/widgets/Cards/MarkdownFormatter.dart';
@@ -11,6 +12,7 @@ class ExpandingTextOverlay extends StatefulWidget {
   final String initialText;
   final void Function(String) onClose;
   final bool isGuided;
+  final bool isReadOnly;
 
   const ExpandingTextOverlay({
     required this.startOffset,
@@ -19,6 +21,7 @@ class ExpandingTextOverlay extends StatefulWidget {
     required this.initialText,
     required this.onClose,
     required this.isGuided,
+    required this.isReadOnly,
   });
 
   @override
@@ -198,7 +201,7 @@ class ExpandingTextOverlayState extends State<ExpandingTextOverlay> {
                                         crossAxisAlignment: CrossAxisAlignment.center,
                                         children: [
                                           // -----------------------------------
-                                          // Icon
+                                          // Back Icon
                                           // -----------------------------------
                                           IconButton(
                                             icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.primary),
@@ -221,16 +224,20 @@ class ExpandingTextOverlayState extends State<ExpandingTextOverlay> {
                                               ),
                                             ),
                                           ),
-                                          IconButton(
-                                            tooltip: 'Markdown',
-                                            icon: Icon(
-                                              showToolbar ? Symbols.code_off_rounded : Symbols.code_rounded,
-                                              color: colorScheme.primary,
-                                              weight: 600,
+                                          // -----------------------------------
+                                          // Markdown Icon
+                                          // -----------------------------------
+                                          if(!widget.isReadOnly)
+                                            IconButton(
+                                              tooltip: 'Markdown',
+                                              icon: Icon(
+                                                showToolbar ? Symbols.code_off_rounded : Symbols.code_rounded,
+                                                color: colorScheme.primary,
+                                                weight: 600,
+                                              ),
+                                              padding: EdgeInsets.zero,
+                                              onPressed: toggleToolbar,
                                             ),
-                                            padding: EdgeInsets.zero,
-                                            onPressed: toggleToolbar,
-                                          ),
                                         ],
                                       ),
                                     ),
@@ -274,65 +281,66 @@ class ExpandingTextOverlayState extends State<ExpandingTextOverlay> {
                                 // -----------------------------------
                                 // Markdown
                                 // -----------------------------------
-                                TweenAnimationBuilder<double>(
-                                  tween: Tween<double>(
-                                    begin: 0,
-                                    end: showToolbar ? 1 : 0,
-                                  ),
-                                  duration: const Duration(milliseconds: 250),
-                                  curve: Curves.easeOutCubic,
-                                  builder: (context, value, child) {
-                                    return ClipRect(
-                                      child: Align(
-                                        heightFactor: value,
-                                        child: Transform.translate(
-                                          offset: Offset(0, -12 * (1 - value)),
-                                          child: Opacity(
-                                            opacity: value,
-                                            child: child,
+                                if(!widget.isReadOnly)
+                                  TweenAnimationBuilder<double>(
+                                    tween: Tween<double>(
+                                      begin: 0,
+                                      end: showToolbar ? 1 : 0,
+                                    ),
+                                    duration: const Duration(milliseconds: 250),
+                                    curve: Curves.easeOutCubic,
+                                    builder: (context, value, child) {
+                                      return ClipRect(
+                                        child: Align(
+                                          heightFactor: value,
+                                          child: Transform.translate(
+                                            offset: Offset(0, -12 * (1 - value)),
+                                            child: Opacity(
+                                              opacity: value,
+                                              child: child,
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                    );
-                                  },
-                                  child: MarkdownToolbar(controller: controller),
-                                ),
+                                      );
+                                    },
+                                    child: MarkdownToolbar(controller: controller),
+                                  ),
 
                                 // -----------------------------------
                                 // Prompt
                                 // -----------------------------------
                                 if(widget.isGuided)
-                                TweenAnimationBuilder<double>(
-                                  tween: Tween<double>(
-                                    begin: 0,
-                                    end: showPrompt ? 1 : 0,
-                                  ),
-                                  duration: const Duration(milliseconds: 250),
-                                  curve: Curves.easeOutCubic,
-                                  builder: (context, value, child) {
-                                    return ClipRect(
-                                      child: Align(
-                                        heightFactor: value,
-                                        child: Transform.translate(
-                                          offset: Offset(0, -12 * (1 - value)),
-                                          child: Opacity(
-                                            opacity: value,
-                                            child: child,
+                                  TweenAnimationBuilder<double>(
+                                    tween: Tween<double>(
+                                      begin: 0,
+                                      end: showPrompt ? 1 : 0,
+                                    ),
+                                    duration: const Duration(milliseconds: 250),
+                                    curve: Curves.easeOutCubic,
+                                    builder: (context, value, child) {
+                                      return ClipRect(
+                                        child: Align(
+                                          heightFactor: value,
+                                          child: Transform.translate(
+                                            offset: Offset(0, -12 * (1 - value)),
+                                            child: Opacity(
+                                              opacity: value,
+                                              child: child,
+                                            ),
                                           ),
                                         ),
+                                      );
+                                    },
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(top: 16),
+                                      child: Text(
+                                          widget.title,
+                                          style: textTheme.titleMedium?.copyWith(
+                                            color: colorScheme.primary,)
                                       ),
-                                    );
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(top: 16),
-                                    child: Text(
-                                        widget.title,
-                                        style: textTheme.titleMedium?.copyWith(
-                                          color: colorScheme.primary,)
                                     ),
-                                  ),
 
-                                ),
+                                  ),
 
                                 // -----------------------------------
                                 // Text Field
@@ -342,7 +350,44 @@ class ExpandingTextOverlayState extends State<ExpandingTextOverlay> {
                                     duration: const Duration(milliseconds: 200),
                                     curve: Curves.easeOut,
                                     padding: EdgeInsets.fromLTRB(16, 16, 16, keyboardInset,),
-                                    child: TextField(
+                                    child: widget.isReadOnly ?
+                                    SingleChildScrollView(
+                                        child: MarkdownBody(
+                                          data: controller.text.trimLeft(),
+                                          styleSheet: MarkdownStyleSheet.fromTheme(
+                                            Theme.of(context),
+                                          ).copyWith(
+                                            p: textTheme.bodyMedium?.copyWith(
+                                              color: colorScheme.primary,
+                                            ),
+                                            h1: textTheme.headlineSmall?.copyWith(
+                                              color: colorScheme.primary,
+                                            ),
+                                            h2: textTheme.titleLarge?.copyWith(
+                                              color: colorScheme.primary,
+                                            ),
+                                            h3: textTheme.titleMedium?.copyWith(
+                                              color: colorScheme.primary,
+                                            ),
+                                            strong: TextStyle(
+                                              color: colorScheme.primary,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                            em: TextStyle(
+                                              color: colorScheme.primary,
+                                              fontStyle: FontStyle.italic,
+                                            ),
+                                            listBullet: textTheme.bodyMedium?.copyWith(
+                                              color: colorScheme.primary,
+                                            ),
+                                            checkbox: textTheme.bodyMedium?.copyWith(
+                                              color: colorScheme.primary,
+                                            ),
+                                          ),
+                                          ),
+                                    ):
+
+                                    TextField(
                                       controller: controller,
                                       maxLines: null,
                                       expands: true,

@@ -105,6 +105,7 @@ class EntryInputState extends State<EntryInput> with TickerProviderStateMixin {
             overlayEntry = null;
           },
           isGuided: false,
+          isReadOnly: false,
         );
       },
     );
