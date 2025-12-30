@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:beebetter/services/database_provider.dart';
+import 'package:beebetter/services/profile_manager.dart';
 
 class TodayPageLogic extends ChangeNotifier {
   String username = "User";
@@ -23,13 +24,14 @@ class TodayPageLogic extends ChangeNotifier {
     notifyListeners();
 
     try {
-      // Load user profile
-      final user = await DatabaseProvider.instance.getOrCreateUser();
-      username = user.name;
+      // Load profile
+      await ProfileManager.instance.initialize();
+      final profile = await ProfileManager.instance.getCurrentProfile();
+      if (profile == null) return;
+      username = profile.name;
 
       // Load today's entries count
-      final userId = user.id;
-      completedEntries = await DatabaseProvider.instance.getTodayEntriesCount(userId: userId);
+      completedEntries = await DatabaseProvider.instance.getTodayEntriesCount(userId: profile.id);
     } catch (e) {
       debugPrint('Error loading today page data: $e');
     } finally {
