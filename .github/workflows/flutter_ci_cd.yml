@@ -45,14 +45,12 @@ jobs:
     
     - name: Precache Flutter artifacts
       run: |
-        flutter precache --android
+        flutter precache --android --force
         echo "Flutter artifacts precached"
-    
-    - name: Verify Flutter engine artifacts
-      run: |
-        echo "Checking Flutter engine artifacts location:"
-        ls -la "$FLUTTER_ROOT/bin/cache/artifacts/engine/android" || echo "Engine artifacts not found at expected location"
-        echo "Flutter SDK path: $FLUTTER_ROOT"
+        echo "Checking for engine artifacts:"
+        find "$FLUTTER_ROOT" -type d -name "android" -path "*/artifacts/engine/*" 2>/dev/null | head -5 || echo "No android artifacts found"
+        echo "Flutter cache structure:"
+        ls -la "$FLUTTER_ROOT/bin/cache/" 2>/dev/null || echo "Cache directory not found"
     
     - name: Verify Flutter setup
       run: |

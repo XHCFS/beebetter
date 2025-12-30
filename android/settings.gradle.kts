@@ -14,15 +14,17 @@ pluginManagement {
         google()
         mavenCentral()
         gradlePluginPortal()
-        // Flutter engine artifacts repository
-        if (flutterSdkPath != null) {
-            maven {
-                url = uri("${flutterSdkPath}/bin/cache/artifacts/engine/android")
-            }
-        }
-        // Flutter hosted Maven repository (fallback)
+        // Flutter hosted Maven repository (primary source)
         maven {
             url = uri("https://storage.googleapis.com/download.flutter.io")
+        }
+        // Flutter engine artifacts repository (local cache, if available)
+        val localArtifactsPath = "${flutterSdkPath}/bin/cache/artifacts/engine/android"
+        val localArtifactsDir = java.io.File(localArtifactsPath)
+        if (localArtifactsDir.exists() && localArtifactsDir.isDirectory) {
+            maven {
+                url = uri(localArtifactsPath)
+            }
         }
     }
 }

@@ -14,15 +14,21 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        // Flutter engine artifacts repository (required to resolve io.flutter:flutter_embedding_*)
-        if (flutterSdkPath != null) {
-            maven {
-                url = uri("${flutterSdkPath}/bin/cache/artifacts/engine/android")
-            }
-        }
-        // Flutter hosted Maven repository (fallback)
+        // Flutter hosted Maven repository (primary source for Flutter engine artifacts)
+        // This is the official repository where Flutter publishes engine artifacts
         maven {
             url = uri("https://storage.googleapis.com/download.flutter.io")
+        }
+        // Flutter engine artifacts repository (local cache, if available)
+        // Note: This path may not exist in CI, so we rely on the hosted repository above
+        if (flutterSdkPath != null) {
+            val localArtifactsPath = "${flutterSdkPath}/bin/cache/artifacts/engine/android"
+            val localArtifactsDir = java.io.File(localArtifactsPath)
+            if (localArtifactsDir.exists() && localArtifactsDir.isDirectory) {
+                maven {
+                    url = uri(localArtifactsPath)
+                }
+            }
         }
     }
 }
