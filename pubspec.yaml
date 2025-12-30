@@ -33,6 +33,7 @@ dependencies:
   drift:
   drift_flutter:
   path:
+  intl: ^0.20.2
   onnxruntime: ^1.4.1
   permission_handler: ^11.3.1
   intl: ^0.18.1
