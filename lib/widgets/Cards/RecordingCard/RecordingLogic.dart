@@ -37,7 +37,19 @@ class RecordingLogic extends ChangeNotifier {
   // Callback when recording is complete
   final void Function(bool canContinue)? onRecordingComplete;
 
-  RecordingLogic({this.onRecordingComplete});
+  String? filePath;
+
+  RecordingLogic({this.onRecordingComplete, this.filePath});
+
+  RecordingLogic.fromFile(String path, {this.onRecordingComplete}) {
+    filePath = path;
+    _state = RecordingState.stopped;
+    isPaused = false;
+    isPlayback = false;
+    elapsed = Duration.zero;
+    amplitudes.count = 0;
+  }
+
 
   // ---------------------------------------------------
   // State getters

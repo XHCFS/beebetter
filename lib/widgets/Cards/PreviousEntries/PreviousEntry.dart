@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:beebetter/widgets/Cards/ExpandingTextOverlay.dart';
+import 'package:beebetter/widgets/Cards/PreviousEntries/VoiceEntryPlayer.dart';
+import 'package:beebetter/widgets/Cards/RecordingCard/RecordingLogic.dart';
 
 class PreviousEntry extends StatefulWidget {
   final String prompt;
@@ -196,38 +198,45 @@ class _PreviousEntryState extends State<PreviousEntry>
                     // ---------------------------------------------------
                     // Entry Text
                     // ---------------------------------------------------
-                    if (widget.userInput != null && widget.userInput!.isNotEmpty)
-                      GestureDetector(
-                        onTap: () {
-                          final renderBox = context.findRenderObject() as RenderBox;
-                          final offset = renderBox.localToGlobal(Offset.zero);
-                          final size = renderBox.size;
+                    if(!widget.isText)
+                      if (widget.userInput != null && widget.userInput!.isNotEmpty)
+                        GestureDetector(
+                          onTap: () {
+                            final renderBox = context.findRenderObject() as RenderBox;
+                            final offset = renderBox.localToGlobal(Offset.zero);
+                            final size = renderBox.size;
 
-                          overlayEntry = OverlayEntry(
-                            builder: (context) => ExpandingTextOverlay(
-                              startOffset: offset,
-                              startSize: size,
-                              title: widget.prompt,
-                              initialText: widget.userInput!,
-                              isGuided: false,
-                              isReadOnly: true,
-                              onClose: (text) {
-                                // Remove overlay when closed
-                                overlayEntry?.remove();
-                                overlayEntry = null;
-                              },
-                            ),
-                          );
+                            overlayEntry = OverlayEntry(
+                              builder: (context) => ExpandingTextOverlay(
+                                startOffset: offset,
+                                startSize: size,
+                                title: widget.prompt,
+                                initialText: widget.userInput!,
+                                isGuided: false,
+                                isReadOnly: true,
+                                onClose: (text) {
+                                  // Remove overlay when closed
+                                  overlayEntry?.remove();
+                                  overlayEntry = null;
+                                },
+                              ),
+                            );
 
-                          Overlay.of(context)?.insert(overlayEntry!);
-                        },
-                        child: Text(
-                          widget.userInput!,
-                          maxLines: 4,
-                          overflow: TextOverflow.ellipsis,
-                          style: textTheme.bodyMedium?.copyWith(color: colorScheme.primary),
+                            Overlay.of(context)?.insert(overlayEntry!);
+                          },
+                          child: Text(
+                            widget.userInput!,
+                            maxLines: 4,
+                            overflow: TextOverflow.ellipsis,
+                            style: textTheme.bodyMedium?.copyWith(color: colorScheme.primary),
+                          ),
                         ),
-                      ),
+
+                    if(widget.isText)
+                      if (widget.userInput != null && widget.userInput!.isNotEmpty)
+                        VoiceEntryPlayer(
+                          logic: RecordingLogic.fromFile(widget.userInput!),
+                        ),
                   ],
                 ),
               ),

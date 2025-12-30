@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:beebetter/pages/Dashboard/DashboardLogic.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:beebetter/widgets/Cards/PreviousEntry.dart';
+import 'package:beebetter/widgets/Cards/PreviousEntries/PreviousEntry.dart';
 
 class BrowseTab extends StatefulWidget {
   @override
