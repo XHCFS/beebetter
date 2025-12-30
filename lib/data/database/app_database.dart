@@ -13,9 +13,13 @@ part 'app_database.g.dart';
 // import 'package:beebetter/data/database/app_database.dart';
 // final db = AppDatabase();
 
-@DriftDatabase(tables: [User, Prompts, Records, Moods])
+@DriftDatabase(tables: [User, Prompts, Records, Moods, PromptInteractions])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
+
+  // The new constructor for Tests
+  // This allows you to pass in NativeDatabase.memory() during testing
+  AppDatabase.forTesting(DatabaseConnection connection) : super(connection);
 
   @override
   int get schemaVersion => 1;

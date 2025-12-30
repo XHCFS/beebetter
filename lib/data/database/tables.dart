@@ -66,6 +66,7 @@ enum Mood {
   apprehensive,
 }
 
+
 enum MoodSource {
   user,
   ai,
@@ -77,30 +78,44 @@ enum InputType {
   written,
 }
 
-// possibly add several profiles
 class User extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get name => text()();
   IntColumn get age => integer().nullable()();
+
+  IntColumn get currentDifficultyLevel => integer().nullable()();
+  IntColumn get journalingStreak => integer().nullable()();
+  TextColumn get preferredCategories => text().nullable()();
+  TextColumn get avoidedPrompts => text().nullable()();
+  DateTimeColumn get lastDifficultyAdjustment => dateTime().nullable()();
+
 }
 
-// additional fields to be added once prompting system designed
 class Prompts extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get content => text()();
-}
 
-class Categories extends Table {
-  IntColumn get id => integer().autoIncrement()();
-  TextColumn get name => text()();
-}
 
-class PromptCategoryLinks extends Table {
-  IntColumn get promptId => integer().references(Prompts, #id)();
-  IntColumn get categoryId => integer().references(Categories, #id)();
+  TextColumn get therapeuticFramework => text()();
+  IntColumn get difficultyLevel => integer()();
+  TextColumn get category => text().nullable()();
 
-  @override
-  Set<Column> get primaryKey => {promptId, categoryId};
+  // IntColumn get estimatedTimeMinutes => integer()(); // Might remoce later
+
+  // JSON encoded list of Mood enum indexes
+  TextColumn get targetMoodStates => text().nullable()();
+
+  // morning / afternoon / evening / night
+  TextColumn get bestTimeOfDay => text().nullable()();
+
+  // tags for filtering & clustering
+  TextColumn get tags => text().nullable()();
+
+  // citation or reference
+  TextColumn get sourceCitation => text().nullable()();
+
+  // Prompts can be deactivated instead of deleted
+  BoolColumn get isActive => boolean().withDefault(const Constant(true))();
 }
 
 class Records extends Table {
@@ -129,4 +144,12 @@ class Moods extends Table {
   // source defines whether recorded mood is inferred by a model or not. will be useful in training
   IntColumn get source => integer()
       .clientDefault(() => MoodSource.user.index)();
+}
+
+class PromptInteractions extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  IntColumn get userId => integer().references(User, #id)();
+  IntColumn get promptId => integer().references(Prompts, #id)();
+  BoolColumn get completed => boolean()(); 
+  BoolColumn get skipped => boolean()(); 
 }
