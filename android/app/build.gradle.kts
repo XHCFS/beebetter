@@ -44,10 +44,12 @@ flutter {
 }
 
 dependencies {
-    // Flutter embedding is automatically provided by the Flutter Gradle plugin
-    // Do NOT add explicit io.flutter:flutter_embedding_* dependencies here
-    // The Flutter Gradle plugin (dev.flutter.flutter-gradle-plugin) handles this automatically
-    // with the correct versions matching your Flutter SDK
+    // The Flutter Gradle plugin should automatically add Flutter embedding dependencies.
+    // However, if it's not working, we can try to ensure the dependency is available.
+    // The plugin should handle this, but if compilation fails, check:
+    // 1. Flutter SDK path in local.properties is correct
+    // 2. Flutter artifacts are properly cached (run: flutter precache --android)
+    // 3. The Flutter Gradle plugin is correctly applied
     
     // Kotlin stdlib
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.1.0")
