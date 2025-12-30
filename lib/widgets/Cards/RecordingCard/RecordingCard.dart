@@ -92,7 +92,7 @@ class RecordingCardState extends State<RecordingCard> with SingleTickerProviderS
             "Recording... ${formatDuration(logic.elapsed)}",
             style: textTheme.titleMedium?.copyWith(color: colorScheme.primary.withAlpha(160)),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 8),
           Wrap(
             spacing: 16,
             runSpacing: 10,
@@ -135,7 +135,6 @@ class RecordingCardState extends State<RecordingCard> with SingleTickerProviderS
                   constraints: const BoxConstraints.expand(),
                 ),
               ),
-
               // ---------------------------------------------------
               // Stop
               // ---------------------------------------------------
@@ -153,6 +152,7 @@ class RecordingCardState extends State<RecordingCard> with SingleTickerProviderS
               ),
             ],
           ),
+          const SizedBox(height: 4),
         ],
       );
     }
@@ -217,6 +217,7 @@ class RecordingCardState extends State<RecordingCard> with SingleTickerProviderS
               ),
             ],
           ),
+          const SizedBox(height: 4),
         ],
       );
     }
