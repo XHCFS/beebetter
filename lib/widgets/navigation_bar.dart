@@ -20,16 +20,18 @@ class NavigationBarWidget extends StatelessWidget {
           topRight: Radius.circular(30),
         ),
         border: Border.all(
-          color: colorScheme.outline.withAlpha(77),
+          color: colorScheme.outline.withAlpha(128),
           width: 1,
         ),
       ),
-      child: ClipRRect(
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(30),
-          topRight: Radius.circular(30),
-        ),
-        child:  NavigationBarTheme(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: ClipRRect(
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(30),
+            topRight: Radius.circular(30),
+          ),
+          child:  NavigationBarTheme(
           data: NavigationBarThemeData(
             height: navBarHeight,
             backgroundColor: colorScheme.surface,
@@ -92,6 +94,7 @@ class NavigationBarWidget extends StatelessWidget {
               // ),
             ),
           ),
+        ),
         ),
       ),
     );

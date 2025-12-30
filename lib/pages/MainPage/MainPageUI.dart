@@ -75,7 +75,10 @@ class MainPageUI extends StatelessWidget {
             bottom: 0,
             left: 0,
             right: 0,
-            child: NavigationBarWidget(navBarHeight: navBarHeight),
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 8.0),
+              child: NavigationBarWidget(navBarHeight: navBarHeight),
+            ),
           ),
 
           // ---------------------------------------------------
