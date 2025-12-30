@@ -94,7 +94,7 @@ class RecordingLogic extends ChangeNotifier {
     if (!hasPermission) return;
 
     final dir = await getTemporaryDirectory();
-    final path = '${dir.path}/rec_${DateTime.now().millisecondsSinceEpoch}.m4a';
+    filePath = '${dir.path}/rec_${DateTime.now().millisecondsSinceEpoch}.m4a';
 
     await recorder.start(
         RecordConfig(
@@ -102,7 +102,7 @@ class RecordingLogic extends ChangeNotifier {
           sampleRate: 44100,
           numChannels: 1,
         ),
-      path: path,
+      path: filePath!,
     );
 
     _state = RecordingState.recording;
@@ -136,14 +136,29 @@ class RecordingLogic extends ChangeNotifier {
   Future<void> stopRecording() async {
     if (!isRecording) return;
 
-    _state = RecordingState.stopped;
-    isPaused = false;
-    isPlayback = false;
-
     elapsedTimer?.cancel();
     amplitudeTimer?.cancel();
 
     await recorder.stop();
+
+    _state = RecordingState.stopped;
+    isPaused = false;
+    isPlayback = false;
+
+    // Initialize player with the recorded file
+    if (filePath != null && File(filePath!).existsSync()) {
+      _initializePlayer();
+      // Load the audio file
+      try {
+        await _audioPlayer.setSource(DeviceFileSource(filePath!));
+        final duration = await _audioPlayer.getDuration();
+        if (duration != null) {
+          _duration = duration;
+        }
+      } catch (e) {
+        debugPrint('Error loading audio file: $e');
+      }
+    }
 
     if (canContinue) {
       onRecordingComplete?.call(true);
@@ -166,6 +181,8 @@ class RecordingLogic extends ChangeNotifier {
     isPlayback = false;
     elapsed = Duration.zero;
     amplitudes.count = 0;
+    filePath = null; // Clear file path when deleting
+    _audioPlayer.stop(); // Stop any playback
     notifyListeners();
   }
 
@@ -173,8 +190,14 @@ class RecordingLogic extends ChangeNotifier {
   // Playback
   // ---------------------------------------------------
   Future<void> togglePlayback() async {
-    if (filePath == null || !File(filePath!).existsSync()) {
-      debugPrint('No valid audio file to play');
+    if (filePath == null) {
+      debugPrint('No file path available');
+      return;
+    }
+
+    final file = File(filePath!);
+    if (!await file.exists()) {
+      debugPrint('Audio file does not exist: $filePath');
       return;
     }
 
@@ -183,16 +206,25 @@ class RecordingLogic extends ChangeNotifier {
         await _audioPlayer.pause();
         isPlayback = false;
       } else {
-        if (_playerState == PlayerState.stopped) {
-          await _audioPlayer.play(DeviceFileSource(filePath!));
-        } else {
-          await _audioPlayer.resume();
+        // Ensure source is set
+        if (_playerState == PlayerState.stopped || _duration == Duration.zero) {
+          await _audioPlayer.setSource(DeviceFileSource(filePath!));
         }
+        await _audioPlayer.resume();
         isPlayback = true;
       }
       notifyListeners();
     } catch (e) {
       debugPrint('Error toggling playback: $e');
+      // Try to reinitialize and play
+      try {
+        await _audioPlayer.setSource(DeviceFileSource(filePath!));
+        await _audioPlayer.resume();
+        isPlayback = true;
+        notifyListeners();
+      } catch (e2) {
+        debugPrint('Error retrying playback: $e2');
+      }
     }
   }
   

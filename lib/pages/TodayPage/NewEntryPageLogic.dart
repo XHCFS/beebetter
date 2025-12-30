@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:beebetter/classes/EntryInfo.dart';
 import 'package:beebetter/services/database_provider.dart';
+import 'package:beebetter/services/profile_manager.dart';
 import 'package:beebetter/services/audio_storage_service.dart';
 import 'package:beebetter/data/database/tables.dart';
 
@@ -71,6 +72,10 @@ class NewEntryPageLogic extends ChangeNotifier {
   void updateEntryInput(String value) {
     entryInfo.userInput = value;
     entryInfo.isVoiceLocked = value.isNotEmpty;
+    // Clear recording path when text is entered to prevent saving as voice
+    if (value.isNotEmpty && _recordingFilePath != null) {
+      _recordingFilePath = null;
+    }
     notifyListeners();
   }
 
@@ -108,18 +113,28 @@ class NewEntryPageLogic extends ChangeNotifier {
     notifyListeners();
 
     try {
-      // Get current user
-      final user = await DatabaseProvider.instance.getOrCreateUser();
+      // Get current profile
+      await ProfileManager.instance.initialize();
+      final profile = await ProfileManager.instance.getCurrentProfile();
+      if (profile == null) return false;
 
       // Filter out empty emotions
       final emotions = entryInfo.emotions.where((e) => e.isNotEmpty).toList();
 
       // Determine input type
+      // Priority: If both text and voice exist, prioritize text entry
       InputType inputType;
       String? content;
       String? audioFilePath;
       
-      if (hasVoice && _recordingFilePath != null) {
+      if (hasText) {
+        // Text entry takes priority
+        inputType = entryInfo.isText ? InputType.text : InputType.written;
+        content = entryInfo.userInput;
+        audioFilePath = null;
+        // Clear recording path since we're saving as text
+        _recordingFilePath = null;
+      } else if (hasVoice && _recordingFilePath != null) {
         // Voice entry - save recording to permanent storage
         final savedPath = await AudioStorageService.saveRecording(_recordingFilePath!);
         if (savedPath == null) {
@@ -130,15 +145,13 @@ class NewEntryPageLogic extends ChangeNotifier {
         inputType = InputType.voice;
         content = null; // Voice entries don't have text content
       } else {
-        // Text entry
-        inputType = entryInfo.isText ? InputType.text : InputType.written;
-        content = entryInfo.userInput;
-        audioFilePath = null;
+        // Should not reach here due to earlier check, but handle gracefully
+        return false;
       }
 
       // Save to database
       await DatabaseProvider.instance.saveEntry(
-        userId: user.id,
+        userId: profile.id,
         content: content,
         title: entryInfo.title,
         inputType: inputType,
