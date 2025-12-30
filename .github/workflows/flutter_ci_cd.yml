@@ -42,6 +42,12 @@ jobs:
         flutter precache --android
         echo "Flutter artifacts precached"
     
+    - name: Verify Flutter engine artifacts
+      run: |
+        echo "Checking Flutter engine artifacts location:"
+        ls -la "$FLUTTER_ROOT/bin/cache/artifacts/engine/android" || echo "Engine artifacts not found at expected location"
+        echo "Flutter SDK path: $FLUTTER_ROOT"
+    
     - name: Verify Flutter setup
       run: |
         flutter doctor -v
