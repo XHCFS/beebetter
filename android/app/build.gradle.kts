@@ -1,3 +1,6 @@
+import java.util.Properties
+import java.io.File
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
@@ -47,8 +50,8 @@ flutter {
 val flutterSdkPath: String? = run {
     val localPropertiesFile = rootProject.file("local.properties")
     if (localPropertiesFile.exists()) {
-        val properties = java.util.Properties()
-        localPropertiesFile.inputStream.use { properties.load(it) }
+        val properties = Properties()
+        localPropertiesFile.inputStream().use { properties.load(it) }
         properties.getProperty("flutter.sdk") ?: System.getenv("FLUTTER_ROOT")
     } else {
         System.getenv("FLUTTER_ROOT")
@@ -57,7 +60,7 @@ val flutterSdkPath: String? = run {
 
 val flutterEngineVersion: String? = run {
     if (flutterSdkPath != null) {
-        val engineVersionFile = java.io.File("$flutterSdkPath/bin/internal/engine.version")
+        val engineVersionFile = File("$flutterSdkPath/bin/internal/engine.version")
         if (engineVersionFile.exists()) {
             engineVersionFile.readText().trim()
         } else {
