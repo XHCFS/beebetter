@@ -15,6 +15,7 @@ class ExpandingTextOverlay extends StatefulWidget {
   final bool isReadOnly;
 
   const ExpandingTextOverlay({
+    super.key,
     required this.startOffset,
     required this.startSize,
     required this.title,

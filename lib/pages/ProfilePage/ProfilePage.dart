@@ -4,6 +4,8 @@ import 'package:beebetter/pages/ProfilePage/ProfilePageLogic.dart';
 import 'package:beebetter/pages/ProfilePage/ProfilePageUI.dart';
 
 class ProfilePage extends StatelessWidget{
+  const ProfilePage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(

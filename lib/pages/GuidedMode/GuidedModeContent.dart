@@ -5,6 +5,8 @@ import 'package:beebetter/pages/GuidedMode/GuidedModeUI.dart';
 import 'package:beebetter/widgets/HexagonPattern.dart';
 
 class GuidedModeContent extends StatelessWidget {
+  const GuidedModeContent({super.key});
+
   @override
   Widget build(BuildContext context) {
     final logic = context.watch<GuidedModeLogic>();

@@ -5,6 +5,8 @@ import 'package:beebetter/pages/GuidedMode/GuidedModeLogic.dart';
 import 'package:beebetter/pages/GuidedMode/GuidedModeContent.dart';
 
 class GuidedMode extends StatelessWidget{
+  const GuidedMode({super.key});
+
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(

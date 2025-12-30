@@ -42,9 +42,3 @@ android {
 flutter {
     source = "../.."
 }
-
-dependencies {
-    // Flutter embedding dependencies
-    implementation("io.flutter:flutter_embedding_debug:1.0.0-${flutter.versionName}")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.1.0")
-}

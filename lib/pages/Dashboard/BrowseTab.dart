@@ -7,6 +7,8 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:beebetter/widgets/Cards/PreviousEntries/PreviousEntry.dart';
 
 class BrowseTab extends StatefulWidget {
+  const BrowseTab({super.key});
+
   @override
   BrowseTabStatefulState createState() => BrowseTabStatefulState();
 }

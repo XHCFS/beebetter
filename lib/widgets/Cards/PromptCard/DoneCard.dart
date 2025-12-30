@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class DoneCard extends StatelessWidget {
+  const DoneCard({super.key});
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;

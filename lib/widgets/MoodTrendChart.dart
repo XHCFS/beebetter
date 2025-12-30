@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 
 class MoodTrendChart extends StatelessWidget {
-  final color;
-  final secondaryColor;
-  final moodValues;
+  final Color color;
+  final Color secondaryColor;
+  final List<int> moodValues;
 
-  MoodTrendChart({
+  const MoodTrendChart({
+    super.key,
     required this.color,
     required this.secondaryColor,
     required this.moodValues,

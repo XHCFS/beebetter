@@ -5,7 +5,7 @@ import 'package:beebetter/pages/MainPage/MainPageLogic.dart';
 
 class NavigationBarWidget extends StatelessWidget {
   final double navBarHeight;
-  const NavigationBarWidget({required this.navBarHeight});
+  const NavigationBarWidget({super.key, required this.navBarHeight});
 
   @override
   Widget build(BuildContext context) {
