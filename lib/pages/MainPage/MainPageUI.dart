@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:beebetter/widgets/BackgroundGradient.dart';
-import 'package:beebetter/widgets/NavigationBar.dart';
+import 'package:beebetter/widgets/navigation_bar.dart';
 import 'package:beebetter/pages/TodayPage/TodayPage.dart';
 import 'package:beebetter/pages/MainPage/GuidedModeOverlay.dart';
 import 'package:beebetter/pages/Dashboard/Dashboard.dart';
