@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
-import 'package:beebetter/widgets/DottedPattern.dart';
+import 'package:beebetter/widgets/dotted_pattern.dart';
 import 'package:beebetter/widgets/Cards/MarkdownToolbar.dart';
 import 'package:beebetter/widgets/Cards/MarkdownFormatter.dart';
 

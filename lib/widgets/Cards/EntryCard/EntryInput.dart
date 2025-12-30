@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
-import 'package:beebetter/widgets/Cards/RecordingCard/RecordingLogic.dart';
+import 'package:beebetter/widgets/Cards/RecordingCard/recording_logic.dart';
 import 'package:beebetter/pages/TodayPage/NewEntryPageLogic.dart';
 import 'package:beebetter/widgets/Cards/RecordingCard/RecordingCard.dart';
 import 'package:beebetter/widgets/Cards/ExpandingTextOverlay.dart';

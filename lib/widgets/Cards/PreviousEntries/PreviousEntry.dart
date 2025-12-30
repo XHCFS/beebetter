@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:beebetter/widgets/Cards/ExpandingTextOverlay.dart';
 import 'package:beebetter/widgets/Cards/PreviousEntries/VoiceEntryPlayer.dart';
-import 'package:beebetter/widgets/Cards/RecordingCard/RecordingLogic.dart';
+import 'package:beebetter/widgets/Cards/RecordingCard/recording_logic.dart';
 
 class PreviousEntry extends StatefulWidget {
   final String prompt;

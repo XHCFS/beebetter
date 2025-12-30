@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:material_symbols_icons/symbols.dart';
-import 'package:beebetter/widgets/Cards/RecordingCard/RecordingLogic.dart';
+import 'package:beebetter/widgets/Cards/RecordingCard/recording_logic.dart';
 import 'package:beebetter/widgets/Cards/RecordingCard/RecordingIndicator.dart';
 
 class VoiceEntryPlayer extends StatefulWidget {
