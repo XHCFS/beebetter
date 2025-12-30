@@ -37,6 +37,12 @@ jobs:
     - name: Clean build
       run: flutter clean
     
+    - name: Clear Gradle cache
+      run: |
+        cd android
+        rm -rf .gradle build app/build
+        echo "Gradle cache cleared"
+    
     - name: Precache Flutter artifacts
       run: |
         flutter precache --android
