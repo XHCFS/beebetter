@@ -352,39 +352,42 @@ class ExpandingTextOverlayState extends State<ExpandingTextOverlay> {
                                     padding: EdgeInsets.fromLTRB(16, 16, 16, keyboardInset,),
                                     child: widget.isReadOnly ?
                                     SingleChildScrollView(
-                                        child: MarkdownBody(
-                                          data: controller.text.trimLeft(),
-                                          styleSheet: MarkdownStyleSheet.fromTheme(
-                                            Theme.of(context),
-                                          ).copyWith(
-                                            p: textTheme.bodyMedium?.copyWith(
-                                              color: colorScheme.primary,
+                                        child: Container(
+                                          width: double.infinity,
+                                          child: MarkdownBody(
+                                            data: controller.text.trimLeft(),
+                                            styleSheet: MarkdownStyleSheet.fromTheme(
+                                                Theme.of(context),
+                                              ).copyWith(
+                                                p: textTheme.bodyMedium?.copyWith(
+                                                  color: colorScheme.primary,
+                                                ),
+                                                h1: textTheme.headlineSmall?.copyWith(
+                                                  color: colorScheme.primary,
+                                                ),
+                                                h2: textTheme.titleLarge?.copyWith(
+                                                  color: colorScheme.primary,
+                                                ),
+                                                h3: textTheme.titleMedium?.copyWith(
+                                                  color: colorScheme.primary,
+                                                ),
+                                                strong: TextStyle(
+                                                  color: colorScheme.primary,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                                em: TextStyle(
+                                                  color: colorScheme.primary,
+                                                  fontStyle: FontStyle.italic,
+                                                ),
+                                                listBullet: textTheme.bodyMedium?.copyWith(
+                                                  color: colorScheme.primary,
+                                                ),
+                                                checkbox: textTheme.bodyMedium?.copyWith(
+                                                  color: colorScheme.primary,
+                                                ),
+                                              ),
                                             ),
-                                            h1: textTheme.headlineSmall?.copyWith(
-                                              color: colorScheme.primary,
-                                            ),
-                                            h2: textTheme.titleLarge?.copyWith(
-                                              color: colorScheme.primary,
-                                            ),
-                                            h3: textTheme.titleMedium?.copyWith(
-                                              color: colorScheme.primary,
-                                            ),
-                                            strong: TextStyle(
-                                              color: colorScheme.primary,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                            em: TextStyle(
-                                              color: colorScheme.primary,
-                                              fontStyle: FontStyle.italic,
-                                            ),
-                                            listBullet: textTheme.bodyMedium?.copyWith(
-                                              color: colorScheme.primary,
-                                            ),
-                                            checkbox: textTheme.bodyMedium?.copyWith(
-                                              color: colorScheme.primary,
-                                            ),
-                                          ),
-                                          ),
+                                        ),
                                     ):
 
                                     TextField(

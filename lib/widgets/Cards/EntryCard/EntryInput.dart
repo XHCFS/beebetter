@@ -270,38 +270,43 @@ class EntryInputState extends State<EntryInput> with TickerProviderStateMixin {
                               color: colorScheme.primary.withAlpha(128),
                             ),
                           )
-                              : MarkdownBody(
-                            data: widget.controller.text.trimLeft(),
-                            styleSheet: MarkdownStyleSheet.fromTheme(
-                              Theme.of(context),
-                            ).copyWith(
-                              p: textTheme.bodyMedium?.copyWith(
-                                color: colorScheme.primary,
+                              : SingleChildScrollView(
+                                  child: Container(
+                                    width: double.infinity,
+                                    child:MarkdownBody(
+                                      data: widget.controller.text.trimLeft(),
+                                      styleSheet: MarkdownStyleSheet.fromTheme(
+                                        Theme.of(context),
+                                      ).copyWith(
+                                        p: textTheme.bodyMedium?.copyWith(
+                                          color: colorScheme.primary,
+                                        ),
+                                        h1: textTheme.headlineSmall?.copyWith(
+                                          color: colorScheme.primary,
+                                        ),
+                                        h2: textTheme.titleLarge?.copyWith(
+                                          color: colorScheme.primary,
+                                        ),
+                                        h3: textTheme.titleMedium?.copyWith(
+                                          color: colorScheme.primary,
+                                        ),
+                                        strong: TextStyle(
+                                          color: colorScheme.primary,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        em: TextStyle(
+                                          color: colorScheme.primary,
+                                          fontStyle: FontStyle.italic,
+                                        ),
+                                        listBullet: textTheme.bodyMedium?.copyWith(
+                                          color: colorScheme.primary,
+                                        ),
+                                        checkbox: textTheme.bodyMedium?.copyWith(
+                                          color: colorScheme.primary,
+                                        ),
+                                      ),
+                                  ),
                               ),
-                              h1: textTheme.headlineSmall?.copyWith(
-                                color: colorScheme.primary,
-                              ),
-                              h2: textTheme.titleLarge?.copyWith(
-                                color: colorScheme.primary,
-                              ),
-                              h3: textTheme.titleMedium?.copyWith(
-                                color: colorScheme.primary,
-                              ),
-                              strong: TextStyle(
-                                color: colorScheme.primary,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              em: TextStyle(
-                                color: colorScheme.primary,
-                                fontStyle: FontStyle.italic,
-                              ),
-                              listBullet: textTheme.bodyMedium?.copyWith(
-                                color: colorScheme.primary,
-                              ),
-                              checkbox: textTheme.bodyMedium?.copyWith(
-                                color: colorScheme.primary,
-                              ),
-                            ),
                           ),
                         ),
                       ),
