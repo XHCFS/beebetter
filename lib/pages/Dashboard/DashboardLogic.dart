@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:beebetter/classes/EntryInfo.dart';
 import 'package:beebetter/services/database_provider.dart';
-import 'package:beebetter/services/profile_manager.dart';
 import 'package:beebetter/data/database/tables.dart';
 
 class DashboardLogic extends ChangeNotifier {
@@ -61,18 +60,16 @@ class DashboardLogic extends ChangeNotifier {
     notifyListeners();
 
     try {
-      await ProfileManager.instance.initialize();
-      final profile = await ProfileManager.instance.getCurrentProfile();
-      if (profile == null) return;
-      final profileId = profile.id;
+      final user = await DatabaseProvider.instance.getOrCreateUser();
+      final userId = user.id;
 
       // Load statistics
-      totalEntries = await DatabaseProvider.instance.getTotalEntries(userId: profileId);
-      daysTracked = await DatabaseProvider.instance.getDaysTracked(userId: profileId);
-      streak = await DatabaseProvider.instance.getStreak(userId: profileId);
+      totalEntries = await DatabaseProvider.instance.getTotalEntries(userId: userId);
+      daysTracked = await DatabaseProvider.instance.getDaysTracked(userId: userId);
+      streak = await DatabaseProvider.instance.getStreak(userId: userId);
 
       // Load entries grouped by date
-      entriesByDay = await DatabaseProvider.instance.getEntriesByDate(userId: profileId);
+      entriesByDay = await DatabaseProvider.instance.getEntriesByDate(userId: userId);
 
       // Load entries for selected day
       await _loadEntriesForSelectedDay();
@@ -93,11 +90,10 @@ class DashboardLogic extends ChangeNotifier {
   /// Load entries for the currently selected day
   Future<void> _loadEntriesForSelectedDay() async {
     try {
-      final profile = await ProfileManager.instance.getCurrentProfile();
-      if (profile == null) return;
+      final user = await DatabaseProvider.instance.getOrCreateUser();
       entries = await DatabaseProvider.instance.getEntriesForDate(
         _selectedDay,
-        userId: profile.id,
+        userId: user.id,
       );
       filteredEntries = entries; // Initially, filtered entries = all entries
     } catch (e) {
@@ -466,11 +462,10 @@ class DashboardLogic extends ChangeNotifier {
       }
 
       // Update statistics
-      final profile = await ProfileManager.instance.getCurrentProfile();
-      if (profile == null) return;
-      totalEntries = await DatabaseProvider.instance.getTotalEntries(userId: profile.id);
-      daysTracked = await DatabaseProvider.instance.getDaysTracked(userId: profile.id);
-      streak = await DatabaseProvider.instance.getStreak(userId: profile.id);
+      final user = await DatabaseProvider.instance.getOrCreateUser();
+      totalEntries = await DatabaseProvider.instance.getTotalEntries(userId: user.id);
+      daysTracked = await DatabaseProvider.instance.getDaysTracked(userId: user.id);
+      streak = await DatabaseProvider.instance.getStreak(userId: user.id);
 
       notifyListeners();
     } catch (e) {
@@ -487,11 +482,10 @@ class DashboardLogic extends ChangeNotifier {
     }
 
     try {
-      final profile = await ProfileManager.instance.getCurrentProfile();
-      if (profile == null) return;
+      final user = await DatabaseProvider.instance.getOrCreateUser();
       filteredEntries = await DatabaseProvider.instance.searchEntries(
         query,
-        userId: profile.id,
+        userId: user.id,
       );
       notifyListeners();
     } catch (e) {

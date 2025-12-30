@@ -48,17 +48,20 @@ class RecordingCardState extends State<RecordingCard> with SingleTickerProviderS
           ),
         ),
         content: Text(
-          "Your recording will be saved. You can review it before continuing.",
+          "Your recording will be saved.",
           style: textTheme.bodyMedium?.copyWith(
             color: colorScheme.primary.withAlpha(200),
           ),
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () {
+              Navigator.pop(context);
+              logic.delete(); // Cancel and delete
+            },
             child: Text(
               "Cancel",
-              style: TextStyle(color: colorScheme.primary.withAlpha(160)),
+              style: TextStyle(color: colorScheme.error),
             ),
           ),
           FilledButton(
@@ -70,7 +73,7 @@ class RecordingCardState extends State<RecordingCard> with SingleTickerProviderS
               backgroundColor: colorScheme.primary,
               foregroundColor: colorScheme.onPrimary,
             ),
-            child: const Text("Stop & Save"),
+            child: const Text("Save"),
           ),
         ],
       ),

@@ -160,9 +160,8 @@ class RecordingLogic extends ChangeNotifier {
       }
     }
 
-    if (canContinue) {
-      onRecordingComplete?.call(true);
-    }
+    // Always notify completion when stopped
+    onRecordingComplete?.call(canContinue);
 
     notifyListeners();
   }
@@ -206,9 +205,14 @@ class RecordingLogic extends ChangeNotifier {
         await _audioPlayer.pause();
         isPlayback = false;
       } else {
-        // Ensure source is set
-        if (_playerState == PlayerState.stopped || _duration == Duration.zero) {
-          await _audioPlayer.setSource(DeviceFileSource(filePath!));
+        // Always set source before playing to ensure it's loaded
+        await _audioPlayer.setSource(DeviceFileSource(filePath!));
+        // Wait a moment for source to be set
+        await Future.delayed(const Duration(milliseconds: 100));
+        // Get duration after setting source
+        final duration = await _audioPlayer.getDuration();
+        if (duration != null) {
+          _duration = duration;
         }
         await _audioPlayer.resume();
         isPlayback = true;
@@ -218,7 +222,12 @@ class RecordingLogic extends ChangeNotifier {
       debugPrint('Error toggling playback: $e');
       // Try to reinitialize and play
       try {
+        _initializePlayer();
         await _audioPlayer.setSource(DeviceFileSource(filePath!));
+        final duration = await _audioPlayer.getDuration();
+        if (duration != null) {
+          _duration = duration;
+        }
         await _audioPlayer.resume();
         isPlayback = true;
         notifyListeners();

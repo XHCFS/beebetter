@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:beebetter/classes/EntryInfo.dart';
 import 'package:beebetter/services/database_provider.dart';
-import 'package:beebetter/services/profile_manager.dart';
 import 'package:beebetter/services/audio_storage_service.dart';
 import 'package:beebetter/data/database/tables.dart';
 
@@ -113,10 +112,8 @@ class NewEntryPageLogic extends ChangeNotifier {
     notifyListeners();
 
     try {
-      // Get current profile
-      await ProfileManager.instance.initialize();
-      final profile = await ProfileManager.instance.getCurrentProfile();
-      if (profile == null) return false;
+      // Get current user
+      final user = await DatabaseProvider.instance.getOrCreateUser();
 
       // Filter out empty emotions
       final emotions = entryInfo.emotions.where((e) => e.isNotEmpty).toList();
@@ -151,7 +148,7 @@ class NewEntryPageLogic extends ChangeNotifier {
 
       // Save to database
       await DatabaseProvider.instance.saveEntry(
-        userId: profile.id,
+        userId: user.id,
         content: content,
         title: entryInfo.title,
         inputType: inputType,

@@ -328,10 +328,16 @@ class EntryInputState extends State<EntryInput> with TickerProviderStateMixin {
                       child: Builder(
                         builder: (context) {
                           final recordingLogic = context.watch<RecordingLogic>();
-                          // Store recording file path when recording is stopped
-                          if (recordingLogic.isStopped && recordingLogic.filePath != null) {
+                          // Store recording file path when recording is stopped and auto-save for voice-only
+                          if (recordingLogic.isStopped && recordingLogic.filePath != null && !logic.entryInfo.isVoiceLocked) {
                             WidgetsBinding.instance.addPostFrameCallback((_) {
                               logic.setRecordingFilePath(recordingLogic.filePath);
+                              // Auto-flip for voice-only entries (no continue button)
+                              if (logic.entryInfo.userInput.trim().isEmpty && recordingLogic.canContinue) {
+                                Future.delayed(const Duration(milliseconds: 500), () {
+                                  widget.onFlip();
+                                });
+                              }
                             });
                           }
                           return RecordingCard();
@@ -346,14 +352,15 @@ class EntryInputState extends State<EntryInput> with TickerProviderStateMixin {
             const SizedBox(height: 16),
 
             // ---------------------------------------------------
-            // Continue Button
+            // Continue Button (hide for voice-only entries)
             // ---------------------------------------------------
-            OutlinedButton(
-              onPressed: (widget.canContinue)
-                  ? ()  {
-                widget.onFlip();
-              }
-                  : null,
+            if (!(logic.entryInfo.isVoiceLocked && logic.entryInfo.userInput.trim().isEmpty))
+              OutlinedButton(
+                onPressed: (widget.canContinue)
+                    ? ()  {
+                  widget.onFlip();
+                }
+                    : null,
               style: OutlinedButton.styleFrom(
                 padding: EdgeInsets.zero,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
