@@ -42,3 +42,9 @@ android {
 flutter {
     source = "../.."
 }
+
+dependencies {
+    // Flutter embedding is automatically provided by the Flutter Gradle plugin
+    // but we ensure Kotlin stdlib is available
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.1.0")
+}

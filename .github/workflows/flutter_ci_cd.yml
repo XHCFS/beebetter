@@ -34,6 +34,11 @@ jobs:
     
     - name: Clean build
       run: flutter clean
+    
+    - name: Verify Flutter setup
+      run: |
+        flutter doctor -v
+        echo "Flutter SDK: $FLUTTER_ROOT"
  
     - name: Generate code
       run: flutter pub run build_runner build --delete-conflicting-outputs
