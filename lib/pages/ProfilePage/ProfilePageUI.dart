@@ -247,6 +247,7 @@ class ProfilePageUI extends StatelessWidget {
                 ),
               ),
             ),
+            const SizedBox(height: 40),
           ]
       ),
     );
