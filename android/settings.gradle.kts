@@ -1,14 +1,21 @@
 pluginManagement {
-    val flutterSdkPath =
+    val flutterSdkPath: String? =
         run {
-            val properties = java.util.Properties()
-            file("local.properties").inputStream().use { properties.load(it) }
-            val flutterSdkPath = properties.getProperty("flutter.sdk")
-            require(flutterSdkPath != null) { "flutter.sdk not set in local.properties" }
-            flutterSdkPath
+            val localPropertiesFile = file("local.properties")
+            if (localPropertiesFile.exists()) {
+                val properties = java.util.Properties()
+                localPropertiesFile.inputStream().use { properties.load(it) }
+                properties.getProperty("flutter.sdk") ?: System.getenv("FLUTTER_ROOT")
+            } else {
+                System.getenv("FLUTTER_ROOT")
+            }
         }
 
-    includeBuild("$flutterSdkPath/packages/flutter_tools/gradle")
+    if (flutterSdkPath != null) {
+        includeBuild("$flutterSdkPath/packages/flutter_tools/gradle")
+    } else {
+        throw GradleException("Flutter SDK not found. Please set flutter.sdk in local.properties or FLUTTER_ROOT environment variable.")
+    }
 
     repositories {
         google()
@@ -19,11 +26,13 @@ pluginManagement {
             url = uri("https://storage.googleapis.com/download.flutter.io")
         }
         // Flutter engine artifacts repository (local cache, if available)
-        val localArtifactsPath = "${flutterSdkPath}/bin/cache/artifacts/engine/android"
-        val localArtifactsDir = java.io.File(localArtifactsPath)
-        if (localArtifactsDir.exists() && localArtifactsDir.isDirectory) {
-            maven {
-                url = uri(localArtifactsPath)
+        if (flutterSdkPath != null) {
+            val localArtifactsPath = "${flutterSdkPath}/bin/cache/artifacts/engine/android"
+            val localArtifactsDir = java.io.File(localArtifactsPath)
+            if (localArtifactsDir.exists() && localArtifactsDir.isDirectory) {
+                maven {
+                    url = uri(localArtifactsPath)
+                }
             }
         }
     }

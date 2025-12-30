@@ -58,6 +58,18 @@ jobs:
         echo "Flutter SDK: $FLUTTER_ROOT"
         echo "Verifying local.properties exists:"
         cat android/local.properties || echo "local.properties not found!"
+    
+    - name: Verify Gradle configuration
+      run: |
+        cd android
+        echo "Checking Gradle wrapper:"
+        ./gradlew --version || true
+        echo ""
+        echo "Checking if Flutter Gradle plugin is available:"
+        ./gradlew tasks --all 2>&1 | grep -i flutter || echo "No Flutter tasks found"
+        echo ""
+        echo "Checking project structure:"
+        ./gradlew projects 2>&1 | head -20 || true
  
     - name: Generate code
       run: flutter pub run build_runner build --delete-conflicting-outputs || true
@@ -74,15 +86,24 @@ jobs:
       run: |
         echo "Building APK with Flutter..."
         flutter build apk --release --verbose 2>&1 | tee build.log || {
-          echo "Build failed, showing last 200 lines:"
+          echo "=== BUILD FAILED ==="
+          echo ""
+          echo "Last 200 lines of build log:"
           tail -200 build.log
           echo ""
-          echo "Checking for Kotlin compilation errors:"
-          grep -i "error\|unresolved\|cannot find" build.log | head -50 || true
+          echo "=== Kotlin compilation errors ==="
+          grep -i "error\|unresolved\|cannot find\|symbol\|class\|package" build.log | head -100 || true
           echo ""
-          echo "Checking Gradle dependencies:"
+          echo "=== Checking Gradle task output ==="
           cd android
-          ./gradlew :app:dependencies --configuration releaseRuntimeClasspath 2>&1 | grep -i flutter || true
+          echo "Running compileReleaseKotlin task with stacktrace..."
+          ./gradlew :app:compileReleaseKotlin --stacktrace 2>&1 | tail -100 || true
+          echo ""
+          echo "=== Checking Flutter dependencies ==="
+          ./gradlew :app:dependencies --configuration releaseRuntimeClasspath 2>&1 | grep -i "flutter\|embedding" || true
+          echo ""
+          echo "=== Checking if Flutter embedding is available ==="
+          ./gradlew :app:dependencies --configuration releaseRuntimeClasspath 2>&1 | grep -A 5 -B 5 "io.flutter" || true
           exit 1
         }
     
