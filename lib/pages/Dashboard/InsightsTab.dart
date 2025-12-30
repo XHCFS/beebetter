@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:beebetter/pages/Dashboard/DashboardLogic.dart';
-import 'package:beebetter/widgets/MoodTrendChart.dart';
+import 'package:beebetter/widgets/mood_trend_chart.dart';
 
 class InsightsTab extends StatelessWidget {
   const InsightsTab({super.key});

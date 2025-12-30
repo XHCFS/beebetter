@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:beebetter/pages/GuidedMode/GuidedModeLogic.dart';
 import 'package:beebetter/pages/GuidedMode/GuidedModeUI.dart';
-import 'package:beebetter/widgets/HexagonPattern.dart';
+import 'package:beebetter/widgets/hexagon_pattern.dart';
 
 class GuidedModeContent extends StatelessWidget {
   const GuidedModeContent({super.key});

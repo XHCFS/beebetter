@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:beebetter/pages/TodayPage/TodayPageLogic.dart';
 import 'package:beebetter/widgets/Cards/EntryCard/EntryCard.dart';
 import 'package:beebetter/pages/TodayPage/NewEntryPageLogic.dart';
-import 'package:beebetter/widgets/HexagonPattern.dart';
+import 'package:beebetter/widgets/hexagon_pattern.dart';
 
 
 class TodayPageUI extends StatelessWidget {
