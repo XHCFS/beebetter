@@ -119,6 +119,9 @@ class Records extends Table {
 
   // will be null in the case of voice entry
   TextColumn get content => text().nullable()();
+  
+  // path to audio file for voice entries
+  TextColumn get audioFilePath => text().nullable()();
 }
 
 class Moods extends Table {

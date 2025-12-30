@@ -114,10 +114,12 @@ class BrowseTabStatefulState extends State<BrowseTab> {
             style: textTheme.bodyMedium?.copyWith(
               color: colorScheme.primary,
             ),
-            onChanged: (value) {
+            onChanged: (value) async {
               setState(() {
                 searchQuery = value.trim().toLowerCase();
               });
+              // Trigger search in logic
+              await logic.searchEntries(searchQuery);
             },
           ),
 

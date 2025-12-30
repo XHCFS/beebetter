@@ -526,6 +526,17 @@ class $RecordsTable extends Records with TableInfo<$RecordsTable, Record> {
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _audioFilePathMeta = const VerificationMeta(
+    'audioFilePath',
+  );
+  @override
+  late final GeneratedColumn<String> audioFilePath = GeneratedColumn<String>(
+    'audio_file_path',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -535,6 +546,7 @@ class $RecordsTable extends Records with TableInfo<$RecordsTable, Record> {
     userId,
     title,
     content,
+    audioFilePath,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -587,6 +599,15 @@ class $RecordsTable extends Records with TableInfo<$RecordsTable, Record> {
         content.isAcceptableOrUnknown(data['content']!, _contentMeta),
       );
     }
+    if (data.containsKey('audio_file_path')) {
+      context.handle(
+        _audioFilePathMeta,
+        audioFilePath.isAcceptableOrUnknown(
+          data['audio_file_path']!,
+          _audioFilePathMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -624,6 +645,10 @@ class $RecordsTable extends Records with TableInfo<$RecordsTable, Record> {
         DriftSqlType.string,
         data['${effectivePrefix}content'],
       ),
+      audioFilePath: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}audio_file_path'],
+      ),
     );
   }
 
@@ -641,6 +666,7 @@ class Record extends DataClass implements Insertable<Record> {
   final int? userId;
   final String? title;
   final String? content;
+  final String? audioFilePath;
   const Record({
     required this.id,
     required this.createdAt,
@@ -649,6 +675,7 @@ class Record extends DataClass implements Insertable<Record> {
     this.userId,
     this.title,
     this.content,
+    this.audioFilePath,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -667,6 +694,9 @@ class Record extends DataClass implements Insertable<Record> {
     }
     if (!nullToAbsent || content != null) {
       map['content'] = Variable<String>(content);
+    }
+    if (!nullToAbsent || audioFilePath != null) {
+      map['audio_file_path'] = Variable<String>(audioFilePath);
     }
     return map;
   }
@@ -688,6 +718,9 @@ class Record extends DataClass implements Insertable<Record> {
       content: content == null && nullToAbsent
           ? const Value.absent()
           : Value(content),
+      audioFilePath: audioFilePath == null && nullToAbsent
+          ? const Value.absent()
+          : Value(audioFilePath),
     );
   }
 
@@ -704,6 +737,7 @@ class Record extends DataClass implements Insertable<Record> {
       userId: serializer.fromJson<int?>(json['userId']),
       title: serializer.fromJson<String?>(json['title']),
       content: serializer.fromJson<String?>(json['content']),
+      audioFilePath: serializer.fromJson<String?>(json['audioFilePath']),
     );
   }
   @override
@@ -717,6 +751,7 @@ class Record extends DataClass implements Insertable<Record> {
       'userId': serializer.toJson<int?>(userId),
       'title': serializer.toJson<String?>(title),
       'content': serializer.toJson<String?>(content),
+      'audioFilePath': serializer.toJson<String?>(audioFilePath),
     };
   }
 
@@ -728,6 +763,7 @@ class Record extends DataClass implements Insertable<Record> {
     Value<int?> userId = const Value.absent(),
     Value<String?> title = const Value.absent(),
     Value<String?> content = const Value.absent(),
+    Value<String?> audioFilePath = const Value.absent(),
   }) => Record(
     id: id ?? this.id,
     createdAt: createdAt ?? this.createdAt,
@@ -736,6 +772,9 @@ class Record extends DataClass implements Insertable<Record> {
     userId: userId.present ? userId.value : this.userId,
     title: title.present ? title.value : this.title,
     content: content.present ? content.value : this.content,
+    audioFilePath: audioFilePath.present
+        ? audioFilePath.value
+        : this.audioFilePath,
   );
   Record copyWithCompanion(RecordsCompanion data) {
     return Record(
@@ -746,6 +785,9 @@ class Record extends DataClass implements Insertable<Record> {
       userId: data.userId.present ? data.userId.value : this.userId,
       title: data.title.present ? data.title.value : this.title,
       content: data.content.present ? data.content.value : this.content,
+      audioFilePath: data.audioFilePath.present
+          ? data.audioFilePath.value
+          : this.audioFilePath,
     );
   }
 
@@ -758,14 +800,23 @@ class Record extends DataClass implements Insertable<Record> {
           ..write('inputType: $inputType, ')
           ..write('userId: $userId, ')
           ..write('title: $title, ')
-          ..write('content: $content')
+          ..write('content: $content, ')
+          ..write('audioFilePath: $audioFilePath')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, createdAt, promptId, inputType, userId, title, content);
+  int get hashCode => Object.hash(
+    id,
+    createdAt,
+    promptId,
+    inputType,
+    userId,
+    title,
+    content,
+    audioFilePath,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -776,7 +827,8 @@ class Record extends DataClass implements Insertable<Record> {
           other.inputType == this.inputType &&
           other.userId == this.userId &&
           other.title == this.title &&
-          other.content == this.content);
+          other.content == this.content &&
+          other.audioFilePath == this.audioFilePath);
 }
 
 class RecordsCompanion extends UpdateCompanion<Record> {
@@ -787,6 +839,7 @@ class RecordsCompanion extends UpdateCompanion<Record> {
   final Value<int?> userId;
   final Value<String?> title;
   final Value<String?> content;
+  final Value<String?> audioFilePath;
   const RecordsCompanion({
     this.id = const Value.absent(),
     this.createdAt = const Value.absent(),
@@ -795,6 +848,7 @@ class RecordsCompanion extends UpdateCompanion<Record> {
     this.userId = const Value.absent(),
     this.title = const Value.absent(),
     this.content = const Value.absent(),
+    this.audioFilePath = const Value.absent(),
   });
   RecordsCompanion.insert({
     this.id = const Value.absent(),
@@ -804,6 +858,7 @@ class RecordsCompanion extends UpdateCompanion<Record> {
     this.userId = const Value.absent(),
     this.title = const Value.absent(),
     this.content = const Value.absent(),
+    this.audioFilePath = const Value.absent(),
   });
   static Insertable<Record> custom({
     Expression<int>? id,
@@ -813,6 +868,7 @@ class RecordsCompanion extends UpdateCompanion<Record> {
     Expression<int>? userId,
     Expression<String>? title,
     Expression<String>? content,
+    Expression<String>? audioFilePath,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -822,6 +878,7 @@ class RecordsCompanion extends UpdateCompanion<Record> {
       if (userId != null) 'user_id': userId,
       if (title != null) 'title': title,
       if (content != null) 'content': content,
+      if (audioFilePath != null) 'audio_file_path': audioFilePath,
     });
   }
 
@@ -833,6 +890,7 @@ class RecordsCompanion extends UpdateCompanion<Record> {
     Value<int?>? userId,
     Value<String?>? title,
     Value<String?>? content,
+    Value<String?>? audioFilePath,
   }) {
     return RecordsCompanion(
       id: id ?? this.id,
@@ -842,6 +900,7 @@ class RecordsCompanion extends UpdateCompanion<Record> {
       userId: userId ?? this.userId,
       title: title ?? this.title,
       content: content ?? this.content,
+      audioFilePath: audioFilePath ?? this.audioFilePath,
     );
   }
 
@@ -869,6 +928,9 @@ class RecordsCompanion extends UpdateCompanion<Record> {
     if (content.present) {
       map['content'] = Variable<String>(content.value);
     }
+    if (audioFilePath.present) {
+      map['audio_file_path'] = Variable<String>(audioFilePath.value);
+    }
     return map;
   }
 
@@ -881,7 +943,8 @@ class RecordsCompanion extends UpdateCompanion<Record> {
           ..write('inputType: $inputType, ')
           ..write('userId: $userId, ')
           ..write('title: $title, ')
-          ..write('content: $content')
+          ..write('content: $content, ')
+          ..write('audioFilePath: $audioFilePath')
           ..write(')'))
         .toString();
   }
@@ -1668,6 +1731,7 @@ typedef $$RecordsTableCreateCompanionBuilder =
       Value<int?> userId,
       Value<String?> title,
       Value<String?> content,
+      Value<String?> audioFilePath,
     });
 typedef $$RecordsTableUpdateCompanionBuilder =
     RecordsCompanion Function({
@@ -1678,6 +1742,7 @@ typedef $$RecordsTableUpdateCompanionBuilder =
       Value<int?> userId,
       Value<String?> title,
       Value<String?> content,
+      Value<String?> audioFilePath,
     });
 
 final class $$RecordsTableReferences
@@ -1769,6 +1834,11 @@ class $$RecordsTableFilterComposer
 
   ColumnFilters<String> get content => $composableBuilder(
     column: $table.content,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get audioFilePath => $composableBuilder(
+    column: $table.audioFilePath,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -1878,6 +1948,11 @@ class $$RecordsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get audioFilePath => $composableBuilder(
+    column: $table.audioFilePath,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$PromptsTableOrderingComposer get promptId {
     final $$PromptsTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -1948,6 +2023,11 @@ class $$RecordsTableAnnotationComposer
 
   GeneratedColumn<String> get content =>
       $composableBuilder(column: $table.content, builder: (column) => column);
+
+  GeneratedColumn<String> get audioFilePath => $composableBuilder(
+    column: $table.audioFilePath,
+    builder: (column) => column,
+  );
 
   $$PromptsTableAnnotationComposer get promptId {
     final $$PromptsTableAnnotationComposer composer = $composerBuilder(
@@ -2056,6 +2136,7 @@ class $$RecordsTableTableManager
                 Value<int?> userId = const Value.absent(),
                 Value<String?> title = const Value.absent(),
                 Value<String?> content = const Value.absent(),
+                Value<String?> audioFilePath = const Value.absent(),
               }) => RecordsCompanion(
                 id: id,
                 createdAt: createdAt,
@@ -2064,6 +2145,7 @@ class $$RecordsTableTableManager
                 userId: userId,
                 title: title,
                 content: content,
+                audioFilePath: audioFilePath,
               ),
           createCompanionCallback:
               ({
@@ -2074,6 +2156,7 @@ class $$RecordsTableTableManager
                 Value<int?> userId = const Value.absent(),
                 Value<String?> title = const Value.absent(),
                 Value<String?> content = const Value.absent(),
+                Value<String?> audioFilePath = const Value.absent(),
               }) => RecordsCompanion.insert(
                 id: id,
                 createdAt: createdAt,
@@ -2082,6 +2165,7 @@ class $$RecordsTableTableManager
                 userId: userId,
                 title: title,
                 content: content,
+                audioFilePath: audioFilePath,
               ),
           withReferenceMapper: (p0) => p0
               .map(

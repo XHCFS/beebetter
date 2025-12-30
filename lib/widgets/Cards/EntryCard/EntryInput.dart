@@ -325,7 +325,18 @@ class EntryInputState extends State<EntryInput> with TickerProviderStateMixin {
                           logic.entryInfo.isTextLocked = canContinue;
                         },
                       ),
-                      child: RecordingCard(),
+                      child: Builder(
+                        builder: (context) {
+                          final recordingLogic = context.watch<RecordingLogic>();
+                          // Store recording file path when recording is stopped
+                          if (recordingLogic.isStopped && recordingLogic.filePath != null) {
+                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                              logic.setRecordingFilePath(recordingLogic.filePath);
+                            });
+                          }
+                          return RecordingCard();
+                        },
+                      ),
                     ),
                   ),
                 ],

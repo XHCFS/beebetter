@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:record/record.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 // Enum for recording session states
 enum RecordingState {
@@ -38,6 +40,12 @@ class RecordingLogic extends ChangeNotifier {
   final void Function(bool canContinue)? onRecordingComplete;
 
   String? filePath;
+  
+  // Audio player for playback
+  final AudioPlayer _audioPlayer = AudioPlayer();
+  PlayerState _playerState = PlayerState.stopped;
+  Duration _duration = Duration.zero;
+  Duration _position = Duration.zero;
 
   RecordingLogic({this.onRecordingComplete, this.filePath});
 
@@ -48,6 +56,25 @@ class RecordingLogic extends ChangeNotifier {
     isPlayback = false;
     elapsed = Duration.zero;
     amplitudes.count = 0;
+    _initializePlayer();
+  }
+  
+  void _initializePlayer() {
+    _audioPlayer.onPlayerStateChanged.listen((state) {
+      _playerState = state;
+      isPlayback = state == PlayerState.playing;
+      notifyListeners();
+    });
+    
+    _audioPlayer.onDurationChanged.listen((duration) {
+      _duration = duration;
+      notifyListeners();
+    });
+    
+    _audioPlayer.onPositionChanged.listen((position) {
+      _position = position;
+      notifyListeners();
+    });
   }
 
 
@@ -143,23 +170,47 @@ class RecordingLogic extends ChangeNotifier {
   }
 
   // ---------------------------------------------------
-  // Playback (stub)
+  // Playback
   // ---------------------------------------------------
-  void togglePlayback() {
-    if (state == RecordingState.stopped || state == RecordingState.recording) {
-      isPlayback = !isPlayback;
-      notifyListeners();
+  Future<void> togglePlayback() async {
+    if (filePath == null || !File(filePath!).existsSync()) {
+      debugPrint('No valid audio file to play');
+      return;
     }
-    notifyListeners();
+
+    try {
+      if (_playerState == PlayerState.playing) {
+        await _audioPlayer.pause();
+        isPlayback = false;
+      } else {
+        if (_playerState == PlayerState.stopped) {
+          await _audioPlayer.play(DeviceFileSource(filePath!));
+        } else {
+          await _audioPlayer.resume();
+        }
+        isPlayback = true;
+      }
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error toggling playback: $e');
+    }
+  }
+  
+  Duration get duration => _duration;
+  Duration get position => _position;
+  
+  Future<void> seek(Duration position) async {
+    await _audioPlayer.seek(position);
   }
 
   // ---------------------------------------------------
-  // Dispose timers
+  // Dispose timers and player
   // ---------------------------------------------------
   @override
   void dispose() {
     amplitudeTimer?.cancel();
     elapsedTimer?.cancel();
+    _audioPlayer.dispose();
     super.dispose();
   }
 }

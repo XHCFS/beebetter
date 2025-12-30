@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:beebetter/classes/EntryInfo.dart';
+import 'package:beebetter/services/database_provider.dart';
 
 class DashboardLogic extends ChangeNotifier {
-
   String overallMood = "Happy";
   int overallMoodPercentage = 80;
-  int totalEntries = 24;
-  int daysTracked = 40;
-  int streak = 15;
+  int totalEntries = 0;
+  int daysTracked = 0;
+  int streak = 0;
 
-  List<int> moodValues = [3, 2, 4, 1, 2, 3, 0];
+  List<int> moodValues = [0, 0, 0, 0, 0, 0, 0]; // Will be calculated from data
 
   DateTime _selectedDay = DateTime.now();
   DateTime _focusedDay = DateTime.now();
@@ -18,6 +18,7 @@ class DashboardLogic extends ChangeNotifier {
   DateTime get focusedDay => _focusedDay;
 
   Map<DateTime, List<EntryInfo>> entriesByDay = {};
+  bool isLoading = false;
 
   DateTime _normalize(DateTime date) =>
       DateTime(date.year, date.month, date.day);
@@ -25,98 +26,134 @@ class DashboardLogic extends ChangeNotifier {
   List<EntryInfo> getEntriesForDay(DateTime day) =>
       entriesByDay[_normalize(day)] ?? [];
 
-  List<EntryInfo> entries = []; // fetch the list of entries for the selected date
-  List<EntryInfo> filteredEntries = []; // fetch the list of entries (search bar)
+  List<EntryInfo> entries = []; // entries for the selected date
+  List<EntryInfo> filteredEntries = []; // filtered entries (search bar)
   final int emotionLevels = 3;
 
   DashboardLogic() {
-    final today = _normalize(DateTime.now());
-    final yesterday = _normalize(DateTime.now().subtract(const Duration(days: 1)));
-    entries = [
-      EntryInfo(
-        id: "p1",
-        title: "What's one small win you had today?",
-        category: "productivity",
-        emotionLevels: emotionLevels,
-        isText: false,
-      ),
-      EntryInfo(
-        id: "p2",
-        title: "Reflect on your energy levels today.",
-        category: "productivity",
-        emotionLevels: emotionLevels,
-        isText: true,
-      ),
-      EntryInfo(
-        id: "p3",
-        title: "Create a story using these three words.",
-        category: "creativity",
-        emotionLevels: emotionLevels,
-        isText: false,
-      ),
-      EntryInfo(
-        id: "p4",
-        title: "What made you smile today?",
-        category: "gratitude practice",
-        emotionLevels: emotionLevels,
-        isText: true,
-      ),
-    ];
+    _loadData();
+  }
 
-    entries[0].userInput = '''A small win today was...\n
-- achievement 1\n
-- achievement 2\n
-- achievement 3\n
-    ''';
-    entries[1].userInput = '''I had low energy in the morning
-im not sure why''';
-    entries[2].userInput = '''Once upon a time, a kitty came across a little bunny protecting its house from little mushrooms. 
-The mushrooms were jumping over the fences and trying to get into the house. In a panic, the bunny tried to drive them away 
-He grabbed his little carrot gun and started shooting carrots on the mushroom. The carrots were too small to hurt them but it was effective!
-It somehow made the mushrooms go away, hmm but why is that. The kitty wanted to help the little bunny so it started thinking.
-Finally, she came up with a plan and immediately started taking action. She collected a lot of carrots and went the bunny's house. 
-On the sight of so many bright orange carrots, all the mushrooms came running to the kitty.
-Some mushrooms offered the bunny some carrots and they all enjoyed the yummy carrots.''';
-    entries[3].userInput = "I made my friend laugh";
+  /// Load all dashboard data
+  Future<void> _loadData() async {
+    isLoading = true;
+    notifyListeners();
 
-    entries[0].emotions = ["Happy", "Motivated", "Proud"];
-    entries[1].emotions = ["Tired", "Low energy", "Confused"];
-    entries[2].emotions = ["Happy", "Excited", "Playful"];
-    entries[3].emotions = ["Happy", "Motivated", "Proud"];
+    try {
+      final user = await DatabaseProvider.instance.getOrCreateUser();
+      final userId = user.id;
 
-    filteredEntries = [
-      EntryInfo(
-        id: "p1",
-        title: "What's one small win you had today?",
-        category: "productivity",
-        emotionLevels: emotionLevels,
-        isText: false,
-      ),
-      EntryInfo(
-        id: "p2",
-        title: "Reflect on your energy levels today.",
-        category: "productivity",
-        emotionLevels: emotionLevels,
-        isText: true,
-      ),
-    ];
-    filteredEntries[0].userInput = "I made my friend laugh";
-    filteredEntries[1].userInput = '''I had low energy in the morning im not sure why''';
-    filteredEntries[0].emotions = ["Happy", "Excited", "Playful"];
-    filteredEntries[1].emotions = ["Happy", "Motivated", "Proud"];
+      // Load statistics
+      totalEntries = await DatabaseProvider.instance.getTotalEntries(userId: userId);
+      daysTracked = await DatabaseProvider.instance.getDaysTracked(userId: userId);
+      streak = await DatabaseProvider.instance.getStreak(userId: userId);
 
-    entriesByDay[today] = entries;
-    entriesByDay[yesterday] = [entries.first];
+      // Load entries grouped by date
+      entriesByDay = await DatabaseProvider.instance.getEntriesByDate(userId: userId);
+
+      // Load entries for selected day
+      await _loadEntriesForSelectedDay();
+
+      // Calculate mood values for the week (simplified - just use first 7 days)
+      _calculateMoodValues();
+    } catch (e) {
+      debugPrint('Error loading dashboard data: $e');
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  /// Load entries for the currently selected day
+  Future<void> _loadEntriesForSelectedDay() async {
+    try {
+      final user = await DatabaseProvider.instance.getOrCreateUser();
+      entries = await DatabaseProvider.instance.getEntriesForDate(
+        _selectedDay,
+        userId: user.id,
+      );
+      filteredEntries = entries; // Initially, filtered entries = all entries
+    } catch (e) {
+      debugPrint('Error loading entries for selected day: $e');
+      entries = [];
+      filteredEntries = [];
+    }
+  }
+
+  /// Calculate mood values for the week chart
+  void _calculateMoodValues() {
+    // Simplified: just set default values for now
+    // TODO: Calculate actual mood values from entries
+    moodValues = [0, 0, 0, 0, 0, 0, 0];
+    
+    // Calculate overall mood (simplified)
+    if (entries.isNotEmpty) {
+      overallMood = "Happy"; // TODO: Calculate from actual mood data
+      overallMoodPercentage = 80; // TODO: Calculate from actual mood data
+    }
+  }
+
+  /// Refresh all data
+  Future<void> refresh() async {
+    await _loadData();
   }
 
   void selectDay(DateTime selected, DateTime focused) {
     _selectedDay = selected;
     _focusedDay = focused;
+    _loadEntriesForSelectedDay();
     notifyListeners();
   }
 
-  void deleteEntry(String id) {
+  /// Delete an entry
+  Future<void> deleteEntry(String id) async {
+    try {
+      final recordId = int.tryParse(id);
+      if (recordId == null) return;
 
+      await DatabaseProvider.instance.deleteEntry(recordId);
+
+      // Remove from local lists
+      entries.removeWhere((e) => e.id == id);
+      filteredEntries.removeWhere((e) => e.id == id);
+
+      // Remove from entriesByDay
+      final normalizedDay = _normalize(_selectedDay);
+      if (entriesByDay.containsKey(normalizedDay)) {
+        entriesByDay[normalizedDay]!.removeWhere((e) => e.id == id);
+      }
+
+      // Update statistics
+      final user = await DatabaseProvider.instance.getOrCreateUser();
+      totalEntries = await DatabaseProvider.instance.getTotalEntries(userId: user.id);
+      daysTracked = await DatabaseProvider.instance.getDaysTracked(userId: user.id);
+      streak = await DatabaseProvider.instance.getStreak(userId: user.id);
+
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error deleting entry: $e');
+    }
   }
 
+  /// Search entries
+  Future<void> searchEntries(String query) async {
+    if (query.trim().isEmpty) {
+      filteredEntries = entries;
+      notifyListeners();
+      return;
+    }
+
+    try {
+      final user = await DatabaseProvider.instance.getOrCreateUser();
+      filteredEntries = await DatabaseProvider.instance.searchEntries(
+        query,
+        userId: user.id,
+      );
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error searching entries: $e');
+      filteredEntries = [];
+      notifyListeners();
+    }
+  }
 }

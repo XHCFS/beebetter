@@ -18,7 +18,19 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
+  
+  @override
+  MigrationStrategy get migration {
+    return MigrationStrategy(
+      onUpgrade: (migrator, from, to) async {
+        if (from < 2) {
+          // Add audioFilePath column to records table
+          await migrator.addColumn(records, records.audioFilePath);
+        }
+      },
+    );
+  }
 }
 
 /// Opens a persistent SQLite database file.

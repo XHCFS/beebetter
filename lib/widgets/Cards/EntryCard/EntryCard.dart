@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:beebetter/widgets/Cards/EntryCard/EntryInput.dart';
 import 'package:beebetter/widgets/Cards/EmotionWheel/EmotionWheel.dart';
 import 'package:beebetter/pages/TodayPage/NewEntryPageLogic.dart';
+import 'package:beebetter/pages/TodayPage/TodayPageLogic.dart';
 
 class EntryCard extends StatefulWidget {
   final int index;
@@ -70,11 +71,24 @@ class EntryCardState extends State<EntryCard>
         logic.entryInfo.emotions[level] = emotion;
         logic.updateCanSelectNextForLevel(level);
       },
-      onNext: (level) {
+      onNext: (level) async {
         if (level == logic.emotionLevels - 1) {
-          logic.saveEntry();
-          controller.clear();
-          setState(() => showEmotions = false);
+          final success = await logic.saveEntry(
+            onSuccess: () {
+              // Refresh TodayPageLogic if available in context
+              try {
+                final todayLogic = Provider.of<TodayPageLogic>(context, listen: false);
+                todayLogic.refresh();
+              } catch (e) {
+                // TodayPageLogic not available in this context, that's okay
+                debugPrint('TodayPageLogic not found in context: $e');
+              }
+            },
+          );
+          if (success) {
+            controller.clear();
+            setState(() => showEmotions = false);
+          }
         }
       },
       onLevelChanged: logic.updateCanSelectNextForLevel,
