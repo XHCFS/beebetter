@@ -92,23 +92,15 @@ jobs:
         flutter pub get
         echo "Dependencies resolved successfully"
     
-    - name: Ensure Flutter plugins are configured
-      run: |
-        echo "=== Ensuring Flutter plugins are properly configured ==="
-        # Regenerate plugin files - this creates .flutter-plugins and plugin registrant
-        flutter pub get
-        echo "Checking for .flutter-plugins file:"
-        cat .flutter-plugins 2>/dev/null || echo ".flutter-plugins not found - this is required!"
-        echo "Checking for GeneratedPluginRegistrant:"
-        ls -la android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java 2>/dev/null || echo "GeneratedPluginRegistrant.java will be generated during build"
-        echo "Plugin configuration complete"
-    
     - name: Build APK
       run: |
         echo "Building APK with Flutter..."
-        # Ensure plugins are set up before building
+        # Ensure dependencies and plugins are set up right before building
+        # This ensures .flutter-plugins and plugin files are generated
         flutter pub get
-        # Build the APK - Flutter will handle plugin setup automatically
+        # Build the APK - Flutter build command should handle plugin setup
+        # The Flutter Gradle plugin should automatically include plugin dependencies
+        # If plugins aren't found, it's likely a Flutter Gradle plugin issue
         flutter build apk --release
         echo "APK built successfully"
         echo "APK location: build/app/outputs/flutter-apk/app-release.apk"
