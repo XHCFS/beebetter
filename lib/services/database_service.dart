@@ -1,4 +1,4 @@
-import 'package:beebetter/data/database/app_database.dart';
+import 'package:beebetter/data/database/app_database.dart' hide Mood;
 import 'package:beebetter/data/database/tables.dart';
 import 'package:beebetter/classes/EntryInfo.dart';
 import 'package:drift/drift.dart';
@@ -160,7 +160,9 @@ class DatabaseService {
     var query = _db.select(_db.records)
       ..where((r) => r.createdAt.isBiggerOrEqualValue(startOfDay))
       ..where((r) => r.createdAt.isSmallerThanValue(endOfDay))
-      ..orderBy((r) => OrderingTerm(expression: r.createdAt, mode: OrderingMode.desc));
+      ..orderBy([
+        (r) => OrderingTerm(expression: r.createdAt, mode: OrderingMode.desc)
+      ]);
 
     if (userId != null) {
       query = query..where((r) => r.userId.equals(userId));
@@ -173,7 +175,9 @@ class DatabaseService {
   /// Load all entries (optionally filtered by user)
   Future<List<EntryInfo>> getAllEntries({int? userId, int? limit}) async {
     var query = _db.select(_db.records)
-      ..orderBy((r) => OrderingTerm(expression: r.createdAt, mode: OrderingMode.desc));
+      ..orderBy([
+        (r) => OrderingTerm(expression: r.createdAt, mode: OrderingMode.desc)
+      ]);
 
     if (userId != null) {
       query = query..where((r) => r.userId.equals(userId));
@@ -195,7 +199,9 @@ class DatabaseService {
       ..where((r) => 
         r.content.like(searchTerm) | r.title.like(searchTerm)
       )
-      ..orderBy((r) => OrderingTerm(expression: r.createdAt, mode: OrderingMode.desc));
+      ..orderBy([
+        (r) => OrderingTerm(expression: r.createdAt, mode: OrderingMode.desc)
+      ]);
 
     if (userId != null) {
       dbQuery = dbQuery..where((r) => r.userId.equals(userId));
@@ -388,8 +394,8 @@ class DatabaseService {
       final normalized = DateTime(day.year, day.month, day.day);
       if (normalized == expectedDate) {
         streak++;
-        expectedDate = expectedDate.subtract(const Duration(days: 1));
-      } else if (normalized.isBefore(expectedDate!)) {
+        expectedDate = expectedDate?.subtract(const Duration(days: 1));
+      } else if (expectedDate != null && normalized.isBefore(expectedDate)) {
         // Gap found, streak broken
         break;
       }
@@ -421,7 +427,9 @@ class DatabaseService {
   Future<Map<DateTime, List<EntryInfo>>> getEntriesByDate({int? userId}) async {
     // Load records with dates to properly group
     var query = _db.select(_db.records)
-      ..orderBy((r) => OrderingTerm(expression: r.createdAt, mode: OrderingMode.desc));
+      ..orderBy([
+        (r) => OrderingTerm(expression: r.createdAt, mode: OrderingMode.desc)
+      ]);
 
     if (userId != null) {
       query = query..where((r) => r.userId.equals(userId));
