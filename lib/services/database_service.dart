@@ -11,31 +11,52 @@ class DatabaseService {
   DatabaseService(this._db);
 
   // ============================================================
-  // USER OPERATIONS
+  // PROFILE OPERATIONS (renamed from USER)
   // ============================================================
 
-  /// Get the current user (or create default if none exists)
-  Future<UserData> getOrCreateUser() async {
-    final users = await (_db.select(_db.user)..limit(1)).get();
+  /// Get the current profile (or create default if none exists)
+  Future<UserData> getOrCreateProfile() async {
+    final profiles = await (_db.select(_db.user)..limit(1)).get();
     
-    if (users.isEmpty) {
-      // Create default user
-      final userId = await _db.into(_db.user).insert(
-        UserCompanion.insert(name: 'User', age: const Value.absent()),
+    if (profiles.isEmpty) {
+      // Create default profile
+      final profileId = await _db.into(_db.user).insert(
+        UserCompanion.insert(name: 'Profile 1', age: const Value.absent()),
       );
-      return UserData(id: userId, name: 'User', age: null);
+      return UserData(id: profileId, name: 'Profile 1', age: null);
     }
     
-    return users.first;
+    return profiles.first;
   }
 
-  /// Update user profile
-  Future<void> updateUser({
-    required int userId,
+  /// Get profile by ID
+  Future<UserData?> getProfile(int profileId) async {
+    return await (_db.select(_db.user)..where((u) => u.id.equals(profileId))).getSingleOrNull();
+  }
+
+  /// Get all profiles
+  Future<List<UserData>> getAllProfiles() async {
+    return await (_db.select(_db.user)).get();
+  }
+
+  /// Create a new profile
+  Future<UserData> createProfile({required String name, int? age}) async {
+    final profileId = await _db.into(_db.user).insert(
+      UserCompanion.insert(
+        name: name,
+        age: age != null ? Value(age) : const Value.absent(),
+      ),
+    );
+    return UserData(id: profileId, name: name, age: age);
+  }
+
+  /// Update profile
+  Future<void> updateProfile({
+    required int profileId,
     String? name,
     int? age,
   }) async {
-    await (_db.update(_db.user)..where((u) => u.id.equals(userId))).write(
+    await (_db.update(_db.user)..where((u) => u.id.equals(profileId))).write(
       UserCompanion(
         name: name != null ? Value(name) : const Value.absent(),
         age: age != null ? Value(age) : const Value.absent(),
@@ -43,10 +64,28 @@ class DatabaseService {
     );
   }
 
-  /// Get user by ID
-  Future<UserData?> getUser(int userId) async {
-    return await (_db.select(_db.user)..where((u) => u.id.equals(userId))).getSingleOrNull();
+  /// Delete a profile and all its entries
+  Future<void> deleteProfile(int profileId) async {
+    // Delete all entries for this profile
+    await (_db.delete(_db.records)..where((r) => r.userId.equals(profileId))).go();
+    
+    // Delete the profile
+    await (_db.delete(_db.user)..where((u) => u.id.equals(profileId))).go();
   }
+
+  // Legacy method for backward compatibility
+  @Deprecated('Use getOrCreateProfile instead')
+  Future<UserData> getOrCreateUser() async => getOrCreateProfile();
+
+  @Deprecated('Use getProfile instead')
+  Future<UserData?> getUser(int userId) async => getProfile(userId);
+
+  @Deprecated('Use updateProfile instead')
+  Future<void> updateUser({
+    required int userId,
+    String? name,
+    int? age,
+  }) async => updateProfile(profileId: userId, name: name, age: age);
 
   // ============================================================
   // ENTRY OPERATIONS
