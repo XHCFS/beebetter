@@ -323,7 +323,7 @@ class DatabaseService {
       ..addColumns([_db.records.id.count()]);
 
     if (userId != null) {
-      query = query..where((r) => r.userId.equals(userId));
+      query = query..where(_db.records.userId.equals(userId));
     }
 
     final result = await query.getSingle();
@@ -337,7 +337,7 @@ class DatabaseService {
       ..groupBy([_db.records.createdAt]);
 
     if (userId != null) {
-      query = query..where((r) => r.userId.equals(userId));
+      query = query..where(_db.records.userId.equals(userId));
     }
 
     final results = await query.get();
@@ -364,7 +364,7 @@ class DatabaseService {
       ..orderBy([OrderingTerm(expression: _db.records.createdAt, mode: OrderingMode.desc)]);
 
     if (userId != null) {
-      query = query..where((r) => r.userId.equals(userId));
+      query = query..where(_db.records.userId.equals(userId));
     }
 
     final results = await query.get();
@@ -412,11 +412,11 @@ class DatabaseService {
 
     var query = _db.selectOnly(_db.records)
       ..addColumns([_db.records.id.count()])
-      ..where((r) => r.createdAt.isBiggerOrEqualValue(startOfDay))
-      ..where((r) => r.createdAt.isSmallerThanValue(endOfDay));
+      ..where(_db.records.createdAt.isBiggerOrEqualValue(startOfDay))
+      ..where(_db.records.createdAt.isSmallerThanValue(endOfDay));
 
     if (userId != null) {
-      query = query..where((r) => r.userId.equals(userId));
+      query = query..where(_db.records.userId.equals(userId));
     }
 
     final result = await query.getSingle();
