@@ -73,8 +73,14 @@ jobs:
     - name: Build APK
       run: |
         echo "Building APK with Flutter..."
-        flutter build apk --release --verbose 2>&1 | tail -100 || {
-          echo "Build failed, checking Gradle dependencies..."
+        flutter build apk --release --verbose 2>&1 | tee build.log || {
+          echo "Build failed, showing last 200 lines:"
+          tail -200 build.log
+          echo ""
+          echo "Checking for Kotlin compilation errors:"
+          grep -i "error\|unresolved\|cannot find" build.log | head -50 || true
+          echo ""
+          echo "Checking Gradle dependencies:"
           cd android
           ./gradlew :app:dependencies --configuration releaseRuntimeClasspath 2>&1 | grep -i flutter || true
           exit 1
