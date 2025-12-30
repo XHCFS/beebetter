@@ -135,7 +135,7 @@ class BrowseTabStatefulState extends State<BrowseTab> {
               children: [
                 Icon(
                   Symbols.calendar_month_rounded,
-                  size: 32,
+                  size: 24,
                   color: colorScheme.primary.withAlpha(240),
                 ),
                 const SizedBox(width: 8),
@@ -251,7 +251,7 @@ class BrowseTabStatefulState extends State<BrowseTab> {
               children: [
                 Icon(
                   Symbols.calendar_today_rounded,
-                  size: 32,
+                  size: 24,
                   color: colorScheme.primary.withAlpha(240),
                 ),
                 const SizedBox(width: 8),

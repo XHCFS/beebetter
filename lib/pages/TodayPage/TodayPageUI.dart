@@ -22,7 +22,7 @@ class TodayPageUI extends StatelessWidget {
       Theme.of(context).colorScheme.surfaceContainerLowest,
     );
     Color inversePrimaryBrighter = Color.alphaBlend(
-      Theme.of(context).colorScheme.inversePrimary.withAlpha(100),
+      Theme.of(context).colorScheme.inversePrimary.withAlpha(128),
       Theme.of(context).colorScheme.surfaceContainerLowest,
     );
 
@@ -75,18 +75,17 @@ class TodayPageUI extends StatelessWidget {
               onContinuePressed: (text) {},
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 16),
 
           // ---------------------------------------------------
           // Daily Prompts
           // ---------------------------------------------------
           Card(
-            elevation: 2,
+            elevation: 0,
             color: colorScheme.inversePrimary,
             shadowColor: colorScheme.inversePrimary,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
-              // side: BorderSide(color: colorScheme.inversePrimary, width: 1),
             ),
             child: InkWell(
               borderRadius: BorderRadius.circular(12),

@@ -196,7 +196,7 @@ class _PreviousEntryState extends State<PreviousEntry>
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 8, vertical: 4),
                               decoration: BoxDecoration(
-                                color: colorScheme.inversePrimary.withAlpha(100),
+                                color: colorScheme.inversePrimary.withAlpha(128),
                                 borderRadius: BorderRadius.circular(12),
                                 // border: Border.all(
                                 //     color: colorScheme.inversePrimary, width: 1),

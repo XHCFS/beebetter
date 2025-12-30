@@ -265,7 +265,7 @@ class ExpandingTextOverlayState extends State<ExpandingTextOverlay> {
                                   curve: Curves.easeOut,
                                   child: CustomPaint(
                                     painter: DottedPatternPainter(
-                                      color: colorScheme.inversePrimary.withAlpha(100),
+                                      color: colorScheme.inversePrimary.withAlpha(128),
                                       spacing: 20,
                                       radius: 1.5,
                                     ),
