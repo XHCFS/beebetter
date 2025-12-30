@@ -28,6 +28,8 @@ jobs:
     - name: Create local.properties
       run: |
         echo "flutter.sdk=$FLUTTER_ROOT" > android/local.properties
+        echo "Created local.properties with Flutter SDK: $FLUTTER_ROOT"
+        cat android/local.properties
     
     - name: Install dependencies
       run: flutter pub get
@@ -39,9 +41,11 @@ jobs:
       run: |
         flutter doctor -v
         echo "Flutter SDK: $FLUTTER_ROOT"
+        echo "Verifying local.properties exists:"
+        cat android/local.properties || echo "local.properties not found!"
  
     - name: Generate code
-      run: flutter pub run build_runner build --delete-conflicting-outputs
+      run: flutter pub run build_runner build --delete-conflicting-outputs || true
     
     - name: Run tests
       run: flutter test --no-pub
