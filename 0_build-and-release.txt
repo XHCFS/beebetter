@@ -1,0 +1,1138 @@
+﻿2025-12-30T19:44:07.0210031Z Current runner version: '2.330.0'
+2025-12-30T19:44:07.0234650Z ##[group]Runner Image Provisioner
+2025-12-30T19:44:07.0235539Z Hosted Compute Agent
+2025-12-30T19:44:07.0236090Z Version: 20251211.462
+2025-12-30T19:44:07.0236702Z Commit: 6cbad8c2bb55d58165063d031ccabf57e2d2db61
+2025-12-30T19:44:07.0237352Z Build Date: 2025-12-11T16:28:49Z
+2025-12-30T19:44:07.0238139Z Worker ID: {6784d509-e70c-4b4e-98a4-318cbb18cbba}
+2025-12-30T19:44:07.0238877Z ##[endgroup]
+2025-12-30T19:44:07.0239404Z ##[group]Operating System
+2025-12-30T19:44:07.0240061Z Ubuntu
+2025-12-30T19:44:07.0240520Z 24.04.3
+2025-12-30T19:44:07.0240973Z LTS
+2025-12-30T19:44:07.0241477Z ##[endgroup]
+2025-12-30T19:44:07.0242018Z ##[group]Runner Image
+2025-12-30T19:44:07.0242522Z Image: ubuntu-24.04
+2025-12-30T19:44:07.0243089Z Version: 20251215.174.1
+2025-12-30T19:44:07.0244374Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20251215.174/images/ubuntu/Ubuntu2404-Readme.md
+2025-12-30T19:44:07.0246130Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20251215.174
+2025-12-30T19:44:07.0247176Z ##[endgroup]
+2025-12-30T19:44:07.0248206Z ##[group]GITHUB_TOKEN Permissions
+2025-12-30T19:44:07.0250570Z Contents: write
+2025-12-30T19:44:07.0251119Z Metadata: read
+2025-12-30T19:44:07.0251760Z ##[endgroup]
+2025-12-30T19:44:07.0253793Z Secret source: Actions
+2025-12-30T19:44:07.0255071Z Prepare workflow directory
+2025-12-30T19:44:07.0581525Z Prepare all required actions
+2025-12-30T19:44:07.0618313Z Getting action download info
+2025-12-30T19:44:07.4131224Z Download action repository 'actions/checkout@v3' (SHA:f43a0e5ff2bd294095638e18286ca9a3d1956744)
+2025-12-30T19:44:07.5357755Z Download action repository 'subosito/flutter-action@v2' (SHA:fd55f4c5af5b953cc57a2be44cb082c8f6635e8e)
+2025-12-30T19:44:07.7946322Z Download action repository 'softprops/action-gh-release@v1' (SHA:de2c0eb89ae2a093876385947365aca7b0e5f844)
+2025-12-30T19:44:08.2010414Z Getting action download info
+2025-12-30T19:44:08.3248785Z Download action repository 'actions/cache@v4' (SHA:0057852bfaa89a56745cba8c7296529d2fc39830)
+2025-12-30T19:44:08.4753838Z Complete job name: build-and-release
+2025-12-30T19:44:08.5515844Z ##[group]Run actions/checkout@v3
+2025-12-30T19:44:08.5516704Z with:
+2025-12-30T19:44:08.5517137Z   repository: XHCFS/beebetter
+2025-12-30T19:44:08.5517827Z   token: ***
+2025-12-30T19:44:08.5518234Z   ssh-strict: true
+2025-12-30T19:44:08.5518667Z   persist-credentials: true
+2025-12-30T19:44:08.5519130Z   clean: true
+2025-12-30T19:44:08.5519547Z   sparse-checkout-cone-mode: true
+2025-12-30T19:44:08.5520033Z   fetch-depth: 1
+2025-12-30T19:44:08.5520443Z   fetch-tags: false
+2025-12-30T19:44:08.5520841Z   lfs: false
+2025-12-30T19:44:08.5521242Z   submodules: false
+2025-12-30T19:44:08.5521675Z   set-safe-directory: true
+2025-12-30T19:44:08.5522387Z ##[endgroup]
+2025-12-30T19:44:08.6538209Z Syncing repository: XHCFS/beebetter
+2025-12-30T19:44:08.6541029Z ##[group]Getting Git version info
+2025-12-30T19:44:08.6542314Z Working directory is '/home/runner/work/beebetter/beebetter'
+2025-12-30T19:44:08.6544437Z [command]/usr/bin/git version
+2025-12-30T19:44:08.6618574Z git version 2.52.0
+2025-12-30T19:44:08.6648236Z ##[endgroup]
+2025-12-30T19:44:08.6665566Z Temporarily overriding HOME='/home/runner/work/_temp/ae05fc0e-736f-4785-b1d8-a4db2cd0404d' before making global git config changes
+2025-12-30T19:44:08.6667993Z Adding repository directory to the temporary git global config as a safe directory
+2025-12-30T19:44:08.6670280Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/beebetter/beebetter
+2025-12-30T19:44:08.6712725Z Deleting the contents of '/home/runner/work/beebetter/beebetter'
+2025-12-30T19:44:08.6717215Z ##[group]Initializing the repository
+2025-12-30T19:44:08.6720974Z [command]/usr/bin/git init /home/runner/work/beebetter/beebetter
+2025-12-30T19:44:08.6846600Z hint: Using 'master' as the name for the initial branch. This default branch name
+2025-12-30T19:44:08.6848332Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2025-12-30T19:44:08.6850270Z hint: to use in all of your new repositories, which will suppress this warning,
+2025-12-30T19:44:08.6851158Z hint: call:
+2025-12-30T19:44:08.6851831Z hint:
+2025-12-30T19:44:08.6852681Z hint: 	git config --global init.defaultBranch <name>
+2025-12-30T19:44:08.6853752Z hint:
+2025-12-30T19:44:08.6855534Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2025-12-30T19:44:08.6857138Z hint: 'development'. The just-created branch can be renamed via this command:
+2025-12-30T19:44:08.6858428Z hint:
+2025-12-30T19:44:08.6859115Z hint: 	git branch -m <name>
+2025-12-30T19:44:08.6859875Z hint:
+2025-12-30T19:44:08.6860865Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2025-12-30T19:44:08.6862581Z Initialized empty Git repository in /home/runner/work/beebetter/beebetter/.git/
+2025-12-30T19:44:08.6865564Z [command]/usr/bin/git remote add origin https://github.com/XHCFS/beebetter
+2025-12-30T19:44:08.6918690Z ##[endgroup]
+2025-12-30T19:44:08.6919949Z ##[group]Disabling automatic garbage collection
+2025-12-30T19:44:08.6921946Z [command]/usr/bin/git config --local gc.auto 0
+2025-12-30T19:44:08.6950882Z ##[endgroup]
+2025-12-30T19:44:08.6952129Z ##[group]Setting up auth
+2025-12-30T19:44:08.6957472Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2025-12-30T19:44:08.6986067Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2025-12-30T19:44:08.7362391Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2025-12-30T19:44:08.7392146Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2025-12-30T19:44:08.7618457Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2025-12-30T19:44:08.7651584Z ##[endgroup]
+2025-12-30T19:44:08.7653319Z ##[group]Fetching the repository
+2025-12-30T19:44:08.7661741Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --progress --no-recurse-submodules --depth=1 origin +8deefc3cfe57d1fe2309ac077d84512facbef434:refs/remotes/origin/backend
+2025-12-30T19:44:08.9670625Z remote: Enumerating objects: 247, done.        
+2025-12-30T19:44:08.9672375Z remote: Counting objects:   0% (1/247)        
+2025-12-30T19:44:08.9673919Z remote: Counting objects:   1% (3/247)        
+2025-12-30T19:44:08.9675566Z remote: Counting objects:   2% (5/247)        
+2025-12-30T19:44:08.9676971Z remote: Counting objects:   3% (8/247)        
+2025-12-30T19:44:08.9678426Z remote: Counting objects:   4% (10/247)        
+2025-12-30T19:44:08.9679883Z remote: Counting objects:   5% (13/247)        
+2025-12-30T19:44:08.9681287Z remote: Counting objects:   6% (15/247)        
+2025-12-30T19:44:08.9682608Z remote: Counting objects:   7% (18/247)        
+2025-12-30T19:44:08.9684226Z remote: Counting objects:   8% (20/247)        
+2025-12-30T19:44:08.9685956Z remote: Counting objects:   9% (23/247)        
+2025-12-30T19:44:08.9687451Z remote: Counting objects:  10% (25/247)        
+2025-12-30T19:44:08.9688943Z remote: Counting objects:  11% (28/247)        
+2025-12-30T19:44:08.9690504Z remote: Counting objects:  12% (30/247)        
+2025-12-30T19:44:08.9692081Z remote: Counting objects:  13% (33/247)        
+2025-12-30T19:44:08.9693693Z remote: Counting objects:  14% (35/247)        
+2025-12-30T19:44:08.9695550Z remote: Counting objects:  15% (38/247)        
+2025-12-30T19:44:08.9697204Z remote: Counting objects:  16% (40/247)        
+2025-12-30T19:44:08.9698903Z remote: Counting objects:  17% (42/247)        
+2025-12-30T19:44:08.9700565Z remote: Counting objects:  18% (45/247)        
+2025-12-30T19:44:08.9702258Z remote: Counting objects:  19% (47/247)        
+2025-12-30T19:44:08.9704292Z remote: Counting objects:  20% (50/247)        
+2025-12-30T19:44:08.9706424Z remote: Counting objects:  21% (52/247)        
+2025-12-30T19:44:08.9708164Z remote: Counting objects:  22% (55/247)        
+2025-12-30T19:44:08.9709959Z remote: Counting objects:  23% (57/247)        
+2025-12-30T19:44:08.9711707Z remote: Counting objects:  24% (60/247)        
+2025-12-30T19:44:08.9713577Z remote: Counting objects:  25% (62/247)        
+2025-12-30T19:44:08.9715747Z remote: Counting objects:  26% (65/247)        
+2025-12-30T19:44:08.9718037Z remote: Counting objects:  27% (67/247)        
+2025-12-30T19:44:08.9719889Z remote: Counting objects:  28% (70/247)        
+2025-12-30T19:44:08.9721287Z remote: Counting objects:  29% (72/247)        
+2025-12-30T19:44:08.9722656Z remote: Counting objects:  30% (75/247)        
+2025-12-30T19:44:08.9724233Z remote: Counting objects:  31% (77/247)        
+2025-12-30T19:44:08.9725645Z remote: Counting objects:  32% (80/247)        
+2025-12-30T19:44:08.9727063Z remote: Counting objects:  33% (82/247)        
+2025-12-30T19:44:08.9728479Z remote: Counting objects:  34% (84/247)        
+2025-12-30T19:44:08.9729869Z remote: Counting objects:  35% (87/247)        
+2025-12-30T19:44:08.9731261Z remote: Counting objects:  36% (89/247)        
+2025-12-30T19:44:08.9732642Z remote: Counting objects:  37% (92/247)        
+2025-12-30T19:44:08.9734250Z remote: Counting objects:  38% (94/247)        
+2025-12-30T19:44:08.9735719Z remote: Counting objects:  39% (97/247)        
+2025-12-30T19:44:08.9737238Z remote: Counting objects:  40% (99/247)        
+2025-12-30T19:44:08.9738731Z remote: Counting objects:  41% (102/247)        
+2025-12-30T19:44:08.9740260Z remote: Counting objects:  42% (104/247)        
+2025-12-30T19:44:08.9741774Z remote: Counting objects:  43% (107/247)        
+2025-12-30T19:44:08.9743292Z remote: Counting objects:  44% (109/247)        
+2025-12-30T19:44:08.9745021Z remote: Counting objects:  45% (112/247)        
+2025-12-30T19:44:08.9746554Z remote: Counting objects:  46% (114/247)        
+2025-12-30T19:44:08.9748101Z remote: Counting objects:  47% (117/247)        
+2025-12-30T19:44:08.9749835Z remote: Counting objects:  48% (119/247)        
+2025-12-30T19:44:08.9751359Z remote: Counting objects:  49% (122/247)        
+2025-12-30T19:44:08.9752866Z remote: Counting objects:  50% (124/247)        
+2025-12-30T19:44:08.9754532Z remote: Counting objects:  51% (126/247)        
+2025-12-30T19:44:08.9755990Z remote: Counting objects:  52% (129/247)        
+2025-12-30T19:44:08.9757409Z remote: Counting objects:  53% (131/247)        
+2025-12-30T19:44:08.9758823Z remote: Counting objects:  54% (134/247)        
+2025-12-30T19:44:08.9760233Z remote: Counting objects:  55% (136/247)        
+2025-12-30T19:44:08.9761674Z remote: Counting objects:  56% (139/247)        
+2025-12-30T19:44:08.9763110Z remote: Counting objects:  57% (141/247)        
+2025-12-30T19:44:08.9764686Z remote: Counting objects:  58% (144/247)        
+2025-12-30T19:44:08.9766095Z remote: Counting objects:  59% (146/247)        
+2025-12-30T19:44:08.9767526Z remote: Counting objects:  60% (149/247)        
+2025-12-30T19:44:08.9768939Z remote: Counting objects:  61% (151/247)        
+2025-12-30T19:44:08.9770359Z remote: Counting objects:  62% (154/247)        
+2025-12-30T19:44:08.9771782Z remote: Counting objects:  63% (156/247)        
+2025-12-30T19:44:08.9773201Z remote: Counting objects:  64% (159/247)        
+2025-12-30T19:44:08.9774791Z remote: Counting objects:  65% (161/247)        
+2025-12-30T19:44:08.9776173Z remote: Counting objects:  66% (164/247)        
+2025-12-30T19:44:08.9777561Z remote: Counting objects:  67% (166/247)        
+2025-12-30T19:44:08.9778959Z remote: Counting objects:  68% (168/247)        
+2025-12-30T19:44:08.9780330Z remote: Counting objects:  69% (171/247)        
+2025-12-30T19:44:08.9781711Z remote: Counting objects:  70% (173/247)        
+2025-12-30T19:44:08.9783151Z remote: Counting objects:  71% (176/247)        
+2025-12-30T19:44:08.9784715Z remote: Counting objects:  72% (178/247)        
+2025-12-30T19:44:08.9786144Z remote: Counting objects:  73% (181/247)        
+2025-12-30T19:44:08.9787734Z remote: Counting objects:  74% (183/247)        
+2025-12-30T19:44:08.9789166Z remote: Counting objects:  75% (186/247)        
+2025-12-30T19:44:08.9790593Z remote: Counting objects:  76% (188/247)        
+2025-12-30T19:44:08.9792018Z remote: Counting objects:  77% (191/247)        
+2025-12-30T19:44:08.9793432Z remote: Counting objects:  78% (193/247)        
+2025-12-30T19:44:08.9795081Z remote: Counting objects:  79% (196/247)        
+2025-12-30T19:44:08.9796488Z remote: Counting objects:  80% (198/247)        
+2025-12-30T19:44:08.9797868Z remote: Counting objects:  81% (201/247)        
+2025-12-30T19:44:08.9799254Z remote: Counting objects:  82% (203/247)        
+2025-12-30T19:44:08.9800637Z remote: Counting objects:  83% (206/247)        
+2025-12-30T19:44:08.9802015Z remote: Counting objects:  84% (208/247)        
+2025-12-30T19:44:08.9803407Z remote: Counting objects:  85% (210/247)        
+2025-12-30T19:44:08.9804985Z remote: Counting objects:  86% (213/247)        
+2025-12-30T19:44:08.9806370Z remote: Counting objects:  87% (215/247)        
+2025-12-30T19:44:08.9807761Z remote: Counting objects:  88% (218/247)        
+2025-12-30T19:44:08.9809148Z remote: Counting objects:  89% (220/247)        
+2025-12-30T19:44:08.9810518Z remote: Counting objects:  90% (223/247)        
+2025-12-30T19:44:08.9811879Z remote: Counting objects:  91% (225/247)        
+2025-12-30T19:44:08.9813250Z remote: Counting objects:  92% (228/247)        
+2025-12-30T19:44:08.9814809Z remote: Counting objects:  93% (230/247)        
+2025-12-30T19:44:08.9816164Z remote: Counting objects:  94% (233/247)        
+2025-12-30T19:44:08.9817516Z remote: Counting objects:  95% (235/247)        
+2025-12-30T19:44:08.9818883Z remote: Counting objects:  96% (238/247)        
+2025-12-30T19:44:08.9820233Z remote: Counting objects:  97% (240/247)        
+2025-12-30T19:44:08.9821609Z remote: Counting objects:  98% (243/247)        
+2025-12-30T19:44:08.9822981Z remote: Counting objects:  99% (245/247)        
+2025-12-30T19:44:08.9824504Z remote: Counting objects: 100% (247/247)        
+2025-12-30T19:44:08.9826654Z remote: Counting objects: 100% (247/247), done.        
+2025-12-30T19:44:08.9829016Z remote: Compressing objects:   0% (1/190)        
+2025-12-30T19:44:08.9831369Z remote: Compressing objects:   1% (2/190)        
+2025-12-30T19:44:08.9832843Z remote: Compressing objects:   2% (4/190)        
+2025-12-30T19:44:08.9834478Z remote: Compressing objects:   3% (6/190)        
+2025-12-30T19:44:08.9835873Z remote: Compressing objects:   4% (8/190)        
+2025-12-30T19:44:08.9837333Z remote: Compressing objects:   5% (10/190)        
+2025-12-30T19:44:08.9838706Z remote: Compressing objects:   6% (12/190)        
+2025-12-30T19:44:08.9840065Z remote: Compressing objects:   7% (14/190)        
+2025-12-30T19:44:08.9841424Z remote: Compressing objects:   8% (16/190)        
+2025-12-30T19:44:08.9842797Z remote: Compressing objects:   9% (18/190)        
+2025-12-30T19:44:08.9844631Z remote: Compressing objects:  10% (19/190)        
+2025-12-30T19:44:08.9846765Z remote: Compressing objects:  11% (21/190)        
+2025-12-30T19:44:08.9848697Z remote: Compressing objects:  12% (23/190)        
+2025-12-30T19:44:08.9850101Z remote: Compressing objects:  13% (25/190)        
+2025-12-30T19:44:08.9851455Z remote: Compressing objects:  14% (27/190)        
+2025-12-30T19:44:08.9853031Z remote: Compressing objects:  15% (29/190)        
+2025-12-30T19:44:08.9854641Z remote: Compressing objects:  16% (31/190)        
+2025-12-30T19:44:08.9856043Z remote: Compressing objects:  17% (33/190)        
+2025-12-30T19:44:08.9857920Z remote: Compressing objects:  18% (35/190)        
+2025-12-30T19:44:08.9859309Z remote: Compressing objects:  19% (37/190)        
+2025-12-30T19:44:08.9860688Z remote: Compressing objects:  20% (38/190)        
+2025-12-30T19:44:08.9862061Z remote: Compressing objects:  21% (40/190)        
+2025-12-30T19:44:08.9863440Z remote: Compressing objects:  22% (42/190)        
+2025-12-30T19:44:08.9865294Z remote: Compressing objects:  23% (44/190)        
+2025-12-30T19:44:08.9866936Z remote: Compressing objects:  24% (46/190)        
+2025-12-30T19:44:08.9868369Z remote: Compressing objects:  25% (48/190)        
+2025-12-30T19:44:08.9870242Z remote: Compressing objects:  26% (50/190)        
+2025-12-30T19:44:08.9872110Z remote: Compressing objects:  27% (52/190)        
+2025-12-30T19:44:08.9873742Z remote: Compressing objects:  28% (54/190)        
+2025-12-30T19:44:08.9875401Z remote: Compressing objects:  29% (56/190)        
+2025-12-30T19:44:08.9876889Z remote: Compressing objects:  30% (57/190)        
+2025-12-30T19:44:08.9879078Z remote: Compressing objects:  31% (59/190)        
+2025-12-30T19:44:08.9881080Z remote: Compressing objects:  32% (61/190)        
+2025-12-30T19:44:08.9883407Z remote: Compressing objects:  33% (63/190)        
+2025-12-30T19:44:08.9885271Z remote: Compressing objects:  34% (65/190)        
+2025-12-30T19:44:08.9887285Z remote: Compressing objects:  35% (67/190)        
+2025-12-30T19:44:08.9889144Z remote: Compressing objects:  36% (69/190)        
+2025-12-30T19:44:08.9890545Z remote: Compressing objects:  37% (71/190)        
+2025-12-30T19:44:08.9891912Z remote: Compressing objects:  38% (73/190)        
+2025-12-30T19:44:08.9893266Z remote: Compressing objects:  39% (75/190)        
+2025-12-30T19:44:08.9894932Z remote: Compressing objects:  40% (76/190)        
+2025-12-30T19:44:08.9896300Z remote: Compressing objects:  41% (78/190)        
+2025-12-30T19:44:08.9897628Z remote: Compressing objects:  42% (80/190)        
+2025-12-30T19:44:08.9898957Z remote: Compressing objects:  43% (82/190)        
+2025-12-30T19:44:08.9900271Z remote: Compressing objects:  44% (84/190)        
+2025-12-30T19:44:08.9901617Z remote: Compressing objects:  45% (86/190)        
+2025-12-30T19:44:08.9902956Z remote: Compressing objects:  46% (88/190)        
+2025-12-30T19:44:08.9904542Z remote: Compressing objects:  47% (90/190)        
+2025-12-30T19:44:08.9905883Z remote: Compressing objects:  48% (92/190)        
+2025-12-30T19:44:08.9907232Z remote: Compressing objects:  49% (94/190)        
+2025-12-30T19:44:08.9908767Z remote: Compressing objects:  50% (95/190)        
+2025-12-30T19:44:08.9910118Z remote: Compressing objects:  51% (97/190)        
+2025-12-30T19:44:08.9911446Z remote: Compressing objects:  52% (99/190)        
+2025-12-30T19:44:08.9912776Z remote: Compressing objects:  53% (101/190)        
+2025-12-30T19:44:08.9914332Z remote: Compressing objects:  54% (103/190)        
+2025-12-30T19:44:08.9915682Z remote: Compressing objects:  55% (105/190)        
+2025-12-30T19:44:08.9917016Z remote: Compressing objects:  56% (107/190)        
+2025-12-30T19:44:08.9918334Z remote: Compressing objects:  57% (109/190)        
+2025-12-30T19:44:08.9919656Z remote: Compressing objects:  58% (111/190)        
+2025-12-30T19:44:08.9920969Z remote: Compressing objects:  59% (113/190)        
+2025-12-30T19:44:08.9922284Z remote: Compressing objects:  60% (114/190)        
+2025-12-30T19:44:08.9923602Z remote: Compressing objects:  61% (116/190)        
+2025-12-30T19:44:08.9925094Z remote: Compressing objects:  62% (118/190)        
+2025-12-30T19:44:08.9926415Z remote: Compressing objects:  63% (120/190)        
+2025-12-30T19:44:08.9927735Z remote: Compressing objects:  64% (122/190)        
+2025-12-30T19:44:08.9929031Z remote: Compressing objects:  65% (124/190)        
+2025-12-30T19:44:08.9930338Z remote: Compressing objects:  66% (126/190)        
+2025-12-30T19:44:08.9931661Z remote: Compressing objects:  67% (128/190)        
+2025-12-30T19:44:08.9932958Z remote: Compressing objects:  68% (130/190)        
+2025-12-30T19:44:08.9934368Z remote: Compressing objects:  69% (132/190)        
+2025-12-30T19:44:08.9935672Z remote: Compressing objects:  70% (133/190)        
+2025-12-30T19:44:08.9936993Z remote: Compressing objects:  71% (135/190)        
+2025-12-30T19:44:08.9938310Z remote: Compressing objects:  72% (137/190)        
+2025-12-30T19:44:08.9939703Z remote: Compressing objects:  73% (139/190)        
+2025-12-30T19:44:08.9941285Z remote: Compressing objects:  74% (141/190)        
+2025-12-30T19:44:08.9942620Z remote: Compressing objects:  75% (143/190)        
+2025-12-30T19:44:08.9944064Z remote: Compressing objects:  76% (145/190)        
+2025-12-30T19:44:08.9945394Z remote: Compressing objects:  77% (147/190)        
+2025-12-30T19:44:08.9946709Z remote: Compressing objects:  78% (149/190)        
+2025-12-30T19:44:08.9948322Z remote: Compressing objects:  79% (151/190)        
+2025-12-30T19:44:08.9949853Z remote: Compressing objects:  80% (152/190)        
+2025-12-30T19:44:08.9951153Z remote: Compressing objects:  81% (154/190)        
+2025-12-30T19:44:08.9952460Z remote: Compressing objects:  82% (156/190)        
+2025-12-30T19:44:08.9953754Z remote: Compressing objects:  83% (158/190)        
+2025-12-30T19:44:08.9955298Z remote: Compressing objects:  84% (160/190)        
+2025-12-30T19:44:08.9956609Z remote: Compressing objects:  85% (162/190)        
+2025-12-30T19:44:08.9957928Z remote: Compressing objects:  86% (164/190)        
+2025-12-30T19:44:08.9959254Z remote: Compressing objects:  87% (166/190)        
+2025-12-30T19:44:08.9960564Z remote: Compressing objects:  88% (168/190)        
+2025-12-30T19:44:08.9961891Z remote: Compressing objects:  89% (170/190)        
+2025-12-30T19:44:08.9963197Z remote: Compressing objects:  90% (171/190)        
+2025-12-30T19:44:08.9964642Z remote: Compressing objects:  91% (173/190)        
+2025-12-30T19:44:08.9965934Z remote: Compressing objects:  92% (175/190)        
+2025-12-30T19:44:08.9967236Z remote: Compressing objects:  93% (177/190)        
+2025-12-30T19:44:08.9968541Z remote: Compressing objects:  94% (179/190)        
+2025-12-30T19:44:08.9969853Z remote: Compressing objects:  95% (181/190)        
+2025-12-30T19:44:08.9971144Z remote: Compressing objects:  96% (183/190)        
+2025-12-30T19:44:08.9972436Z remote: Compressing objects:  97% (185/190)        
+2025-12-30T19:44:08.9973745Z remote: Compressing objects:  98% (187/190)        
+2025-12-30T19:44:08.9975234Z remote: Compressing objects:  99% (189/190)        
+2025-12-30T19:44:08.9976529Z remote: Compressing objects: 100% (190/190)        
+2025-12-30T19:44:08.9978075Z remote: Compressing objects: 100% (190/190), done.        
+2025-12-30T19:44:08.9979467Z Receiving objects:   0% (1/247)
+2025-12-30T19:44:08.9981017Z Receiving objects:   1% (3/247)
+2025-12-30T19:44:08.9982846Z Receiving objects:   2% (5/247)
+2025-12-30T19:44:08.9984825Z Receiving objects:   3% (8/247)
+2025-12-30T19:44:08.9986309Z Receiving objects:   4% (10/247)
+2025-12-30T19:44:08.9987307Z Receiving objects:   5% (13/247)
+2025-12-30T19:44:08.9988349Z Receiving objects:   6% (15/247)
+2025-12-30T19:44:08.9989325Z Receiving objects:   7% (18/247)
+2025-12-30T19:44:08.9990325Z Receiving objects:   8% (20/247)
+2025-12-30T19:44:08.9991311Z Receiving objects:   9% (23/247)
+2025-12-30T19:44:08.9992297Z Receiving objects:  10% (25/247)
+2025-12-30T19:44:08.9993270Z Receiving objects:  11% (28/247)
+2025-12-30T19:44:08.9994472Z Receiving objects:  12% (30/247)
+2025-12-30T19:44:08.9995468Z Receiving objects:  13% (33/247)
+2025-12-30T19:44:08.9996458Z Receiving objects:  14% (35/247)
+2025-12-30T19:44:08.9997442Z Receiving objects:  15% (38/247)
+2025-12-30T19:44:08.9998912Z Receiving objects:  16% (40/247)
+2025-12-30T19:44:09.0000594Z Receiving objects:  17% (42/247)
+2025-12-30T19:44:09.0002258Z Receiving objects:  18% (45/247)
+2025-12-30T19:44:09.0003444Z Receiving objects:  19% (47/247)
+2025-12-30T19:44:09.0004702Z Receiving objects:  20% (50/247)
+2025-12-30T19:44:09.0015534Z Receiving objects:  21% (52/247)
+2025-12-30T19:44:09.0017968Z Receiving objects:  22% (55/247)
+2025-12-30T19:44:09.0019080Z Receiving objects:  23% (57/247)
+2025-12-30T19:44:09.0020055Z Receiving objects:  24% (60/247)
+2025-12-30T19:44:09.0028292Z Receiving objects:  25% (62/247)
+2025-12-30T19:44:09.0030532Z Receiving objects:  26% (65/247)
+2025-12-30T19:44:09.0031751Z Receiving objects:  27% (67/247)
+2025-12-30T19:44:09.0033147Z Receiving objects:  28% (70/247)
+2025-12-30T19:44:09.0035474Z Receiving objects:  29% (72/247)
+2025-12-30T19:44:09.0036966Z Receiving objects:  30% (75/247)
+2025-12-30T19:44:09.0038033Z Receiving objects:  31% (77/247)
+2025-12-30T19:44:09.0039076Z Receiving objects:  32% (80/247)
+2025-12-30T19:44:09.0040119Z Receiving objects:  33% (82/247)
+2025-12-30T19:44:09.0041182Z Receiving objects:  34% (84/247)
+2025-12-30T19:44:09.0042205Z Receiving objects:  35% (87/247)
+2025-12-30T19:44:09.0139808Z Receiving objects:  36% (89/247)
+2025-12-30T19:44:09.0141546Z Receiving objects:  37% (92/247)
+2025-12-30T19:44:09.0142631Z Receiving objects:  38% (94/247)
+2025-12-30T19:44:09.0143660Z Receiving objects:  39% (97/247)
+2025-12-30T19:44:09.0144932Z Receiving objects:  40% (99/247)
+2025-12-30T19:44:09.0145960Z Receiving objects:  41% (102/247)
+2025-12-30T19:44:09.0147577Z Receiving objects:  42% (104/247)
+2025-12-30T19:44:09.0149156Z Receiving objects:  43% (107/247)
+2025-12-30T19:44:09.0150998Z Receiving objects:  44% (109/247)
+2025-12-30T19:44:09.0152732Z Receiving objects:  45% (112/247)
+2025-12-30T19:44:09.0154651Z Receiving objects:  46% (114/247)
+2025-12-30T19:44:09.0156336Z Receiving objects:  47% (117/247)
+2025-12-30T19:44:09.0158189Z Receiving objects:  48% (119/247)
+2025-12-30T19:44:09.0159869Z Receiving objects:  49% (122/247)
+2025-12-30T19:44:09.0161543Z Receiving objects:  50% (124/247)
+2025-12-30T19:44:09.0162653Z Receiving objects:  51% (126/247)
+2025-12-30T19:44:09.0163747Z Receiving objects:  52% (129/247)
+2025-12-30T19:44:09.0164971Z Receiving objects:  53% (131/247)
+2025-12-30T19:44:09.0166657Z Receiving objects:  54% (134/247)
+2025-12-30T19:44:09.0168063Z Receiving objects:  55% (136/247)
+2025-12-30T19:44:09.0169105Z Receiving objects:  56% (139/247)
+2025-12-30T19:44:09.0170315Z Receiving objects:  57% (141/247)
+2025-12-30T19:44:09.0171910Z Receiving objects:  58% (144/247)
+2025-12-30T19:44:09.0173665Z Receiving objects:  59% (146/247)
+2025-12-30T19:44:09.0175501Z Receiving objects:  60% (149/247)
+2025-12-30T19:44:09.0177053Z Receiving objects:  61% (151/247)
+2025-12-30T19:44:09.0178612Z Receiving objects:  62% (154/247)
+2025-12-30T19:44:09.0180268Z Receiving objects:  63% (156/247)
+2025-12-30T19:44:09.0182130Z Receiving objects:  64% (159/247)
+2025-12-30T19:44:09.0183830Z Receiving objects:  65% (161/247)
+2025-12-30T19:44:09.0185399Z Receiving objects:  66% (164/247)
+2025-12-30T19:44:09.0186843Z Receiving objects:  67% (166/247)
+2025-12-30T19:44:09.0187886Z Receiving objects:  68% (168/247)
+2025-12-30T19:44:09.0188922Z Receiving objects:  69% (171/247)
+2025-12-30T19:44:09.0189980Z Receiving objects:  70% (173/247)
+2025-12-30T19:44:09.0191014Z Receiving objects:  71% (176/247)
+2025-12-30T19:44:09.0192047Z Receiving objects:  72% (178/247)
+2025-12-30T19:44:09.0193078Z Receiving objects:  73% (181/247)
+2025-12-30T19:44:09.0194403Z Receiving objects:  74% (183/247)
+2025-12-30T19:44:09.0195647Z Receiving objects:  75% (186/247)
+2025-12-30T19:44:09.0196680Z Receiving objects:  76% (188/247)
+2025-12-30T19:44:09.0197696Z Receiving objects:  77% (191/247)
+2025-12-30T19:44:09.0198714Z Receiving objects:  78% (193/247)
+2025-12-30T19:44:09.0199738Z Receiving objects:  79% (196/247)
+2025-12-30T19:44:09.0311819Z Receiving objects:  80% (198/247)
+2025-12-30T19:44:09.0313849Z Receiving objects:  81% (201/247)
+2025-12-30T19:44:09.0328706Z Receiving objects:  82% (203/247)
+2025-12-30T19:44:09.0331084Z remote: Total 247 (delta 34), reused 189 (delta 18), pack-reused 0 (from 0)        
+2025-12-30T19:44:09.0333632Z Receiving objects:  83% (206/247)
+2025-12-30T19:44:09.0334968Z Receiving objects:  84% (208/247)
+2025-12-30T19:44:09.0336001Z Receiving objects:  85% (210/247)
+2025-12-30T19:44:09.0337029Z Receiving objects:  86% (213/247)
+2025-12-30T19:44:09.0338505Z Receiving objects:  87% (215/247)
+2025-12-30T19:44:09.0340157Z Receiving objects:  88% (218/247)
+2025-12-30T19:44:09.0341766Z Receiving objects:  89% (220/247)
+2025-12-30T19:44:09.0343294Z Receiving objects:  90% (223/247)
+2025-12-30T19:44:09.0345053Z Receiving objects:  91% (225/247)
+2025-12-30T19:44:09.0346672Z Receiving objects:  92% (228/247)
+2025-12-30T19:44:09.0348599Z Receiving objects:  93% (230/247)
+2025-12-30T19:44:09.0350101Z Receiving objects:  94% (233/247)
+2025-12-30T19:44:09.0351554Z Receiving objects:  95% (235/247)
+2025-12-30T19:44:09.0353159Z Receiving objects:  96% (238/247)
+2025-12-30T19:44:09.0356426Z Receiving objects:  97% (240/247)
+2025-12-30T19:44:09.0362939Z Receiving objects:  98% (243/247)
+2025-12-30T19:44:09.0365142Z Receiving objects:  99% (245/247)
+2025-12-30T19:44:09.0366726Z Receiving objects: 100% (247/247)
+2025-12-30T19:44:09.0368649Z Receiving objects: 100% (247/247), 375.57 KiB | 7.66 MiB/s, done.
+2025-12-30T19:44:09.0370850Z Resolving deltas:   0% (0/34)
+2025-12-30T19:44:09.0372448Z Resolving deltas:   2% (1/34)
+2025-12-30T19:44:09.0374289Z Resolving deltas:   5% (2/34)
+2025-12-30T19:44:09.0375860Z Resolving deltas:   8% (3/34)
+2025-12-30T19:44:09.0377540Z Resolving deltas:  11% (4/34)
+2025-12-30T19:44:09.0379148Z Resolving deltas:  14% (5/34)
+2025-12-30T19:44:09.0380808Z Resolving deltas:  17% (6/34)
+2025-12-30T19:44:09.0382458Z Resolving deltas:  20% (7/34)
+2025-12-30T19:44:09.0384234Z Resolving deltas:  23% (8/34)
+2025-12-30T19:44:09.0385855Z Resolving deltas:  26% (9/34)
+2025-12-30T19:44:09.0387432Z Resolving deltas:  29% (10/34)
+2025-12-30T19:44:09.0389013Z Resolving deltas:  32% (11/34)
+2025-12-30T19:44:09.0390647Z Resolving deltas:  35% (12/34)
+2025-12-30T19:44:09.0392230Z Resolving deltas:  38% (13/34)
+2025-12-30T19:44:09.0393706Z Resolving deltas:  41% (14/34)
+2025-12-30T19:44:09.0395460Z Resolving deltas:  44% (15/34)
+2025-12-30T19:44:09.0397013Z Resolving deltas:  47% (16/34)
+2025-12-30T19:44:09.0398541Z Resolving deltas:  50% (17/34)
+2025-12-30T19:44:09.0400074Z Resolving deltas:  52% (18/34)
+2025-12-30T19:44:09.0401605Z Resolving deltas:  55% (19/34)
+2025-12-30T19:44:09.0403110Z Resolving deltas:  61% (21/34)
+2025-12-30T19:44:09.0404875Z Resolving deltas:  64% (22/34)
+2025-12-30T19:44:09.0406409Z Resolving deltas:  67% (23/34)
+2025-12-30T19:44:09.0407927Z Resolving deltas:  70% (24/34)
+2025-12-30T19:44:09.0409522Z Resolving deltas:  73% (25/34)
+2025-12-30T19:44:09.0411188Z Resolving deltas:  76% (26/34)
+2025-12-30T19:44:09.0413090Z Resolving deltas:  79% (27/34)
+2025-12-30T19:44:09.0415007Z Resolving deltas:  85% (29/34)
+2025-12-30T19:44:09.0416537Z Resolving deltas:  88% (30/34)
+2025-12-30T19:44:09.0418136Z Resolving deltas:  91% (31/34)
+2025-12-30T19:44:09.0419106Z Resolving deltas:  94% (32/34)
+2025-12-30T19:44:09.0420453Z Resolving deltas:  97% (33/34)
+2025-12-30T19:44:09.0421984Z Resolving deltas: 100% (34/34)
+2025-12-30T19:44:09.0423563Z Resolving deltas: 100% (34/34), done.
+2025-12-30T19:44:09.0526308Z From https://github.com/XHCFS/beebetter
+2025-12-30T19:44:09.0530575Z  * [new ref]         8deefc3cfe57d1fe2309ac077d84512facbef434 -> origin/backend
+2025-12-30T19:44:09.0564823Z ##[endgroup]
+2025-12-30T19:44:09.0567217Z ##[group]Determining the checkout info
+2025-12-30T19:44:09.0569742Z ##[endgroup]
+2025-12-30T19:44:09.0571876Z ##[group]Checking out the ref
+2025-12-30T19:44:09.0574672Z [command]/usr/bin/git checkout --progress --force -B backend refs/remotes/origin/backend
+2025-12-30T19:44:09.0737246Z Switched to a new branch 'backend'
+2025-12-30T19:44:09.0741407Z branch 'backend' set up to track 'origin/backend'.
+2025-12-30T19:44:09.0749525Z ##[endgroup]
+2025-12-30T19:44:09.0788939Z [command]/usr/bin/git log -1 --format='%H'
+2025-12-30T19:44:09.0814725Z '8deefc3cfe57d1fe2309ac077d84512facbef434'
+2025-12-30T19:44:09.1327748Z ##[group]Run subosito/flutter-action@v2
+2025-12-30T19:44:09.1328759Z with:
+2025-12-30T19:44:09.1329430Z   flutter-version: 3.38.4
+2025-12-30T19:44:09.1330218Z   channel: stable
+2025-12-30T19:44:09.1330900Z   cache: true
+2025-12-30T19:44:09.1331583Z   architecture: X64
+2025-12-30T19:44:09.1332318Z   pub-cache-path: default
+2025-12-30T19:44:09.1333105Z   dry-run: false
+2025-12-30T19:44:09.1334104Z   git-source: https://github.com/flutter/flutter.git
+2025-12-30T19:44:09.1335159Z ##[endgroup]
+2025-12-30T19:44:09.1468928Z ##[group]Run chmod +x "$GITHUB_ACTION_PATH/setup.sh"
+2025-12-30T19:44:09.1470211Z [36;1mchmod +x "$GITHUB_ACTION_PATH/setup.sh"[0m
+2025-12-30T19:44:09.1508356Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2025-12-30T19:44:09.1509538Z ##[endgroup]
+2025-12-30T19:44:09.1691064Z ##[group]Run $GITHUB_ACTION_PATH/setup.sh -p \
+2025-12-30T19:44:09.1692246Z [36;1m$GITHUB_ACTION_PATH/setup.sh -p \[0m
+2025-12-30T19:44:09.1693258Z [36;1m  -n '3.38.4' \[0m
+2025-12-30T19:44:09.1694353Z [36;1m  -f '' \[0m
+2025-12-30T19:44:09.1695123Z [36;1m  -a 'X64' \[0m
+2025-12-30T19:44:09.1695890Z [36;1m  -k '' \[0m
+2025-12-30T19:44:09.1696622Z [36;1m  -c '' \[0m
+2025-12-30T19:44:09.1697355Z [36;1m  -l '' \[0m
+2025-12-30T19:44:09.1698112Z [36;1m  -d 'default' \[0m
+2025-12-30T19:44:09.1699124Z [36;1m  -g 'https://github.com/flutter/flutter.git' \[0m
+2025-12-30T19:44:09.1700261Z [36;1m  stable[0m
+2025-12-30T19:44:09.1734585Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2025-12-30T19:44:09.1735784Z ##[endgroup]
+2025-12-30T19:44:09.3485101Z ##[group]Run actions/cache@v4
+2025-12-30T19:44:09.3485975Z with:
+2025-12-30T19:44:09.3486794Z   path: /opt/hostedtoolcache/flutter/stable-3.38.4-x64
+2025-12-30T19:44:09.3488338Z   key: flutter-linux-stable-3.38.4-x64-66dd93f9a27ffe2a9bfc8297506ce066ff51265f
+2025-12-30T19:44:09.3489768Z   enableCrossOsArchive: false
+2025-12-30T19:44:09.3490636Z   fail-on-cache-miss: false
+2025-12-30T19:44:09.3491453Z   lookup-only: false
+2025-12-30T19:44:09.3492188Z   save-always: false
+2025-12-30T19:44:09.3492910Z ##[endgroup]
+2025-12-30T19:44:09.6791505Z Cache hit for: flutter-linux-stable-3.38.4-x64-66dd93f9a27ffe2a9bfc8297506ce066ff51265f
+2025-12-30T19:44:10.7748971Z Received 159383552 of 1602994610 (9.9%), 152.0 MBs/sec
+2025-12-30T19:44:11.8067718Z Received 402653184 of 1602994610 (25.1%), 189.0 MBs/sec
+2025-12-30T19:44:12.8104684Z Received 637534208 of 1602994610 (39.8%), 200.3 MBs/sec
+2025-12-30T19:44:13.8107356Z Received 834666496 of 1602994610 (52.1%), 197.2 MBs/sec
+2025-12-30T19:44:14.8131434Z Received 1048576000 of 1602994610 (65.4%), 198.5 MBs/sec
+2025-12-30T19:44:15.8160476Z Received 1216348160 of 1602994610 (75.9%), 192.0 MBs/sec
+2025-12-30T19:44:16.8196057Z Received 1463812096 of 1602994610 (91.3%), 198.2 MBs/sec
+2025-12-30T19:44:17.5698982Z Received 1602994610 of 1602994610 (100.0%), 196.1 MBs/sec
+2025-12-30T19:44:17.5702495Z Cache Size: ~1529 MB (1602994610 B)
+2025-12-30T19:44:17.5764932Z [command]/usr/bin/tar -xf /home/runner/work/_temp/30b208bb-32b0-4b78-9073-a294b5a10fb7/cache.tzst -P -C /home/runner/work/beebetter/beebetter --use-compress-program unzstd
+2025-12-30T19:44:22.9416346Z Cache restored successfully
+2025-12-30T19:44:23.2609453Z Cache restored from key: flutter-linux-stable-3.38.4-x64-66dd93f9a27ffe2a9bfc8297506ce066ff51265f
+2025-12-30T19:44:23.3625876Z ##[group]Run actions/cache@v4
+2025-12-30T19:44:23.3626128Z with:
+2025-12-30T19:44:23.3626333Z   path: /home/runner/.pub-cache
+2025-12-30T19:44:23.3626764Z   key: flutter-pub-linux-stable-3.38.4-x64-66dd93f9a27ffe2a9bfc8297506ce066ff51265f-
+2025-12-30T19:44:23.3627184Z   enableCrossOsArchive: false
+2025-12-30T19:44:23.3627434Z   fail-on-cache-miss: false
+2025-12-30T19:44:23.3627649Z   lookup-only: false
+2025-12-30T19:44:23.3627838Z   save-always: false
+2025-12-30T19:44:23.3628027Z ##[endgroup]
+2025-12-30T19:44:23.6017548Z Cache hit for: flutter-pub-linux-stable-3.38.4-x64-66dd93f9a27ffe2a9bfc8297506ce066ff51265f-
+2025-12-30T19:44:24.2281125Z Received 40549022 of 40549022 (100.0%), 75.2 MBs/sec
+2025-12-30T19:44:24.2281828Z Cache Size: ~39 MB (40549022 B)
+2025-12-30T19:44:24.2308427Z [command]/usr/bin/tar -xf /home/runner/work/_temp/353d6d42-3ff8-4f47-904a-a806be4ad079/cache.tzst -P -C /home/runner/work/beebetter/beebetter --use-compress-program unzstd
+2025-12-30T19:44:25.0073451Z Cache restored successfully
+2025-12-30T19:44:25.0231141Z Cache restored from key: flutter-pub-linux-stable-3.38.4-x64-66dd93f9a27ffe2a9bfc8297506ce066ff51265f-
+2025-12-30T19:44:25.0349959Z ##[group]Run $GITHUB_ACTION_PATH/setup.sh \
+2025-12-30T19:44:25.0350309Z [36;1m$GITHUB_ACTION_PATH/setup.sh \[0m
+2025-12-30T19:44:25.0350776Z [36;1m  -n '3.38.4' \[0m
+2025-12-30T19:44:25.0351032Z [36;1m  -a 'x64' \[0m
+2025-12-30T19:44:25.0351347Z [36;1m  -c '/opt/hostedtoolcache/flutter/stable-3.38.4-x64' \[0m
+2025-12-30T19:44:25.0351693Z [36;1m  -d '/home/runner/.pub-cache' \[0m
+2025-12-30T19:44:25.0351942Z [36;1m  stable[0m
+2025-12-30T19:44:25.0385641Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2025-12-30T19:44:25.0385979Z ##[endgroup]
+2025-12-30T19:44:25.1892771Z ##[group]Run echo "flutter.sdk=$FLUTTER_ROOT" > android/local.properties
+2025-12-30T19:44:25.1893312Z [36;1mecho "flutter.sdk=$FLUTTER_ROOT" > android/local.properties[0m
+2025-12-30T19:44:25.1893761Z [36;1mecho "Created local.properties with Flutter SDK: $FLUTTER_ROOT"[0m
+2025-12-30T19:44:25.1894426Z [36;1mcat android/local.properties[0m
+2025-12-30T19:44:25.1930401Z shell: /usr/bin/bash -e {0}
+2025-12-30T19:44:25.1930655Z env:
+2025-12-30T19:44:25.1930931Z   FLUTTER_ROOT: /opt/hostedtoolcache/flutter/stable-3.38.4-x64
+2025-12-30T19:44:25.1931303Z   PUB_CACHE: /home/runner/.pub-cache
+2025-12-30T19:44:25.1931559Z ##[endgroup]
+2025-12-30T19:44:25.1984332Z Created local.properties with Flutter SDK: /opt/hostedtoolcache/flutter/stable-3.38.4-x64
+2025-12-30T19:44:25.1992962Z flutter.sdk=/opt/hostedtoolcache/flutter/stable-3.38.4-x64
+2025-12-30T19:44:25.2017605Z ##[group]Run flutter pub get
+2025-12-30T19:44:25.2017900Z [36;1mflutter pub get[0m
+2025-12-30T19:44:25.2049527Z shell: /usr/bin/bash -e {0}
+2025-12-30T19:44:25.2049776Z env:
+2025-12-30T19:44:25.2050045Z   FLUTTER_ROOT: /opt/hostedtoolcache/flutter/stable-3.38.4-x64
+2025-12-30T19:44:25.2050400Z   PUB_CACHE: /home/runner/.pub-cache
+2025-12-30T19:44:25.2050647Z ##[endgroup]
+2025-12-30T19:44:25.5310393Z Resolving dependencies...
+2025-12-30T19:44:26.0222682Z Downloading packages...
+2025-12-30T19:44:31.3307864Z + _fe_analyzer_shared 92.0.0
+2025-12-30T19:44:31.3308432Z + analyzer 9.0.0
+2025-12-30T19:44:31.3308847Z + args 2.7.0
+2025-12-30T19:44:31.3309223Z + async 2.13.0
+2025-12-30T19:44:31.3309674Z + audioplayers 6.5.1
+2025-12-30T19:44:31.3310150Z + audioplayers_android 5.2.1
+2025-12-30T19:44:31.3310664Z + audioplayers_darwin 6.3.0
+2025-12-30T19:44:31.3311165Z + audioplayers_linux 4.2.1
+2025-12-30T19:44:31.3311698Z + audioplayers_platform_interface 7.1.1
+2025-12-30T19:44:31.3312347Z + audioplayers_web 5.1.1
+2025-12-30T19:44:31.3312808Z + audioplayers_windows 4.2.1
+2025-12-30T19:44:31.3313324Z + boolean_selector 2.1.2
+2025-12-30T19:44:31.3313690Z + build 4.0.3
+2025-12-30T19:44:31.3314210Z + build_config 1.2.0
+2025-12-30T19:44:31.3314563Z + build_daemon 4.1.1
+2025-12-30T19:44:31.3314927Z + build_runner 2.10.4
+2025-12-30T19:44:31.3315287Z + built_collection 5.1.1
+2025-12-30T19:44:31.3315659Z + built_value 8.12.1
+2025-12-30T19:44:31.3315995Z + chalkdart 3.0.5
+2025-12-30T19:44:31.3316348Z + characters 1.4.0 (1.4.1 available)
+2025-12-30T19:44:31.3316762Z + charcode 1.4.0
+2025-12-30T19:44:31.3317092Z + checked_yaml 2.0.4
+2025-12-30T19:44:31.3317440Z + cli_util 0.4.2
+2025-12-30T19:44:31.3317762Z + clock 1.1.2
+2025-12-30T19:44:31.3318093Z + code_builder 4.11.0
+2025-12-30T19:44:31.3318446Z + collection 1.19.1
+2025-12-30T19:44:31.3318785Z + convert 3.1.2
+2025-12-30T19:44:31.3319145Z + crypto 3.0.7
+2025-12-30T19:44:31.3319478Z + cupertino_icons 1.0.8
+2025-12-30T19:44:31.3319836Z + dart_style 3.1.3
+2025-12-30T19:44:31.3320201Z + dotted_border 3.1.0
+2025-12-30T19:44:31.3320537Z + drift 2.30.0
+2025-12-30T19:44:31.3320851Z + drift_dev 2.30.0
+2025-12-30T19:44:31.3321182Z + drift_flutter 0.2.8
+2025-12-30T19:44:31.3321527Z + equatable 2.0.7
+2025-12-30T19:44:31.3321857Z + fake_async 1.3.3
+2025-12-30T19:44:31.3322175Z + ffi 2.1.4
+2025-12-30T19:44:31.3322470Z + file 7.0.1
+2025-12-30T19:44:31.3322773Z + fixnum 1.1.1
+2025-12-30T19:44:31.3323111Z + fl_chart 0.66.2 (1.1.1 available)
+2025-12-30T19:44:31.3323543Z + flutter 0.0.0 from sdk flutter
+2025-12-30T19:44:31.3323933Z + flutter_card_swiper 7.2.0
+2025-12-30T19:44:31.3324448Z + flutter_flip_card 0.0.6
+2025-12-30T19:44:31.3324814Z + flutter_lints 5.0.0 (6.0.0 available)
+2025-12-30T19:44:31.3325660Z + flutter_markdown 0.7.7+1 (discontinued replaced by flutter_markdown_plus)
+2025-12-30T19:44:31.3326218Z + flutter_test 0.0.0 from sdk flutter
+2025-12-30T19:44:31.3326499Z + flutter_web_plugins 0.0.0 from sdk flutter
+2025-12-30T19:44:31.3326745Z + glob 2.1.3
+2025-12-30T19:44:31.3326917Z + graphs 2.3.2
+2025-12-30T19:44:31.3327094Z + http 1.6.0
+2025-12-30T19:44:31.3327269Z + http_multi_server 3.2.2
+2025-12-30T19:44:31.3327476Z + http_parser 4.1.2
+2025-12-30T19:44:31.3327667Z + intl 0.18.1 (0.20.2 available)
+2025-12-30T19:44:31.3327870Z + io 1.0.5
+2025-12-30T19:44:31.3328038Z + json_annotation 4.9.0
+2025-12-30T19:44:31.3328234Z + leak_tracker 11.0.2
+2025-12-30T19:44:31.3328437Z + leak_tracker_flutter_testing 3.0.10
+2025-12-30T19:44:31.3328678Z + leak_tracker_testing 3.0.2
+2025-12-30T19:44:31.3328894Z + lints 5.1.1 (6.0.0 available)
+2025-12-30T19:44:31.3329097Z + logging 1.3.0
+2025-12-30T19:44:31.3329272Z + markdown 7.3.0
+2025-12-30T19:44:31.3329466Z + matcher 0.12.17 (0.12.18 available)
+2025-12-30T19:44:31.3329745Z + material_color_utilities 0.11.1 (0.13.0 available)
+2025-12-30T19:44:31.3330029Z + material_symbols_icons 4.2892.0
+2025-12-30T19:44:31.3330252Z + meta 1.17.0
+2025-12-30T19:44:31.3330412Z + mime 2.0.0
+2025-12-30T19:44:31.3330576Z + nested 1.0.0
+2025-12-30T19:44:31.3330938Z + package_config 2.2.0
+2025-12-30T19:44:31.3331148Z + path 1.9.1
+2025-12-30T19:44:31.3331321Z + path_provider 2.1.5
+2025-12-30T19:44:31.3331523Z + path_provider_android 2.2.22
+2025-12-30T19:44:31.3331754Z + path_provider_foundation 2.5.1
+2025-12-30T19:44:31.3331985Z + path_provider_linux 2.2.1
+2025-12-30T19:44:31.3332215Z + path_provider_platform_interface 2.1.2
+2025-12-30T19:44:31.3332470Z + path_provider_windows 2.3.0
+2025-12-30T19:44:31.3332684Z + platform 3.1.6
+2025-12-30T19:44:31.3332870Z + plugin_platform_interface 2.1.8
+2025-12-30T19:44:31.3333096Z + pool 1.5.2
+2025-12-30T19:44:31.3333262Z + provider 6.1.5+1
+2025-12-30T19:44:31.3333444Z + pub_semver 2.2.0
+2025-12-30T19:44:31.3333623Z + pubspec_parse 1.5.0
+2025-12-30T19:44:31.3333812Z + recase 4.1.0
+2025-12-30T19:44:31.3334186Z + record 6.1.2
+2025-12-30T19:44:31.3334393Z + record_android 1.4.5
+2025-12-30T19:44:31.3334579Z + record_ios 1.1.5
+2025-12-30T19:44:31.3334756Z + record_linux 1.2.1
+2025-12-30T19:44:31.3334937Z + record_macos 1.1.2
+2025-12-30T19:44:31.3335130Z + record_platform_interface 1.4.0
+2025-12-30T19:44:31.3335353Z + record_web 1.2.2
+2025-12-30T19:44:31.3335533Z + record_windows 1.0.7
+2025-12-30T19:44:31.3335719Z + shelf 1.4.2
+2025-12-30T19:44:31.3335892Z + shelf_web_socket 3.0.0
+2025-12-30T19:44:31.3336094Z + simple_gesture_detector 0.2.1
+2025-12-30T19:44:31.3336324Z + sky_engine 0.0.0 from sdk flutter
+2025-12-30T19:44:31.3336585Z + smooth_page_indicator 1.2.1 (2.0.1 available)
+2025-12-30T19:44:31.3336842Z + source_gen 4.1.1
+2025-12-30T19:44:31.3337021Z + source_span 1.10.1
+2025-12-30T19:44:31.3337210Z + sqlite3 2.9.4 (3.1.1 available)
+2025-12-30T19:44:31.3337428Z + sqlite3_flutter_libs 0.5.41
+2025-12-30T19:44:31.3337641Z + sqlparser 0.42.1
+2025-12-30T19:44:31.3337822Z + stack_trace 1.12.1
+2025-12-30T19:44:31.3338003Z + stream_channel 2.1.4
+2025-12-30T19:44:31.3338194Z + stream_transform 2.1.1
+2025-12-30T19:44:31.3338389Z + string_scanner 1.4.1
+2025-12-30T19:44:31.3338571Z + synchronized 3.4.0
+2025-12-30T19:44:31.3338778Z + table_calendar 3.0.9 (3.2.0 available)
+2025-12-30T19:44:31.3339018Z + term_glyph 1.2.2
+2025-12-30T19:44:31.3339205Z + test_api 0.7.7 (0.7.8 available)
+2025-12-30T19:44:31.3339430Z + typed_data 1.4.0
+2025-12-30T19:44:31.3339599Z + uuid 4.5.2
+2025-12-30T19:44:31.3339767Z + vector_math 2.2.0
+2025-12-30T19:44:31.3339951Z + vm_service 15.0.2
+2025-12-30T19:44:31.3340125Z + watcher 1.2.0
+2025-12-30T19:44:31.3340293Z + web 1.1.1
+2025-12-30T19:44:31.3340454Z + web_socket 1.0.1
+2025-12-30T19:44:31.3340631Z + web_socket_channel 3.0.3
+2025-12-30T19:44:31.3340841Z + xdg_directories 1.1.0
+2025-12-30T19:44:31.3341029Z + yaml 3.1.3
+2025-12-30T19:44:31.3341205Z Changed 118 dependencies!
+2025-12-30T19:44:31.3341418Z 1 package is discontinued.
+2025-12-30T19:44:31.3341890Z 11 packages have newer versions incompatible with dependency constraints.
+2025-12-30T19:44:31.3342269Z Try `flutter pub outdated` for more information.
+2025-12-30T19:44:31.7740400Z ##[group]Run flutter clean
+2025-12-30T19:44:31.7740680Z [36;1mflutter clean[0m
+2025-12-30T19:44:31.7772753Z shell: /usr/bin/bash -e {0}
+2025-12-30T19:44:31.7772983Z env:
+2025-12-30T19:44:31.7773242Z   FLUTTER_ROOT: /opt/hostedtoolcache/flutter/stable-3.38.4-x64
+2025-12-30T19:44:31.7773582Z   PUB_CACHE: /home/runner/.pub-cache
+2025-12-30T19:44:31.7773824Z ##[endgroup]
+2025-12-30T19:44:31.9265611Z Deleting .dart_tool...                                               0ms
+2025-12-30T19:44:31.9276132Z Deleting ephemeral...                                                0ms
+2025-12-30T19:44:31.9286758Z Deleting Generated.xcconfig...                                       0ms
+2025-12-30T19:44:31.9287560Z Deleting flutter_export_environment.sh...                            0ms
+2025-12-30T19:44:31.9296936Z Deleting ephemeral...                                                0ms
+2025-12-30T19:44:31.9302889Z Deleting ephemeral...                                                0ms
+2025-12-30T19:44:31.9309999Z Deleting ephemeral...                                                0ms
+2025-12-30T19:44:31.9313003Z Deleting .flutter-plugins-dependencies...                            0ms
+2025-12-30T19:44:31.9467419Z ##[group]Run cd android
+2025-12-30T19:44:31.9467695Z [36;1mcd android[0m
+2025-12-30T19:44:31.9467921Z [36;1mrm -rf .gradle build app/build[0m
+2025-12-30T19:44:31.9468196Z [36;1mecho "Gradle cache cleared"[0m
+2025-12-30T19:44:31.9499784Z shell: /usr/bin/bash -e {0}
+2025-12-30T19:44:31.9500012Z env:
+2025-12-30T19:44:31.9500272Z   FLUTTER_ROOT: /opt/hostedtoolcache/flutter/stable-3.38.4-x64
+2025-12-30T19:44:31.9500610Z   PUB_CACHE: /home/runner/.pub-cache
+2025-12-30T19:44:31.9500855Z ##[endgroup]
+2025-12-30T19:44:31.9563125Z Gradle cache cleared
+2025-12-30T19:44:31.9585191Z ##[group]Run flutter precache --android --force
+2025-12-30T19:44:31.9585573Z [36;1mflutter precache --android --force[0m
+2025-12-30T19:44:31.9585862Z [36;1mecho "Flutter artifacts precached"[0m
+2025-12-30T19:44:31.9586144Z [36;1mecho "Checking for engine artifacts:"[0m
+2025-12-30T19:44:31.9586712Z [36;1mfind "$FLUTTER_ROOT" -type d -name "android" -path "*/artifacts/engine/*" 2>/dev/null | head -5 || echo "No android artifacts found"[0m
+2025-12-30T19:44:31.9587245Z [36;1mecho "Flutter cache structure:"[0m
+2025-12-30T19:44:31.9587681Z [36;1mls -la "$FLUTTER_ROOT/bin/cache/" 2>/dev/null || echo "Cache directory not found"[0m
+2025-12-30T19:44:31.9588063Z [36;1mecho ""[0m
+2025-12-30T19:44:31.9588304Z [36;1mecho "=== Checking Flutter engine version ==="[0m
+2025-12-30T19:44:31.9588800Z [36;1mcat "$FLUTTER_ROOT/bin/internal/engine.version" 2>/dev/null || echo "Engine version file not found"[0m
+2025-12-30T19:44:31.9589240Z [36;1mecho ""[0m
+2025-12-30T19:44:31.9589558Z [36;1mecho "=== Checking for Flutter embedding in local artifacts ==="[0m
+2025-12-30T19:44:31.9590235Z [36;1mfind "$FLUTTER_ROOT/bin/cache/artifacts/engine" -name "*embedding*" -type f 2>/dev/null | head -10 || echo "No embedding artifacts found locally"[0m
+2025-12-30T19:44:31.9620424Z shell: /usr/bin/bash -e {0}
+2025-12-30T19:44:31.9620658Z env:
+2025-12-30T19:44:31.9620914Z   FLUTTER_ROOT: /opt/hostedtoolcache/flutter/stable-3.38.4-x64
+2025-12-30T19:44:31.9621249Z   PUB_CACHE: /home/runner/.pub-cache
+2025-12-30T19:44:31.9621491Z ##[endgroup]
+2025-12-30T19:44:32.3199959Z Downloading Material fonts...                                      242ms
+2025-12-30T19:44:32.3802673Z Downloading Gradle Wrapper...                                        9ms
+2025-12-30T19:44:32.5291005Z Downloading android-arm-profile/linux-x64 tools...                 138ms
+2025-12-30T19:44:32.7208193Z Downloading android-arm-release/linux-x64 tools...                 119ms
+2025-12-30T19:44:32.9114698Z Downloading android-arm64-profile/linux-x64 tools...               124ms
+2025-12-30T19:44:33.0874195Z Downloading android-arm64-release/linux-x64 tools...               102ms
+2025-12-30T19:44:33.2683411Z Downloading android-x64-profile/linux-x64 tools...                 113ms
+2025-12-30T19:44:33.4407009Z Downloading android-x64-release/linux-x64 tools...                  99ms
+2025-12-30T19:44:37.3470005Z Downloading android-x86 tools...                                    3.8s
+2025-12-30T19:44:41.7429029Z Downloading android-x64 tools...                                    3.7s
+2025-12-30T19:44:46.0902795Z Downloading android-arm tools...                                    3.6s
+2025-12-30T19:44:48.2461747Z Downloading android-arm-profile tools...                         1,470ms
+2025-12-30T19:44:49.9278569Z Downloading android-arm-release tools...                         1,413ms
+2025-12-30T19:44:55.6551188Z Downloading android-arm64 tools...                                  5.5s
+2025-12-30T19:44:58.2676951Z Downloading android-arm64-profile tools...                       1,488ms
+2025-12-30T19:44:59.9756927Z Downloading android-arm64-release tools...                       1,431ms
+2025-12-30T19:45:01.7738415Z Downloading android-x64-profile tools...                         1,528ms
+2025-12-30T19:45:03.4033720Z Downloading android-x64-release tools...                         1,352ms
+2025-12-30T19:45:03.9584759Z Downloading engine information...                                    5ms
+2025-12-30T19:45:04.0550207Z Downloading package sky_engine...                                   62ms
+2025-12-30T19:45:04.1414668Z Downloading package flutter_gpu...                                   6ms
+2025-12-30T19:45:04.2864467Z Downloading flutter_patched_sdk tools...                           131ms
+2025-12-30T19:45:04.5239497Z Downloading flutter_patched_sdk_product tools...                   142ms
+2025-12-30T19:45:05.7604728Z Downloading linux-x64 tools...                                   1,139ms
+2025-12-30T19:45:06.5012833Z Downloading linux-x64/font-subset tools...                          77ms
+2025-12-30T19:45:06.6220925Z Flutter artifacts precached
+2025-12-30T19:45:06.6221442Z Checking for engine artifacts:
+2025-12-30T19:45:06.6999555Z Flutter cache structure:
+2025-12-30T19:45:06.7018345Z total 42444
+2025-12-30T19:45:06.7018808Z drwxr-xr-x+  7 runner runner     4096 Dec 30 19:45 .
+2025-12-30T19:45:06.7019373Z drwxr-xr-x+  4 runner runner     4096 Dec  4 17:14 ..
+2025-12-30T19:45:06.7019824Z -rw-r--r--+  1 runner runner        0 Dec  4 17:14 .dartignore
+2025-12-30T19:45:06.7020479Z -rw-r--r--+  1 runner runner      579 Dec  3 21:14 LICENSE.dart_sdk_archive.md
+2025-12-30T19:45:06.7021218Z -rw-rw-rw-+  1 runner runner       40 Dec 30 19:45 android-internal-build-artifacts.stamp
+2025-12-30T19:45:06.7021667Z -rw-rw-rw-+  1 runner runner       40 Dec 30 19:44 android-sdk.stamp
+2025-12-30T19:45:06.7022042Z drwxr-xr-x+ 11 runner runner     4096 Dec  4 17:15 artifacts
+2025-12-30T19:45:06.7022388Z drwxr-xr-x+  5 runner runner     4096 Dec  4 17:14 dart-sdk
+2025-12-30T19:45:06.7022765Z drwxr-xr-x+  2 runner runner     4096 Dec 30 19:45 downloads
+2025-12-30T19:45:06.7023164Z -rw-r--r--+  1 runner runner       41 Dec  4 17:14 engine-dart-sdk.stamp
+2025-12-30T19:45:06.7023556Z -rw-r--r--+  1 runner runner        1 Dec 30 19:44 engine.realm
+2025-12-30T19:45:06.7023905Z -rw-r--r--+  1 runner runner       41 Dec 30 19:44 engine.stamp
+2025-12-30T19:45:06.7024511Z -rw-r--r--+  1 runner runner      237 Dec 30 19:45 engine_stamp.json
+2025-12-30T19:45:06.7024906Z -rw-rw-rw-+  1 runner runner       40 Dec 30 19:45 engine_stamp.stamp
+2025-12-30T19:45:06.7025303Z -rw-r--r--+  1 runner runner      559 Dec  4 17:15 flutter.version.json
+2025-12-30T19:45:06.7025706Z -rw-rw-rw-+  1 runner runner       40 Dec 30 19:45 flutter_sdk.stamp
+2025-12-30T19:45:06.7026088Z -rw-r--r--+  1 runner runner 43352992 Dec  4 17:15 flutter_tools.snapshot
+2025-12-30T19:45:06.7026482Z drwxr-xr-x+  6 runner runner     4096 Dec  4 17:16 flutter_web_sdk
+2025-12-30T19:45:06.7026870Z -rw-rw-rw-+  1 runner runner       40 Dec 30 19:45 font-subset.stamp
+2025-12-30T19:45:06.7027256Z -rw-rw-rw-+  1 runner runner       96 Dec 30 19:44 gradle_wrapper.stamp
+2025-12-30T19:45:06.7027920Z -rw-rw-rw-+  1 runner runner       40 Dec 30 19:45 ios-deploy.stamp
+2025-12-30T19:45:06.7028300Z -rw-rw-rw-+  1 runner runner       40 Dec 30 19:45 libimobiledevice.stamp
+2025-12-30T19:45:06.7028709Z -rw-rw-rw-+  1 runner runner       40 Dec 30 19:45 libimobiledeviceglue.stamp
+2025-12-30T19:45:06.7029101Z -rw-rw-rw-+  1 runner runner       40 Dec 30 19:45 libplist.stamp
+2025-12-30T19:45:06.7029455Z -rw-rw-rw-+  1 runner runner       40 Dec 30 19:45 libusbmuxd.stamp
+2025-12-30T19:45:06.7029795Z -rw-r--r--+  1 runner runner        0 Dec 30 19:44 lockfile
+2025-12-30T19:45:06.7030155Z -rw-rw-rw-+  1 runner runner       86 Dec 30 19:44 material_fonts.stamp
+2025-12-30T19:45:06.7030641Z -rw-rw-rw-+  1 runner runner       40 Dec 30 19:45 openssl.stamp
+2025-12-30T19:45:06.7031215Z drwxr-xr-x+  4 runner runner     4096 Dec 30 19:45 pkg
+2025-12-30T19:45:06.7031535Z 
+2025-12-30T19:45:06.7031637Z === Checking Flutter engine version ===
+2025-12-30T19:45:06.7031915Z a5cb96369ef86c7e85abf5d662a1ca5d89775053
+2025-12-30T19:45:06.7032259Z 
+2025-12-30T19:45:06.7032594Z === Checking for Flutter embedding in local artifacts ===
+2025-12-30T19:45:06.7079683Z ##[group]Run flutter doctor -v
+2025-12-30T19:45:06.7079995Z [36;1mflutter doctor -v[0m
+2025-12-30T19:45:06.7080235Z [36;1mecho "Flutter SDK: $FLUTTER_ROOT"[0m
+2025-12-30T19:45:06.7080527Z [36;1mecho "Verifying local.properties exists:"[0m
+2025-12-30T19:45:06.7080924Z [36;1mcat android/local.properties || echo "local.properties not found!"[0m
+2025-12-30T19:45:06.7113037Z shell: /usr/bin/bash -e {0}
+2025-12-30T19:45:06.7113268Z env:
+2025-12-30T19:45:06.7113533Z   FLUTTER_ROOT: /opt/hostedtoolcache/flutter/stable-3.38.4-x64
+2025-12-30T19:45:06.7113871Z   PUB_CACHE: /home/runner/.pub-cache
+2025-12-30T19:45:06.7114293Z ##[endgroup]
+2025-12-30T19:45:06.7564587Z Building flutter tool...
+2025-12-30T19:45:06.7733521Z Resolving dependencies...
+2025-12-30T19:45:07.2411333Z Downloading packages...
+2025-12-30T19:45:07.2463329Z   _fe_analyzer_shared 89.0.0 (92.0.0 available)
+2025-12-30T19:45:07.2463861Z   analyzer 8.2.0 (9.0.0 available)
+2025-12-30T19:45:07.2464550Z   archive 3.6.1 (4.0.7 available)
+2025-12-30T19:45:07.2464887Z   built_value 8.12.0 (8.12.1 available)
+2025-12-30T19:45:07.2465310Z   code_assets 0.19.7 (1.0.0 available)
+2025-12-30T19:45:07.2465726Z   crypto 3.0.6 (3.0.7 available)
+2025-12-30T19:45:07.2465986Z   dart_style 3.1.2 (3.1.3 available)
+2025-12-30T19:45:07.2466230Z   data_assets 0.19.3 (0.19.6 available)
+2025-12-30T19:45:07.2466466Z   dds 5.0.3 (5.1.0 available)
+2025-12-30T19:45:07.2466686Z   dwds 25.1.0+2 (26.2.3 available)
+2025-12-30T19:45:07.2466971Z   hooks 0.20.1 (1.0.0 available)
+2025-12-30T19:45:07.2467361Z   hooks_runner 0.23.0 (1.0.1 available)
+2025-12-30T19:45:07.2467760Z   http 1.5.0 (1.6.0 available)
+2025-12-30T19:45:07.2468022Z   js 0.7.2 (discontinued)
+2025-12-30T19:45:07.2468232Z   json_rpc_2 3.0.3 (4.0.0 available)
+2025-12-30T19:45:07.2468636Z   matcher 0.12.17 (0.12.18 available)
+2025-12-30T19:45:07.2469066Z   mustache_template 2.0.1 (2.0.2 available)
+2025-12-30T19:45:07.2469404Z   petitparser 6.1.0 (7.0.1 available)
+2025-12-30T19:45:07.2469657Z   shelf_web_socket 2.0.1 (3.0.0 available)
+2025-12-30T19:45:07.2469914Z   test 1.26.3 (1.28.0 available)
+2025-12-30T19:45:07.2470142Z   test_api 0.7.7 (0.7.8 available)
+2025-12-30T19:45:07.2470374Z   test_core 0.6.12 (0.6.14 available)
+2025-12-30T19:45:07.2470620Z   unified_analytics 8.0.5 (8.0.10 available)
+2025-12-30T19:45:07.2470888Z   usage 4.1.1 (discontinued)
+2025-12-30T19:45:07.2471106Z   uuid 4.5.1 (4.5.2 available)
+2025-12-30T19:45:07.2471319Z   watcher 1.1.4 (1.2.0 available)
+2025-12-30T19:45:07.2471534Z   xml 6.5.0 (6.6.1 available)
+2025-12-30T19:45:07.2471744Z   yaml_edit 2.2.2 (2.2.3 available)
+2025-12-30T19:45:07.2472230Z No dependencies changed.
+2025-12-30T19:45:07.2472452Z 2 packages are discontinued.
+2025-12-30T19:45:07.2472780Z 26 packages have newer versions incompatible with dependency constraints.
+2025-12-30T19:45:07.2473470Z Try `dart pub outdated` for more information.
+2025-12-30T19:45:23.0655348Z [✓] Flutter (Channel stable, 3.38.4, on Ubuntu 24.04.3 LTS 6.11.0-1018-azure, locale C.UTF-8) [50ms]
+2025-12-30T19:45:23.0659625Z     • Flutter version 3.38.4 on channel stable at /opt/hostedtoolcache/flutter/stable-3.38.4-x64
+2025-12-30T19:45:23.0661061Z     • Upstream repository https://github.com/flutter/flutter.git
+2025-12-30T19:45:23.0663477Z     • Framework revision 66dd93f9a2 (4 weeks ago), 2025-12-03 14:56:10 -0800
+2025-12-30T19:45:23.0664920Z     • Engine revision a5cb96369e
+2025-12-30T19:45:23.0665542Z     • Dart version 3.10.3
+2025-12-30T19:45:23.0666131Z     • DevTools version 2.51.1
+2025-12-30T19:45:23.0670613Z     • Feature flags: enable-web, enable-linux-desktop, enable-macos-desktop, enable-windows-desktop, enable-android, enable-ios, cli-animations, enable-native-assets, omit-legacy-version-file, enable-lldb-debugging
+2025-12-30T19:45:23.0672585Z 
+2025-12-30T19:45:29.7611330Z [!] Android toolchain - develop for Android devices (Android SDK version 36.1.0) [7.6s]
+2025-12-30T19:45:29.7612325Z     • Android SDK at /usr/local/lib/android/sdk
+2025-12-30T19:45:29.7613318Z     • Emulator version unknown
+2025-12-30T19:45:29.7613956Z     • Platform android-36.1, build-tools 36.1.0
+2025-12-30T19:45:29.7615245Z     • ANDROID_HOME = /usr/local/lib/android/sdk
+2025-12-30T19:45:29.7615921Z     • ANDROID_SDK_ROOT = /usr/local/lib/android/sdk
+2025-12-30T19:45:29.7619667Z     • Java binary at: /usr/lib/jvm/temurin-17-jdk-amd64/bin/java
+2025-12-30T19:45:29.7620430Z       This JDK is specified by the JAVA_HOME environment variable.
+2025-12-30T19:45:29.7621281Z       To manually set the JDK path, use: `flutter config --jdk-dir="path/to/jdk"`.
+2025-12-30T19:45:29.7622338Z     • Java version OpenJDK Runtime Environment Temurin-17.0.17+10 (build 17.0.17+10)
+2025-12-30T19:45:29.7623438Z     ! Some Android licenses not accepted. To resolve this, run: flutter doctor --android-licenses
+2025-12-30T19:45:29.7624172Z 
+2025-12-30T19:45:29.7625695Z [✓] Chrome - develop for the web [914ms]
+2025-12-30T19:45:29.7626298Z     • Chrome at google-chrome
+2025-12-30T19:45:29.7626600Z 
+2025-12-30T19:45:29.7629159Z [✗] Linux toolchain - develop for Linux desktop [1,312ms]
+2025-12-30T19:45:29.7629872Z     • Ubuntu clang version 18.1.3 (1ubuntu1)
+2025-12-30T19:45:29.7630565Z     • cmake version 3.31.6
+2025-12-30T19:45:29.7631310Z     • ninja version 1.13.2
+2025-12-30T19:45:29.7632248Z     • pkg-config version 1.8.1
+2025-12-30T19:45:29.7633383Z     ✗ GTK 3.0 development libraries are required for Linux development.
+2025-12-30T19:45:29.7634360Z       They are likely available from your distribution (e.g.: apt install libgtk-3-dev)
+2025-12-30T19:45:29.7635089Z     ! Unable to access driver information using 'eglinfo'.
+2025-12-30T19:45:29.7636033Z       It is likely available from your distribution (e.g.: apt install mesa-utils)
+2025-12-30T19:45:29.7636526Z 
+2025-12-30T19:45:29.7638624Z [✓] Connected device (2 available) [5.6s]
+2025-12-30T19:45:29.7639583Z     • Linux (desktop) • linux  • linux-x64      • Ubuntu 24.04.3 LTS 6.11.0-1018-azure
+2025-12-30T19:45:29.7640507Z     • Chrome (web)    • chrome • web-javascript • Google Chrome 143.0.7499.109
+2025-12-30T19:45:29.7640936Z 
+2025-12-30T19:45:29.7642693Z [✓] Network resources [1,213ms]
+2025-12-30T19:45:29.7643615Z     • All expected network resources are available.
+2025-12-30T19:45:29.7643946Z 
+2025-12-30T19:45:29.7645376Z ! Doctor found issues in 2 categories.
+2025-12-30T19:45:29.7769224Z Flutter SDK: /opt/hostedtoolcache/flutter/stable-3.38.4-x64
+2025-12-30T19:45:29.7769806Z Verifying local.properties exists:
+2025-12-30T19:45:29.7780201Z flutter.sdk=/opt/hostedtoolcache/flutter/stable-3.38.4-x64
+2025-12-30T19:45:29.7784825Z sdk.dir=/usr/local/lib/android/sdk
+2025-12-30T19:45:29.7810374Z ##[group]Run cd android
+2025-12-30T19:45:29.7810663Z [36;1mcd android[0m
+2025-12-30T19:45:29.7810884Z [36;1mecho "Checking Gradle wrapper:"[0m
+2025-12-30T19:45:29.7811159Z [36;1m./gradlew --version || true[0m
+2025-12-30T19:45:29.7811581Z [36;1mecho ""[0m
+2025-12-30T19:45:29.7811851Z [36;1mecho "Checking if Flutter Gradle plugin is available:"[0m
+2025-12-30T19:45:29.7812313Z [36;1m./gradlew tasks --all 2>&1 | grep -i flutter || echo "No Flutter tasks found"[0m
+2025-12-30T19:45:29.7812691Z [36;1mecho ""[0m
+2025-12-30T19:45:29.7812906Z [36;1mecho "Checking project structure:"[0m
+2025-12-30T19:45:29.7813211Z [36;1m./gradlew projects 2>&1 | head -20 || true[0m
+2025-12-30T19:45:29.7813474Z [36;1mecho ""[0m
+2025-12-30T19:45:29.7813692Z [36;1mecho "=== Verifying Flutter SDK path ==="[0m
+2025-12-30T19:45:29.7814682Z [36;1mecho "FLUTTER_ROOT: $FLUTTER_ROOT"[0m
+2025-12-30T19:45:29.7815052Z [36;1mecho "Checking Flutter Gradle plugin location:"[0m
+2025-12-30T19:45:29.7815623Z [36;1mls -la "$FLUTTER_ROOT/packages/flutter_tools/gradle" 2>&1 | head -10 || echo "Flutter Gradle plugin not found"[0m
+2025-12-30T19:45:29.7816095Z [36;1mecho ""[0m
+2025-12-30T19:45:29.7816321Z [36;1mecho "=== Checking local.properties ==="[0m
+2025-12-30T19:45:29.7816696Z [36;1mcat local.properties || echo "local.properties not found"[0m
+2025-12-30T19:45:29.7848932Z shell: /usr/bin/bash -e {0}
+2025-12-30T19:45:29.7849165Z env:
+2025-12-30T19:45:29.7849427Z   FLUTTER_ROOT: /opt/hostedtoolcache/flutter/stable-3.38.4-x64
+2025-12-30T19:45:29.7849772Z   PUB_CACHE: /home/runner/.pub-cache
+2025-12-30T19:45:29.7850015Z ##[endgroup]
+2025-12-30T19:45:29.7901872Z Checking Gradle wrapper:
+2025-12-30T19:45:29.7905105Z /home/runner/work/_temp/c08a9823-c660-4320-9157-3d9f7d6707ca.sh: line 3: ./gradlew: No such file or directory
+2025-12-30T19:45:29.7906908Z 
+2025-12-30T19:45:29.7907150Z Checking if Flutter Gradle plugin is available:
+2025-12-30T19:45:29.7923705Z No Flutter tasks found
+2025-12-30T19:45:29.7924273Z 
+2025-12-30T19:45:29.7924432Z Checking project structure:
+2025-12-30T19:45:29.7936614Z /home/runner/work/_temp/c08a9823-c660-4320-9157-3d9f7d6707ca.sh: line 9: ./gradlew: No such file or directory
+2025-12-30T19:45:29.7937460Z 
+2025-12-30T19:45:29.7941887Z === Verifying Flutter SDK path ===
+2025-12-30T19:45:29.7942468Z FLUTTER_ROOT: /opt/hostedtoolcache/flutter/stable-3.38.4-x64
+2025-12-30T19:45:29.7943022Z Checking Flutter Gradle plugin location:
+2025-12-30T19:45:29.7957137Z total 80
+2025-12-30T19:45:29.7957520Z drwxr-xr-x+  6 runner runner 4096 Dec 10 19:22 .
+2025-12-30T19:45:29.7958029Z drwxr-xr-x+ 12 runner runner 4096 Dec 10 19:19 ..
+2025-12-30T19:45:29.7958519Z -rw-r--r--+  1 runner runner  107 Dec  4 17:08 .dartignore
+2025-12-30T19:45:29.7958983Z -rw-r--r--+  1 runner runner   37 Dec  4 17:08 .gitignore
+2025-12-30T19:45:29.7959453Z drwxrwxrwx+  4 runner runner 4096 Dec 10 19:21 .gradle
+2025-12-30T19:45:29.7959783Z drwxrwxrwx+  3 runner runner 4096 Dec 10 19:22 .kotlin
+2025-12-30T19:45:29.7960107Z -rw-r--r--+  1 runner runner 2743 Dec  4 17:08 README.md
+2025-12-30T19:45:29.7960450Z -rw-r--r--+  1 runner runner 7293 Dec  4 17:08 aar_init_script.gradle
+2025-12-30T19:45:29.7960849Z -rw-r--r--+  1 runner runner  690 Dec  4 17:08 app_plugin_loader.gradle
+2025-12-30T19:45:29.7961124Z 
+2025-12-30T19:45:29.7961217Z === Checking local.properties ===
+2025-12-30T19:45:29.7968800Z flutter.sdk=/opt/hostedtoolcache/flutter/stable-3.38.4-x64
+2025-12-30T19:45:29.7972207Z sdk.dir=/usr/local/lib/android/sdk
+2025-12-30T19:45:29.7993513Z ##[group]Run flutter pub run build_runner build --delete-conflicting-outputs || true
+2025-12-30T19:45:29.7994382Z [36;1mflutter pub run build_runner build --delete-conflicting-outputs || true[0m
+2025-12-30T19:45:29.8025709Z shell: /usr/bin/bash -e {0}
+2025-12-30T19:45:29.8025944Z env:
+2025-12-30T19:45:29.8026212Z   FLUTTER_ROOT: /opt/hostedtoolcache/flutter/stable-3.38.4-x64
+2025-12-30T19:45:29.8026558Z   PUB_CACHE: /home/runner/.pub-cache
+2025-12-30T19:45:29.8026802Z ##[endgroup]
+2025-12-30T19:45:42.1458436Z   0s drift_dev on 192 inputs; lib/classes/EntryInfo.dart
+2025-12-30T19:45:49.2154847Z   7s drift_dev on 192 inputs: 1 output; spent 5s sdk, 1s analyzing; lib/data/database/app_database.dart
+2025-12-30T19:45:50.9368180Z   9s drift_dev on 192 inputs: 2 output; spent 5s sdk, 3s analyzing; lib/data/database/tables.dart
+2025-12-30T19:46:00.7140381Z   19s drift_dev on 192 inputs: 4 output; spent 11s analyzing, 5s sdk, 2s resolving; lib/pages/Dashboard/BrowseTab.dart
+2025-12-30T19:46:02.1862283Z   20s drift_dev on 192 inputs: 48 output; spent 12s analyzing, 5s sdk, 2s resolving; lib/classes/EntryInfo.dart
+2025-12-30T19:46:03.1873575Z   21s drift_dev on 192 inputs: 7 skipped, 96 output, 8 no-op; spent 12s analyzing, 5s sdk, 2s resolving, 1s building; lib/pages/Dashboard/DashboardUI.dart.types.temp.dart
+2025-12-30T19:46:03.2833745Z   21s drift_dev on 192 inputs: 48 skipped, 96 output, 48 no-op; spent 12s analyzing, 5s sdk, 2s resolving, 1s building
+2025-12-30T19:46:03.2834723Z   0s source_gen:combining_builder on 96 inputs; lib/classes/EntryInfo.dart
+2025-12-30T19:46:03.3488256Z   0s source_gen:combining_builder on 96 inputs: 48 skipped, 1 output, 47 no-op
+2025-12-30T19:46:03.4920777Z   Built with build_runner/jit in 22s; wrote 97 outputs.
+2025-12-30T19:46:03.6147935Z ##[group]Run flutter test --no-pub
+2025-12-30T19:46:03.6148251Z [36;1mflutter test --no-pub[0m
+2025-12-30T19:46:03.6180727Z shell: /usr/bin/bash -e {0}
+2025-12-30T19:46:03.6180963Z env:
+2025-12-30T19:46:03.6181224Z   FLUTTER_ROOT: /opt/hostedtoolcache/flutter/stable-3.38.4-x64
+2025-12-30T19:46:03.6181569Z   PUB_CACHE: /home/runner/.pub-cache
+2025-12-30T19:46:03.6181812Z ##[endgroup]
+2025-12-30T19:46:04.6278728Z 
+2025-12-30T19:46:14.7488608Z ✅ MyApp builds without errors
+2025-12-30T19:46:14.7842180Z 
+2025-12-30T19:46:14.7848423Z 🎉 1 test passed.
+2025-12-30T19:46:14.8797574Z ##[group]Run flutter analyze
+2025-12-30T19:46:14.8797850Z [36;1mflutter analyze[0m
+2025-12-30T19:46:14.8829789Z shell: /usr/bin/bash -e {0}
+2025-12-30T19:46:14.8830024Z env:
+2025-12-30T19:46:14.8830280Z   FLUTTER_ROOT: /opt/hostedtoolcache/flutter/stable-3.38.4-x64
+2025-12-30T19:46:14.8830616Z   PUB_CACHE: /home/runner/.pub-cache
+2025-12-30T19:46:14.8830863Z ##[endgroup]
+2025-12-30T19:46:15.0690833Z Resolving dependencies...
+2025-12-30T19:46:15.1978045Z Downloading packages...
+2025-12-30T19:46:15.2486743Z   characters 1.4.0 (1.4.1 available)
+2025-12-30T19:46:15.2487327Z   fl_chart 0.66.2 (1.1.1 available)
+2025-12-30T19:46:15.2487739Z   flutter_lints 5.0.0 (6.0.0 available)
+2025-12-30T19:46:15.2488328Z   flutter_markdown 0.7.7+1 (discontinued replaced by flutter_markdown_plus)
+2025-12-30T19:46:15.2488921Z   intl 0.18.1 (0.20.2 available)
+2025-12-30T19:46:15.2489291Z   lints 5.1.1 (6.0.0 available)
+2025-12-30T19:46:15.2489650Z   matcher 0.12.17 (0.12.18 available)
+2025-12-30T19:46:15.2490183Z   material_color_utilities 0.11.1 (0.13.0 available)
+2025-12-30T19:46:15.2490734Z   smooth_page_indicator 1.2.1 (2.0.1 available)
+2025-12-30T19:46:15.2491139Z   sqlite3 2.9.4 (3.1.1 available)
+2025-12-30T19:46:15.2491511Z   table_calendar 3.0.9 (3.2.0 available)
+2025-12-30T19:46:15.2491902Z   test_api 0.7.7 (0.7.8 available)
+2025-12-30T19:46:15.2492262Z Got dependencies!
+2025-12-30T19:46:15.2493416Z 1 package is discontinued.
+2025-12-30T19:46:15.2496666Z 11 packages have newer versions incompatible with dependency constraints.
+2025-12-30T19:46:15.2497343Z Try `flutter pub outdated` for more information.
+2025-12-30T19:46:29.0404716Z Analyzing beebetter...                                          
+2025-12-30T19:46:29.0410265Z 
+2025-12-30T19:46:29.0430036Z    info • The file name 'EntryInfo.dart' isn't a lower_case_with_underscores identifier • lib/classes/EntryInfo.dart:1:1 • file_names
+2025-12-30T19:46:29.0431750Z    info • The file name 'BrowseTab.dart' isn't a lower_case_with_underscores identifier • lib/pages/Dashboard/BrowseTab.dart:1:1 • file_names
+2025-12-30T19:46:29.0434948Z warning • Dead code • lib/pages/Dashboard/BrowseTab.dart:309:48 • dead_code
+2025-12-30T19:46:29.0436714Z warning • The left operand can't be null, so the right operand is never executed • lib/pages/Dashboard/BrowseTab.dart:309:51 • dead_null_aware_expression
+2025-12-30T19:46:29.0439015Z warning • Dead code • lib/pages/Dashboard/BrowseTab.dart:377:50 • dead_code
+2025-12-30T19:46:29.0441036Z warning • The left operand can't be null, so the right operand is never executed • lib/pages/Dashboard/BrowseTab.dart:377:53 • dead_null_aware_expression
+2025-12-30T19:46:29.0442921Z    info • The file name 'Dashboard.dart' isn't a lower_case_with_underscores identifier • lib/pages/Dashboard/Dashboard.dart:1:1 • file_names
+2025-12-30T19:46:29.0444986Z    info • The file name 'DashboardLogic.dart' isn't a lower_case_with_underscores identifier • lib/pages/Dashboard/DashboardLogic.dart:1:1 • file_names
+2025-12-30T19:46:29.0446978Z    info • The file name 'DashboardUI.dart' isn't a lower_case_with_underscores identifier • lib/pages/Dashboard/DashboardUI.dart:1:1 • file_names
+2025-12-30T19:46:29.0448734Z warning • The value of the local variable 'logic' isn't used • lib/pages/Dashboard/DashboardUI.dart:15:11 • unused_local_variable
+2025-12-30T19:46:29.0450164Z    info • Unnecessary 'const' keyword • lib/pages/Dashboard/DashboardUI.dart:48:23 • unnecessary_const
+2025-12-30T19:46:29.0451465Z    info • Unnecessary 'const' keyword • lib/pages/Dashboard/DashboardUI.dart:49:23 • unnecessary_const
+2025-12-30T19:46:29.0452735Z    info • Unnecessary 'const' keyword • lib/pages/Dashboard/DashboardUI.dart:58:23 • unnecessary_const
+2025-12-30T19:46:29.0454140Z    info • Unnecessary 'const' keyword • lib/pages/Dashboard/DashboardUI.dart:59:23 • unnecessary_const
+2025-12-30T19:46:29.0455601Z    info • The file name 'InsightsTab.dart' isn't a lower_case_with_underscores identifier • lib/pages/Dashboard/InsightsTab.dart:1:1 • file_names
+2025-12-30T19:46:29.0457603Z    info • Unnecessary use of string interpolation • lib/pages/Dashboard/InsightsTab.dart:285:35 • unnecessary_string_interpolations
+2025-12-30T19:46:29.0459321Z    info • The file name 'GuidedMode.dart' isn't a lower_case_with_underscores identifier • lib/pages/GuidedMode/GuidedMode.dart:1:1 • file_names
+2025-12-30T19:46:29.0461171Z    info • The file name 'GuidedModeContent.dart' isn't a lower_case_with_underscores identifier • lib/pages/GuidedMode/GuidedModeContent.dart:1:1 • file_names
+2025-12-30T19:46:29.0463126Z    info • The file name 'GuidedModeLogic.dart' isn't a lower_case_with_underscores identifier • lib/pages/GuidedMode/GuidedModeLogic.dart:1:1 • file_names
+2025-12-30T19:46:29.0465280Z    info • The file name 'GuidedModeUI.dart' isn't a lower_case_with_underscores identifier • lib/pages/GuidedMode/GuidedModeUI.dart:1:1 • file_names
+2025-12-30T19:46:29.0467211Z    info • The file name 'GuidedModeOverlay.dart' isn't a lower_case_with_underscores identifier • lib/pages/MainPage/GuidedModeOverlay.dart:1:1 • file_names
+2025-12-30T19:46:29.0469003Z    info • The file name 'MainPage.dart' isn't a lower_case_with_underscores identifier • lib/pages/MainPage/MainPage.dart:1:1 • file_names
+2025-12-30T19:46:29.0470708Z    info • The file name 'MainPageLogic.dart' isn't a lower_case_with_underscores identifier • lib/pages/MainPage/MainPageLogic.dart:1:1 • file_names
+2025-12-30T19:46:29.0472452Z    info • The file name 'MainPageUI.dart' isn't a lower_case_with_underscores identifier • lib/pages/MainPage/MainPageUI.dart:1:1 • file_names
+2025-12-30T19:46:29.0474965Z    info • The file name 'ProfilePage.dart' isn't a lower_case_with_underscores identifier • lib/pages/ProfilePage/ProfilePage.dart:1:1 • file_names
+2025-12-30T19:46:29.0476852Z    info • The file name 'ProfilePageLogic.dart' isn't a lower_case_with_underscores identifier • lib/pages/ProfilePage/ProfilePageLogic.dart:1:1 • file_names
+2025-12-30T19:46:29.0478796Z    info • The file name 'ProfilePageUI.dart' isn't a lower_case_with_underscores identifier • lib/pages/ProfilePage/ProfilePageUI.dart:1:1 • file_names
+2025-12-30T19:46:29.0480705Z    info • The file name 'NewEntryPageLogic.dart' isn't a lower_case_with_underscores identifier • lib/pages/TodayPage/NewEntryPageLogic.dart:1:1 • file_names
+2025-12-30T19:46:29.0482544Z    info • The file name 'TodayPage.dart' isn't a lower_case_with_underscores identifier • lib/pages/TodayPage/TodayPage.dart:1:1 • file_names
+2025-12-30T19:46:29.0484468Z    info • The file name 'TodayPageLogic.dart' isn't a lower_case_with_underscores identifier • lib/pages/TodayPage/TodayPageLogic.dart:1:1 • file_names
+2025-12-30T19:46:29.0486505Z    info • The file name 'TodayPageUI.dart' isn't a lower_case_with_underscores identifier • lib/pages/TodayPage/TodayPageUI.dart:1:1 • file_names
+2025-12-30T19:46:29.0488000Z    info • Don't invoke 'print' in production code • lib/services/audio_storage_service.dart:39:7 • avoid_print
+2025-12-30T19:46:29.0489288Z    info • Don't invoke 'print' in production code • lib/services/audio_storage_service.dart:54:7 • avoid_print
+2025-12-30T19:46:29.0490873Z    info • The file name 'BackgroundGradient.dart' isn't a lower_case_with_underscores identifier • lib/widgets/BackgroundGradient.dart:1:1 • file_names
+2025-12-30T19:46:29.0492647Z    info • Invalid use of a private type in a public API • lib/widgets/BackgroundGradient.dart:94:14 • library_private_types_in_public_api
+2025-12-30T19:46:29.0494958Z    info • The file name 'EmotionWheel.dart' isn't a lower_case_with_underscores identifier • lib/widgets/Cards/EmotionWheel/EmotionWheel.dart:1:1 • file_names
+2025-12-30T19:46:29.0496989Z    info • The file name 'EmotionsGrid.dart' isn't a lower_case_with_underscores identifier • lib/widgets/Cards/EmotionWheel/EmotionsGrid.dart:1:1 • file_names
+2025-12-30T19:46:29.0498298Z    info • The file name 'EntryCard.dart' isn't a lower_case_with_underscores identifier • lib/widgets/Cards/EntryCard/EntryCard.dart:1:1 • file_names
+2025-12-30T19:46:29.0501293Z    info • The file name 'EntryInput.dart' isn't a lower_case_with_underscores identifier • lib/widgets/Cards/EntryCard/EntryInput.dart:1:1 • file_names
+2025-12-30T19:46:29.0502960Z    info • Use a 'SizedBox' to add whitespace to a layout • lib/widgets/Cards/EntryCard/EntryInput.dart:274:42 • sized_box_for_whitespace
+2025-12-30T19:46:29.0504827Z    info • The file name 'ExpandingTextOverlay.dart' isn't a lower_case_with_underscores identifier • lib/widgets/Cards/ExpandingTextOverlay.dart:1:1 • file_names
+2025-12-30T19:46:29.0505890Z    info • Use a 'SizedBox' to add whitespace to a layout • lib/widgets/Cards/ExpandingTextOverlay.dart:356:48 • sized_box_for_whitespace
+2025-12-30T19:46:29.0506896Z    info • The file name 'MarkdownFormatter.dart' isn't a lower_case_with_underscores identifier • lib/widgets/Cards/MarkdownFormatter.dart:1:1 • file_names
+2025-12-30T19:46:29.0508262Z    info • The import of 'package:flutter/material.dart' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/services.dart' • lib/widgets/Cards/MarkdownFormatter.dart:1:8 • unnecessary_import
+2025-12-30T19:46:29.0509534Z    info • The file name 'MarkdownToolbar.dart' isn't a lower_case_with_underscores identifier • lib/widgets/Cards/MarkdownToolbar.dart:1:1 • file_names
+2025-12-30T19:46:29.0510505Z    info • Statements in an if should be enclosed in a block • lib/widgets/Cards/MarkdownToolbar.dart:172:34 • curly_braces_in_flow_control_structures
+2025-12-30T19:46:29.0511464Z    info • Statements in an if should be enclosed in a block • lib/widgets/Cards/MarkdownToolbar.dart:173:38 • curly_braces_in_flow_control_structures
+2025-12-30T19:46:29.0512442Z    info • Statements in an if should be enclosed in a block • lib/widgets/Cards/MarkdownToolbar.dart:174:37 • curly_braces_in_flow_control_structures
+2025-12-30T19:46:29.0513475Z    info • The file name 'PreviousEntry.dart' isn't a lower_case_with_underscores identifier • lib/widgets/Cards/PreviousEntries/PreviousEntry.dart:1:1 • file_names
+2025-12-30T19:46:29.0514875Z warning • The receiver can't be null, so the null-aware operator '?.' is unnecessary • lib/widgets/Cards/PreviousEntries/PreviousEntry.dart:242:48 • invalid_null_aware_operator
+2025-12-30T19:46:29.0516031Z    info • The file name 'VoiceEntryPlayer.dart' isn't a lower_case_with_underscores identifier • lib/widgets/Cards/PreviousEntries/VoiceEntryPlayer.dart:1:1 • file_names
+2025-12-30T19:46:29.0517116Z warning • The value of the local variable 'textTheme' isn't used • lib/widgets/Cards/PreviousEntries/VoiceEntryPlayer.dart:36:11 • unused_local_variable
+2025-12-30T19:46:29.0518633Z    info • The file name 'DoneCard.dart' isn't a lower_case_with_underscores identifier • lib/widgets/Cards/PromptCard/DoneCard.dart:1:1 • file_names
+2025-12-30T19:46:29.0519598Z    info • The file name 'PromptCard.dart' isn't a lower_case_with_underscores identifier • lib/widgets/Cards/PromptCard/PromptCard.dart:1:1 • file_names
+2025-12-30T19:46:29.0520590Z    info • The file name 'PromptInput.dart' isn't a lower_case_with_underscores identifier • lib/widgets/Cards/PromptCard/PromptInput.dart:1:1 • file_names
+2025-12-30T19:46:29.0521532Z    info • Use a 'SizedBox' to add whitespace to a layout • lib/widgets/Cards/PromptCard/PromptInput.dart:269:38 • sized_box_for_whitespace
+2025-12-30T19:46:29.0522561Z    info • The file name 'RecordingCard.dart' isn't a lower_case_with_underscores identifier • lib/widgets/Cards/RecordingCard/RecordingCard.dart:1:1 • file_names
+2025-12-30T19:46:29.0523671Z    info • The file name 'RecordingIndicator.dart' isn't a lower_case_with_underscores identifier • lib/widgets/Cards/RecordingCard/RecordingIndicator.dart:1:1 • file_names
+2025-12-30T19:46:29.0524463Z 
+2025-12-30T19:46:29.0720400Z 58 issues found. (ran in 13.1s)
+2025-12-30T19:46:29.0784411Z ##[error]Process completed with exit code 1.
+2025-12-30T19:46:29.0825796Z ##[group]Run cd android
+2025-12-30T19:46:29.0826058Z [36;1mcd android[0m
+2025-12-30T19:46:29.0826307Z [36;1mecho "=== Checking dependency resolution ==="[0m
+2025-12-30T19:46:29.0826830Z [36;1m./gradlew :app:dependencies --configuration releaseRuntimeClasspath 2>&1 | tee deps.log || true[0m
+2025-12-30T19:46:29.0827281Z [36;1mecho ""[0m
+2025-12-30T19:46:29.0827555Z [36;1mecho "=== Searching for Flutter embedding in dependencies ==="[0m
+2025-12-30T19:46:29.0828082Z [36;1mgrep -i "flutter\|embedding\|io.flutter" deps.log | head -50 || echo "No Flutter dependencies found"[0m
+2025-12-30T19:46:29.0828516Z [36;1mecho ""[0m
+2025-12-30T19:46:29.0828762Z [36;1mecho "=== Checking for unresolved dependencies ==="[0m
+2025-12-30T19:46:29.0829340Z [36;1mgrep -i "FAILED\|unresolved\|could not find\|could not resolve" deps.log | head -50 || echo "No unresolved dependencies found"[0m
+2025-12-30T19:46:29.0867896Z shell: /usr/bin/bash -e {0}
+2025-12-30T19:46:29.0868133Z env:
+2025-12-30T19:46:29.0868435Z   FLUTTER_ROOT: /opt/hostedtoolcache/flutter/stable-3.38.4-x64
+2025-12-30T19:46:29.0868788Z   PUB_CACHE: /home/runner/.pub-cache
+2025-12-30T19:46:29.0869028Z ##[endgroup]
+2025-12-30T19:46:29.0921981Z === Checking dependency resolution ===
+2025-12-30T19:46:29.0935028Z /home/runner/work/_temp/64e7e139-f6ae-407c-a780-f8c389b862ab.sh: line 3: ./gradlew: No such file or directory
+2025-12-30T19:46:29.0936370Z 
+2025-12-30T19:46:29.0936594Z === Searching for Flutter embedding in dependencies ===
+2025-12-30T19:46:29.0954822Z 
+2025-12-30T19:46:29.0955104Z === Checking for unresolved dependencies ===
+2025-12-30T19:46:29.0994664Z ##[group]Run echo "Building APK with Flutter..."
+2025-12-30T19:46:29.0995089Z [36;1mecho "Building APK with Flutter..."[0m
+2025-12-30T19:46:29.0995357Z [36;1mcd android[0m
+2025-12-30T19:46:29.0995642Z [36;1m# Capture full Gradle output with detailed error information[0m
+2025-12-30T19:46:29.0996133Z [36;1m./gradlew :app:assembleRelease --stacktrace --info 2>&1 | tee build.log || {[0m
+2025-12-30T19:46:29.0996532Z [36;1m  echo "=== BUILD FAILED ==="[0m
+2025-12-30T19:46:29.0996773Z [36;1m  echo ""[0m
+2025-12-30T19:46:29.0997005Z [36;1m  echo "=== Full Kotlin compilation errors ==="[0m
+2025-12-30T19:46:29.0997329Z [36;1m  # Look for Kotlin compilation errors in the log[0m
+2025-12-30T19:46:29.0997661Z [36;1m  grep -A 20 "e: file:" build.log | head -200 || true[0m
+2025-12-30T19:46:29.0997937Z [36;1m  echo ""[0m
+2025-12-30T19:46:29.0998157Z [36;1m  echo "=== Unresolved reference errors ==="[0m
+2025-12-30T19:46:29.0998635Z [36;1m  grep -i "unresolved\|cannot find\|symbol\|class\|package" build.log | head -100 || true[0m
+2025-12-30T19:46:29.0999035Z [36;1m  echo ""[0m
+2025-12-30T19:46:29.0999430Z [36;1m  echo "=== Dependency resolution errors ==="[0m
+2025-12-30T19:46:29.0999833Z [36;1m  grep -i "could not find\|could not resolve\|FAILED" build.log | head -100 || true[0m
+2025-12-30T19:46:29.1000197Z [36;1m  echo ""[0m
+2025-12-30T19:46:29.1000410Z [36;1m  echo "=== Last 300 lines of build log ==="[0m
+2025-12-30T19:46:29.1000684Z [36;1m  tail -300 build.log[0m
+2025-12-30T19:46:29.1000905Z [36;1m  echo ""[0m
+2025-12-30T19:46:29.1001178Z [36;1m  echo "=== Running compileReleaseKotlin with full output ==="[0m
+2025-12-30T19:46:29.1001688Z [36;1m  ./gradlew :app:compileReleaseKotlin --stacktrace --info 2>&1 | tee kotlin.log || true[0m
+2025-12-30T19:46:29.1002098Z [36;1m  echo ""[0m
+2025-12-30T19:46:29.1002342Z [36;1m  echo "=== Kotlin compilation errors (detailed) ==="[0m
+2025-12-30T19:46:29.1002704Z [36;1m  grep -A 10 "e: file:" kotlin.log | head -200 || true[0m
+2025-12-30T19:46:29.1002989Z [36;1m  echo ""[0m
+2025-12-30T19:46:29.1003239Z [36;1m  echo "=== Checking Flutter embedding availability ==="[0m
+2025-12-30T19:46:29.1003891Z [36;1m  ./gradlew :app:dependencies --configuration releaseRuntimeClasspath 2>&1 | grep -A 10 -B 10 "io.flutter" || echo "No io.flutter dependencies found"[0m
+2025-12-30T19:46:29.1004674Z [36;1m  exit 1[0m
+2025-12-30T19:46:29.1004852Z [36;1m}[0m
+2025-12-30T19:46:29.1005014Z [36;1mcd ..[0m
+2025-12-30T19:46:29.1005209Z [36;1m# Copy APK to expected location[0m
+2025-12-30T19:46:29.1005752Z [36;1mcp android/app/build/outputs/apk/release/app-release.apk build/app/outputs/flutter-apk/app-release.apk || true[0m
+2025-12-30T19:46:29.1037017Z shell: /usr/bin/bash -e {0}
+2025-12-30T19:46:29.1037246Z env:
+2025-12-30T19:46:29.1037508Z   FLUTTER_ROOT: /opt/hostedtoolcache/flutter/stable-3.38.4-x64
+2025-12-30T19:46:29.1037858Z   PUB_CACHE: /home/runner/.pub-cache
+2025-12-30T19:46:29.1038100Z ##[endgroup]
+2025-12-30T19:46:29.1087831Z Building APK with Flutter...
+2025-12-30T19:46:29.1100198Z /home/runner/work/_temp/bdd71d75-e13d-4b1d-9b19-c1912b2c3216.sh: line 4: ./gradlew: No such file or directory
+2025-12-30T19:46:29.1115338Z cp: cannot stat 'android/app/build/outputs/apk/release/app-release.apk': No such file or directory
+2025-12-30T19:46:29.1148294Z ##[group]Run echo "branch=${GITHUB_REF#refs/heads/}" >> $GITHUB_OUTPUT
+2025-12-30T19:46:29.1148737Z [36;1mecho "branch=${GITHUB_REF#refs/heads/}" >> $GITHUB_OUTPUT[0m
+2025-12-30T19:46:29.1178596Z shell: /usr/bin/bash -e {0}
+2025-12-30T19:46:29.1178819Z env:
+2025-12-30T19:46:29.1179069Z   FLUTTER_ROOT: /opt/hostedtoolcache/flutter/stable-3.38.4-x64
+2025-12-30T19:46:29.1179400Z   PUB_CACHE: /home/runner/.pub-cache
+2025-12-30T19:46:29.1179639Z ##[endgroup]
+2025-12-30T19:46:29.1252318Z ##[group]Run echo "short_sha=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+2025-12-30T19:46:29.1252824Z [36;1mecho "short_sha=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT[0m
+2025-12-30T19:46:29.1253274Z [36;1mecho "commit_msg=$(git log -1 --pretty=%B | head -n 1)" >> $GITHUB_OUTPUT[0m
+2025-12-30T19:46:29.1282472Z shell: /usr/bin/bash -e {0}
+2025-12-30T19:46:29.1282699Z env:
+2025-12-30T19:46:29.1282958Z   FLUTTER_ROOT: /opt/hostedtoolcache/flutter/stable-3.38.4-x64
+2025-12-30T19:46:29.1283301Z   PUB_CACHE: /home/runner/.pub-cache
+2025-12-30T19:46:29.1283544Z ##[endgroup]
+2025-12-30T19:46:29.1394791Z ##[group]Run BRANCH_NAME="backend"
+2025-12-30T19:46:29.1395089Z [36;1mBRANCH_NAME="backend"[0m
+2025-12-30T19:46:29.1395402Z [36;1m# Replace / with - in branch name for tag compatibility[0m
+2025-12-30T19:46:29.1395747Z [36;1mTAG_NAME="branch-${BRANCH_NAME//\//-}"[0m
+2025-12-30T19:46:29.1396050Z [36;1mecho "tag_name=$TAG_NAME" >> $GITHUB_OUTPUT[0m
+2025-12-30T19:46:29.1424891Z shell: /usr/bin/bash -e {0}
+2025-12-30T19:46:29.1425118Z env:
+2025-12-30T19:46:29.1425385Z   FLUTTER_ROOT: /opt/hostedtoolcache/flutter/stable-3.38.4-x64
+2025-12-30T19:46:29.1425723Z   PUB_CACHE: /home/runner/.pub-cache
+2025-12-30T19:46:29.1425958Z ##[endgroup]
+2025-12-30T19:46:29.1501686Z ##[group]Run gh release delete "branch-backend" --yes --cleanup-tag || true
+2025-12-30T19:46:29.1502360Z [36;1mgh release delete "branch-backend" --yes --cleanup-tag || true[0m
+2025-12-30T19:46:29.1531211Z shell: /usr/bin/bash -e {0}
+2025-12-30T19:46:29.1531442Z env:
+2025-12-30T19:46:29.1531718Z   FLUTTER_ROOT: /opt/hostedtoolcache/flutter/stable-3.38.4-x64
+2025-12-30T19:46:29.1532055Z   PUB_CACHE: /home/runner/.pub-cache
+2025-12-30T19:46:29.1532797Z   GITHUB_TOKEN: ***
+2025-12-30T19:46:29.1533165Z ##[endgroup]
+2025-12-30T19:46:29.6006361Z release not found
+2025-12-30T19:46:29.6086346Z ##[group]Run cp build/app/outputs/flutter-apk/app-release.apk app-backend.apk
+2025-12-30T19:46:29.6086885Z [36;1mcp build/app/outputs/flutter-apk/app-release.apk app-backend.apk[0m
+2025-12-30T19:46:29.6118856Z shell: /usr/bin/bash -e {0}
+2025-12-30T19:46:29.6119087Z env:
+2025-12-30T19:46:29.6119347Z   FLUTTER_ROOT: /opt/hostedtoolcache/flutter/stable-3.38.4-x64
+2025-12-30T19:46:29.6119683Z   PUB_CACHE: /home/runner/.pub-cache
+2025-12-30T19:46:29.6119923Z ##[endgroup]
+2025-12-30T19:46:29.6183165Z cp: cannot stat 'build/app/outputs/flutter-apk/app-release.apk': No such file or directory
+2025-12-30T19:46:29.6188342Z ##[error]Process completed with exit code 1.
+2025-12-30T19:46:29.6296408Z Post job cleanup.
+2025-12-30T19:46:29.6346659Z Post job cleanup.
+2025-12-30T19:46:29.7068904Z [command]/usr/bin/git version
+2025-12-30T19:46:29.7105968Z git version 2.52.0
+2025-12-30T19:46:29.7150577Z Temporarily overriding HOME='/home/runner/work/_temp/5b32a124-5917-4eab-ab3f-d67a15cbf4f6' before making global git config changes
+2025-12-30T19:46:29.7151907Z Adding repository directory to the temporary git global config as a safe directory
+2025-12-30T19:46:29.7155996Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/beebetter/beebetter
+2025-12-30T19:46:29.7188492Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2025-12-30T19:46:29.7218148Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2025-12-30T19:46:29.7446544Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2025-12-30T19:46:29.7466474Z http.https://github.com/.extraheader
+2025-12-30T19:46:29.7478432Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2025-12-30T19:46:29.7506919Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2025-12-30T19:46:29.7846290Z Cleaning up orphan processes
+2025-12-30T19:46:29.8119240Z Terminate orphan process: pid (2757) (adb)
