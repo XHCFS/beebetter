@@ -17,10 +17,21 @@ class DashboardLogic extends ChangeNotifier {
   DateTime? get selectedDay => _selectedDay;
   DateTime get focusedDay => _focusedDay;
 
-  List<EntryInfo> entries = [];
+  Map<DateTime, List<EntryInfo>> entriesByDay = {};
+
+  DateTime _normalize(DateTime date) =>
+      DateTime(date.year, date.month, date.day);
+
+  List<EntryInfo> getEntriesForDay(DateTime day) =>
+      entriesByDay[_normalize(day)] ?? [];
+
+  List<EntryInfo> entries = []; // fetch the list of entries for the selected date
+  List<EntryInfo> filteredEntries = []; // fetch the list of entries (search bar)
   final int emotionLevels = 3;
 
   DashboardLogic() {
+    final today = _normalize(DateTime.now());
+    final yesterday = _normalize(DateTime.now().subtract(const Duration(days: 1)));
     entries = [
       EntryInfo(
         id: "p1",
@@ -72,6 +83,30 @@ Some mushrooms offered the bunny some carrots and they all enjoyed the yummy car
     entries[1].emotions = ["Tired", "Low energy", "Confused"];
     entries[2].emotions = ["Happy", "Excited", "Playful"];
     entries[3].emotions = ["Happy", "Motivated", "Proud"];
+
+    filteredEntries = [
+      EntryInfo(
+        id: "p1",
+        title: "What's one small win you had today?",
+        category: "productivity",
+        emotionLevels: emotionLevels,
+        isText: false,
+      ),
+      EntryInfo(
+        id: "p2",
+        title: "Reflect on your energy levels today.",
+        category: "productivity",
+        emotionLevels: emotionLevels,
+        isText: true,
+      ),
+    ];
+    filteredEntries[0].userInput = "I made my friend laugh";
+    filteredEntries[1].userInput = '''I had low energy in the morning im not sure why''';
+    filteredEntries[0].emotions = ["Happy", "Excited", "Playful"];
+    filteredEntries[1].emotions = ["Happy", "Motivated", "Proud"];
+
+    entriesByDay[today] = entries;
+    entriesByDay[yesterday] = [entries.first];
   }
 
   void selectDay(DateTime selected, DateTime focused) {

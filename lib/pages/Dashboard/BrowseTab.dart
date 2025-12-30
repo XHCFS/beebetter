@@ -58,11 +58,14 @@ class BrowseTabStatefulState extends State<BrowseTab> {
               child: TableCalendar(
                 firstDay: DateTime.utc(2020, 1, 1),
                 lastDay: DateTime.utc(2030, 12, 31),
-
                 focusedDay: logic.focusedDay,
 
                 selectedDayPredicate: (day) =>
                     isSameDay(logic.selectedDay, day),
+
+                eventLoader: (day) {
+                  return logic.getEntriesForDay(day);
+                },
 
                 onDaySelected: (selectedDay, focusedDay) {
                   logic.selectDay(selectedDay, focusedDay);
@@ -113,6 +116,24 @@ class BrowseTabStatefulState extends State<BrowseTab> {
                   weekendStyle:
                   TextStyle(color: colorScheme.primary.withAlpha(160)),
                 ),
+
+                calendarBuilders: CalendarBuilders(
+                  markerBuilder: (context, day, events) {
+                    if (events.isEmpty) return const SizedBox.shrink();
+
+                    return Positioned(
+                      bottom: 6,
+                      child: Container(
+                        width: 6,
+                        height: 6,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.inversePrimary,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                    );
+                  },
+                ),
               ),
             ),
           ),
@@ -153,10 +174,23 @@ class BrowseTabStatefulState extends State<BrowseTab> {
               // List of Entries
               // ---------------------------------------------------
               if (logic.entries.isEmpty)
-                Text(
-                  "No entries for this day.",
-                  style: textTheme.bodyMedium
-                      ?.copyWith(color: colorScheme.primary.withAlpha(160)),
+                SizedBox(
+                  width: double.infinity,
+                  height: 80,
+                  child: Card(
+                    color: colorScheme.onPrimary,
+                    shadowColor: colorScheme.inversePrimary,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Center(
+                      child: Text(
+                        "No entries for this day.",
+                        style: textTheme.bodyMedium
+                            ?.copyWith(color: colorScheme.primary.withAlpha(160)),
+                      ),
+                    ),
+                  ),
                 )
               else
                 Column(
