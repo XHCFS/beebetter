@@ -73,7 +73,14 @@ jobs:
       continue-on-error: true
     
     - name: Build APK
-      run: flutter build apk --release
+      run: |
+        echo "Building APK with Flutter..."
+        flutter build apk --release --verbose 2>&1 | tail -100 || {
+          echo "Build failed, checking Gradle dependencies..."
+          cd android
+          ./gradlew :app:dependencies --configuration releaseRuntimeClasspath 2>&1 | grep -i flutter || true
+          exit 1
+        }
     
     # Get branch name and commit info for all pushes
     - name: Get branch name
