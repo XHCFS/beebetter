@@ -67,23 +67,13 @@ jobs:
     
     - name: Verify Gradle configuration
       run: |
-        cd android
-        echo "Checking Gradle wrapper:"
-        ./gradlew --version || true
-        echo ""
-        echo "Checking if Flutter Gradle plugin is available:"
-        ./gradlew tasks --all 2>&1 | grep -i flutter || echo "No Flutter tasks found"
-        echo ""
-        echo "Checking project structure:"
-        ./gradlew projects 2>&1 | head -20 || true
-        echo ""
         echo "=== Verifying Flutter SDK path ==="
         echo "FLUTTER_ROOT: $FLUTTER_ROOT"
         echo "Checking Flutter Gradle plugin location:"
         ls -la "$FLUTTER_ROOT/packages/flutter_tools/gradle" 2>&1 | head -10 || echo "Flutter Gradle plugin not found"
         echo ""
         echo "=== Checking local.properties ==="
-        cat local.properties || echo "local.properties not found"
+        cat android/local.properties || echo "local.properties not found"
  
     - name: Generate code
       run: flutter pub run build_runner build --delete-conflicting-outputs || true
@@ -98,50 +88,16 @@ jobs:
     
     - name: Check dependency resolution
       run: |
-        cd android
-        echo "=== Checking dependency resolution ==="
-        ./gradlew :app:dependencies --configuration releaseRuntimeClasspath 2>&1 | tee deps.log || true
-        echo ""
-        echo "=== Searching for Flutter embedding in dependencies ==="
-        grep -i "flutter\|embedding\|io.flutter" deps.log | head -50 || echo "No Flutter dependencies found"
-        echo ""
-        echo "=== Checking for unresolved dependencies ==="
-        grep -i "FAILED\|unresolved\|could not find\|could not resolve" deps.log | head -50 || echo "No unresolved dependencies found"
+        echo "=== Verifying Flutter can resolve dependencies ==="
+        flutter pub get
+        echo "Dependencies resolved successfully"
     
     - name: Build APK
       run: |
         echo "Building APK with Flutter..."
-        cd android
-        # Capture full Gradle output with detailed error information
-        ./gradlew :app:assembleRelease --stacktrace --info 2>&1 | tee build.log || {
-          echo "=== BUILD FAILED ==="
-          echo ""
-          echo "=== Full Kotlin compilation errors ==="
-          # Look for Kotlin compilation errors in the log
-          grep -A 20 "e: file:" build.log | head -200 || true
-          echo ""
-          echo "=== Unresolved reference errors ==="
-          grep -i "unresolved\|cannot find\|symbol\|class\|package" build.log | head -100 || true
-          echo ""
-          echo "=== Dependency resolution errors ==="
-          grep -i "could not find\|could not resolve\|FAILED" build.log | head -100 || true
-          echo ""
-          echo "=== Last 300 lines of build log ==="
-          tail -300 build.log
-          echo ""
-          echo "=== Running compileReleaseKotlin with full output ==="
-          ./gradlew :app:compileReleaseKotlin --stacktrace --info 2>&1 | tee kotlin.log || true
-          echo ""
-          echo "=== Kotlin compilation errors (detailed) ==="
-          grep -A 10 "e: file:" kotlin.log | head -200 || true
-          echo ""
-          echo "=== Checking Flutter embedding availability ==="
-          ./gradlew :app:dependencies --configuration releaseRuntimeClasspath 2>&1 | grep -A 10 -B 10 "io.flutter" || echo "No io.flutter dependencies found"
-          exit 1
-        }
-        cd ..
-        # Copy APK to expected location
-        cp android/app/build/outputs/apk/release/app-release.apk build/app/outputs/flutter-apk/app-release.apk || true
+        flutter build apk --release
+        echo "APK built successfully"
+        echo "APK location: build/app/outputs/flutter-apk/app-release.apk"
     
     # Get branch name and commit info for all pushes
     - name: Get branch name
