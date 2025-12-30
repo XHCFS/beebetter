@@ -1,3 +1,6 @@
+import java.util.Properties
+import java.io.File
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
@@ -37,6 +40,31 @@ android {
             signingConfig = signingConfigs.getByName("debug")
         }
     }
+}
+
+// Read Flutter SDK path from local.properties
+val localPropertiesFile = File(rootProject.projectDir, "local.properties")
+val properties = Properties()
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.inputStream().use { properties.load(it) }
+}
+val flutterSdkPath = properties.getProperty("flutter.sdk") ?: System.getenv("FLUTTER_ROOT")
+
+// Read engine version from Flutter SDK
+val embeddingVersion = if (flutterSdkPath != null) {
+    val engineVersionFile = File("$flutterSdkPath/bin/internal/engine.version")
+    if (engineVersionFile.exists()) {
+        engineVersionFile.readText().trim()
+    } else {
+        "1.0.0" // fallback
+    }
+} else {
+    "1.0.0" // fallback
+}
+
+dependencies {
+    // Explicitly add Flutter embedding dependency
+    implementation("io.flutter:flutter_embedding_release:$embeddingVersion")
 }
 
 flutter {
