@@ -1,6 +1,3 @@
-import java.util.Properties
-import java.io.File
-
 plugins {
     id("com.android.application")
     id("kotlin-android")
@@ -14,12 +11,12 @@ android {
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_11.toString()
+        jvmTarget = JavaVersion.VERSION_17.toString()
     }
 
     defaultConfig {
@@ -44,50 +41,4 @@ android {
 
 flutter {
     source = "../.."
-}
-
-// Read Flutter SDK path and engine version to construct embedding dependency version
-val flutterSdkPath: String? = run {
-    val localPropertiesFile = rootProject.file("local.properties")
-    if (localPropertiesFile.exists()) {
-        val properties = Properties()
-        localPropertiesFile.inputStream().use { properties.load(it) }
-        properties.getProperty("flutter.sdk") ?: System.getenv("FLUTTER_ROOT")
-    } else {
-        System.getenv("FLUTTER_ROOT")
-    }
-}
-
-val flutterEngineVersion: String? = run {
-    if (flutterSdkPath != null) {
-        val engineVersionFile = File("$flutterSdkPath/bin/internal/engine.version")
-        if (engineVersionFile.exists()) {
-            engineVersionFile.readText().trim()
-        } else {
-            null
-        }
-    } else {
-        null
-    }
-}
-
-dependencies {
-    // Explicitly add Flutter embedding dependency
-    // The Flutter Gradle plugin should add this automatically, but it's not working in CI
-    // We add it explicitly to ensure FlutterActivity is available during compilation
-    if (flutterEngineVersion != null) {
-        // Use the engine version to construct the embedding version
-        // Format: 1.0.0-<engine-version>
-        val embeddingVersion = "1.0.0-$flutterEngineVersion"
-        implementation("io.flutter:flutter_embedding_release:$embeddingVersion")
-        println("Using Flutter embedding version: $embeddingVersion")
-    } else {
-        // If we can't get the engine version, log a warning
-        // The Flutter Gradle plugin should still add the dependency, but if it doesn't,
-        // this build will fail and we'll need to investigate further
-        println("WARNING: Could not determine Flutter engine version. Flutter Gradle plugin should add embedding dependency.")
-    }
-    
-    // Kotlin stdlib
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.1.0")
 }
