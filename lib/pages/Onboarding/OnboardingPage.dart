@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:beebetter/pages/Onboarding/OnboardingLogic.dart';
 import 'package:beebetter/widgets/BackgroundGradient.dart';
-import 'package:beebetter/pages/MainPage/MainPage.dart';
 
 class OnboardingPage extends StatelessWidget {
   const OnboardingPage({super.key});
@@ -27,32 +26,6 @@ class OnboardingContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final logic = context.watch<OnboardingLogic>();
-
-    return SafeArea(
-      child: PageView(
-        controller: logic.pageController,
-        physics: const NeverScrollableScrollPhysics(),
-        children: [
-          // Step 1: Welcome
-          _WelcomeStep(logic: logic),
-          // Step 2: Profile Setup
-          _ProfileSetupStep(logic: logic),
-          // Step 3: Complete
-          _CompleteStep(logic: logic),
-        ],
-      ),
-    );
-  }
-}
-
-class OnboardingContent extends StatelessWidget {
-  const OnboardingContent({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final logic = context.watch<OnboardingLogic>();
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
 
     return SafeArea(
       child: PageView(

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:beebetter/services/onboarding_service.dart';
 import 'package:beebetter/services/profile_manager.dart';
 import 'package:beebetter/services/database_provider.dart';
-import 'package:beebetter/pages/MainPage/MainPage.dart';
 
 class OnboardingLogic extends ChangeNotifier {
   final PageController pageController = PageController();
@@ -52,7 +51,6 @@ class OnboardingLogic extends ChangeNotifier {
 
       // Set as current profile
       await ProfileManager.instance.switchProfile(profile.id);
-      await ProfileManager.instance.initialize();
 
       // Move to next step
       nextStep();

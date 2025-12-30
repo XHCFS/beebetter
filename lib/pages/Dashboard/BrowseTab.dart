@@ -306,7 +306,7 @@ class BrowseTabStatefulState extends State<BrowseTab> {
                         child: PreviousEntry(
                           prompt: entry.title,
                           category: entry.category,
-                          isText: entry.isText ?? false,
+                          isText: entry.isText,
                           userInput: entry.userInput,
                           emotions: entry.emotions,
                           isExpanded: expandedIndex == index,
@@ -374,7 +374,7 @@ class BrowseTabStatefulState extends State<BrowseTab> {
                           child: PreviousEntry(
                             prompt: entry.title,
                             category: entry.category,
-                            isText: entry.isText ?? false,
+                            isText: entry.isText,
                             userInput: entry.userInput,
                             emotions: entry.emotions,
                             isExpanded: expandedIndex == index,

@@ -232,7 +232,7 @@ class ProfilePageUI extends StatelessWidget {
                         Switch(
                           value: logic.isDarkMode,
                           onChanged: (_) => logic.toggleDarkMode(),
-                          activeColor: colorScheme.primary,
+                          activeThumbColor: colorScheme.primary,
                         ),
                       ],
                     ),
@@ -282,7 +282,7 @@ class ProfilePageUI extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: colorScheme.surfaceBright,
+                          color: colorScheme.surfaceContainerHigh,
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(
                             color: colorScheme.primary.withAlpha(128),
@@ -389,7 +389,7 @@ class ProfilePageUI extends StatelessWidget {
                             ),
                           ),
                         );
-                      }).toList(),
+                      }),
                     
                     const SizedBox(height: 12),
                     

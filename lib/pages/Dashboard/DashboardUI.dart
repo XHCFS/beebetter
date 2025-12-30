@@ -12,7 +12,6 @@ class DashboardUI extends StatelessWidget {
   Widget build(BuildContext context) {
     ColorScheme colorScheme = Theme.of(context).colorScheme;
     TextTheme textTheme = Theme.of(context).textTheme;
-    final logic = context.read<DashboardLogic>();
 
     return DefaultTabController(
       length: 2,
