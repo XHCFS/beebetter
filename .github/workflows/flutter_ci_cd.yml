@@ -25,8 +25,15 @@ jobs:
         channel: 'stable'
         cache: true
     
+    - name: Create local.properties
+      run: |
+        echo "flutter.sdk=$FLUTTER_ROOT" > android/local.properties
+    
     - name: Install dependencies
       run: flutter pub get
+    
+    - name: Clean build
+      run: flutter clean
  
     - name: Generate code
       run: flutter pub run build_runner build --delete-conflicting-outputs
