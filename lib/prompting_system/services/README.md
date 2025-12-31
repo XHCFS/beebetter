@@ -2,6 +2,43 @@
 
 This directory contains the prompting system of the guided mode. It has 2 main files, the `adaptation_system.dart` is responsible for learning the user's prefernces. The `prompt_selection_system.dart` which is a simple schotastic scoring algorithm to rank which prompts to show next.
 
+A new file, `prompt_initalizer.dart` is added to handle the initial population of the database.
+
+## `prompt_initalizer.dart`
+
+### Usage 
+```dart
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
+import 'package:beebetter/data/database/app_database.dart';
+import 'package:beebetter/prompting_system/services/prompt_initalization.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  final database = AppDatabase(); // Your existing database instance
+  final initService = PromptInitializationService(database);
+
+  try {
+    // Load the JSON file from assets
+    final String jsonContent = await rootBundle.loadString('assets/prompts.json');
+    
+    // Initialize prompts
+    await initService.initializePromptsFromJson(jsonContent);
+  } catch (e) {
+    // Handle asset loading or DB insertion errors
+    debugPrint('Failed to load initial prompts: $e');
+  }
+
+  runApp(MyApp(database: database));
+}
+```
+### Unit tests in `/test/prompt_initialization_test.dart`
+* **Enum Mapping**: It verifies that string names like "proud" are correctly converted to their integer index (2) based on teh Mood enum definition.
+* **Idempotency**: It checks that the isNotEmpty guard in the service prevents redundant database writes if the app restarts.
+* **Schema Defaults**: It ensures that missing keys in the JSON don't cause crashes, utilizing the null safety of Drift Tables.
+* **Error Tolerance**: It specifically tests how the system reacts to a mood name that doesn't exist in the code, ensuring it filters out the garbage while keeping the valid data.
+
 ## `prompt_selection_system.dart`
 
 ### Usage
@@ -13,8 +50,6 @@ system = PromptSelectionSystem(db, random: Random(42));
 
 final ranked = await system.rankPromptsForUser(userId: userId); // Rank of what to show next to user (best-worst)
 ```
-
-### When to run?
 
 ### Scoring System
 
@@ -28,7 +63,7 @@ The class `PromptScorer` is our scoring engine, the table below shows how the sc
 | **Mood Alignment** | Per matching mood in target states | +1.2 per match |
 | **Time of Day** | Matches current time (or is universal) | +1.0 |
 
-After each prompt is scored the `_weightRank` function adds some random weigh to each prompt score so the system is less determinstic. For more experimental approaches, modify the point base system or add more "predictors".
+After each prompt is scored they're passed to the `_weightRank` is a baised random function that insures that the final selection/ranking process is not determnistic. 
 
 ### test cases
 

@@ -172,8 +172,6 @@ class AdaptationService {
   /* -------------------------------------------------------------------------- */
 
   Future<void> _updateAvoidedPrompts(int userId) async {
-    final thirtyDaysAgo = DateTime.now().subtract(const Duration(days: 30));
-
     final interactions =
         await (_db.select(_db.promptInteractions)
               ..where((pi) => pi.userId.equals(userId))

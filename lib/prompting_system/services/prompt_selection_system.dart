@@ -231,7 +231,7 @@ class PromptScorer {
       score += overlap * 1.2;
     }
 
-    if (prompt.bestTimeOfDay == null || prompt.bestTimeOfDay == timeOfDay) {
+    if (prompt.bestTimeOfDay == null || prompt.bestTimeOfDay == timeOfDay || prompt.bestTimeOfDay == 'anytime') {
       score += 1.0;
     }
 
