@@ -4,6 +4,7 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:beebetter/widgets/Cards/RecordingCard/RecordingLogic.dart';
 import 'package:beebetter/widgets/Cards/RecordingCard/RecordingIndicator.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class RecordingCard extends StatefulWidget {
   const RecordingCard({super.key});
@@ -45,22 +46,57 @@ class RecordingCardState extends State<RecordingCard> with SingleTickerProviderS
     // Start Screen
     // ---------------------------------------------------
     if (logic.state == RecordingState.beforeRecording) {
+      final hasError = logic.errorMessage != null;
       content = Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           GestureDetector(
-            onTap: logic.startRecording,
+            onTap: () async {
+              try {
+                await logic.startRecording();
+              } catch (e) {
+                // Catch any unhandled exceptions
+                debugPrint('Error in startRecording: $e');
+              }
+            },
             child: Icon(
               Symbols.mic,
               size: 36,
-              color: colorScheme.primary.withAlpha(200),
+              color: hasError 
+                  ? colorScheme.error.withAlpha(200)
+                  : colorScheme.primary.withAlpha(200),
             ),
           ),
           const SizedBox(height: 12),
-          Text(
-            "Click to start",
-            style: textTheme.titleMedium?.copyWith(color: colorScheme.primary.withAlpha(160)),
-          ),
+          if (hasError) ...[
+            Text(
+              logic.errorMessage!,
+              style: textTheme.bodySmall?.copyWith(
+                color: colorScheme.error,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            if (logic.errorMessage!.contains('permanently denied')) ...[
+              FilledButton.icon(
+                onPressed: () async {
+                  await openAppSettings();
+                },
+                icon: const Icon(Icons.settings, size: 18),
+                label: const Text('Open Settings'),
+                style: FilledButton.styleFrom(
+                  backgroundColor: colorScheme.error,
+                  foregroundColor: colorScheme.onError,
+                ),
+              ),
+              const SizedBox(height: 8),
+            ],
+          ] else ...[
+            Text(
+              "Click to start",
+              style: textTheme.titleMedium?.copyWith(color: colorScheme.primary.withAlpha(160)),
+            ),
+          ],
         ],
       );
     }

@@ -10,15 +10,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final baseScheme = ColorScheme.fromSeed(seedColor: Colors.orangeAccent);
-    // final customScheme = baseScheme.copyWith(
-    //   primary: const Color(0xFF9C89B8),
-    //   onPrimary: const Color(0xFFFFFFFF),
-    //   secondary: const Color(0xFFBFA2DB),
-    //   onSecondary: const Color(0xFF1C1B1F),
-    //   tertiary: const Color(0xFFD9CFF3),
-    // );
-
     final colorAccent = Colors.orangeAccent;
     final baseScheme = ColorScheme.fromSeed(seedColor: Colors.orangeAccent);
     final baseInversePrimary = baseScheme.inversePrimary;
@@ -29,11 +20,11 @@ class MyApp extends StatelessWidget {
     );
 
     return MaterialApp(
-      title: 'BEEBetter',
+      title: 'BEEbetter',
       theme: ThemeData(
         colorScheme: colorScheme,
       ),
-      home: MainPage()
+      home: MainPage(),
     );
   }
 }
