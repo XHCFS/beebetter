@@ -1,7 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/services.dart';
 import 'package:record/record.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 // Enum for recording session states
 enum RecordingState {
@@ -16,7 +19,11 @@ class RecordingLogic extends ChangeNotifier {
   // ---------------------------------------------------
 
   final int minRecordingTime = 20; // seconds
-  final recorder = AudioRecorder();
+  AudioRecorder? _recorder;
+  AudioRecorder get recorder {
+    _recorder ??= AudioRecorder();
+    return _recorder!;
+  }
   RecordingState _state = RecordingState.beforeRecording;
 
   bool get isRecording => _state == RecordingState.recording;
@@ -36,18 +43,36 @@ class RecordingLogic extends ChangeNotifier {
 
   // Callback when recording is complete
   final void Function(bool canContinue)? onRecordingComplete;
+  
+  // Callback for showing error messages to user
+  final void Function(String errorMessage)? onError;
 
   String? filePath;
+  String? _errorMessage;
+  
+  String? get errorMessage => _errorMessage;
 
-  RecordingLogic({this.onRecordingComplete, this.filePath});
+  RecordingLogic({this.onRecordingComplete, this.onError, this.filePath});
 
-  RecordingLogic.fromFile(String path, {this.onRecordingComplete}) {
+  RecordingLogic.fromFile(String path, {this.onRecordingComplete, this.onError}) {
     filePath = path;
     _state = RecordingState.stopped;
     isPaused = false;
     isPlayback = false;
     elapsed = Duration.zero;
     amplitudes.count = 0;
+    _errorMessage = null;
+  }
+  
+  void _clearError() {
+    _errorMessage = null;
+    notifyListeners();
+  }
+  
+  void _setError(String message) {
+    _errorMessage = message;
+    onError?.call(message);
+    notifyListeners();
   }
 
 
@@ -63,46 +88,130 @@ class RecordingLogic extends ChangeNotifier {
 
   // Start a recording session
   Future<void> startRecording() async {
-    final hasPermission = await recorder.hasPermission();
-    if (!hasPermission) return;
-
-    final dir = await getTemporaryDirectory();
-    final path = '${dir.path}/rec_${DateTime.now().millisecondsSinceEpoch}.m4a';
-
-    await recorder.start(
-        RecordConfig(
-          encoder: AudioEncoder.aacLc,
-          sampleRate: 44100,
-          numChannels: 1,
-        ),
-      path: path,
-    );
-
-    _state = RecordingState.recording;
-    isPaused = false;
-    isPlayback = false;
-    elapsed = Duration.zero;
-    amplitudes.count = 0; // reset recording indicator bars
-    notifyListeners();
-
-    // Track elapsed time
-    elapsedTimer = Timer.periodic(const Duration(seconds: 1), (_) {
-      if (!isPaused) {
-        elapsed += const Duration(seconds: 1);
-        notifyListeners();
+    _clearError();
+    
+    // Check if running on web (record package doesn't support web)
+    if (kIsWeb) {
+      _setError('Voice recording is not supported on web. Please use a mobile device.');
+      return;
+    }
+    
+    try {
+      // Wait a brief moment to ensure Flutter engine and plugins are fully initialized
+      // This helps prevent MissingPluginException in release builds
+      await Future.delayed(const Duration(milliseconds: 100));
+      
+      // Check and request microphone permission using permission_handler
+      // (Don't use recorder.hasPermission() as it may throw MissingPluginException)
+      PermissionStatus permissionStatus;
+      try {
+        // Try to access the permission handler - if it fails, the plugin isn't ready
+        permissionStatus = await Permission.microphone.status;
+      } on MissingPluginException catch (e) {
+        // Plugin not registered - this should not happen if build is correct
+        // But we provide helpful error message
+        _setError('Microphone permission system not available.\n\nThis usually means:\n1. The app needs a full rebuild (not hot reload)\n2. Plugins may not be properly included in the build\n\nPlease rebuild the app completely.');
+        debugPrint('MissingPluginException in permission check: $e');
+        debugPrint('Full error details: ${e.toString()}');
+        return;
+      } catch (e) {
+        _setError('Failed to check microphone permission: ${e.toString()}');
+        debugPrint('Permission check error: $e');
+        return;
       }
-    });
+      
+      if (!permissionStatus.isGranted) {
+        PermissionStatus result;
+        try {
+          result = await Permission.microphone.request();
+        } on MissingPluginException catch (e) {
+          // Plugin not registered - this should not happen if build is correct
+          _setError('Microphone permission system not available.\n\nThis usually means:\n1. The app needs a full rebuild (not hot reload)\n2. Plugins may not be properly included in the build\n\nPlease rebuild the app completely.');
+          debugPrint('MissingPluginException in permission request: $e');
+          debugPrint('Full error details: ${e.toString()}');
+          return;
+        } catch (e) {
+          _setError('Failed to request microphone permission: ${e.toString()}');
+          debugPrint('Permission request error: $e');
+          return;
+        }
+        
+        if (result.isPermanentlyDenied) {
+          _setError('Microphone permission is permanently denied. Please enable it in app settings.');
+          return;
+        }
+        
+        if (!result.isGranted) {
+          _setError('Microphone permission is required to record audio.');
+          return;
+        }
+      }
 
-    // Poll amplitudes
-    amplitudeTimer =
-        Timer.periodic(Duration(milliseconds: amplitudePollIntervalMs), (_) async {
-          if (!isPaused) {
-            final amp = await recorder.getAmplitude();
-            double normalized = ((amp.current + 60) / 60).clamp(0.0, 1.0);
-            amplitudes.add(normalized);
-            notifyListeners();
-          }
-        });
+      // Get temporary directory for recording
+      final dir = await getTemporaryDirectory();
+      final path = '${dir.path}/rec_${DateTime.now().millisecondsSinceEpoch}.m4a';
+      filePath = path; // Store path for later use
+
+      // Start recording with error handling
+      // Ensure recorder is initialized (lazy initialization)
+      try {
+        // Small delay to ensure recorder plugin is ready
+        await Future.delayed(const Duration(milliseconds: 50));
+        
+        await recorder.start(
+          RecordConfig(
+            encoder: AudioEncoder.aacLc,
+            sampleRate: 44100,
+            numChannels: 1,
+          ),
+          path: path,
+        );
+      } on MissingPluginException catch (e) {
+        // Handle MissingPluginException specifically - plugin not registered
+        _setError('Audio recording system not available.\n\nThis usually means:\n1. The app needs a full rebuild (not hot reload)\n2. Plugins may not be properly included in the build\n\nPlease rebuild the app completely.');
+        debugPrint('MissingPluginException in recorder.start(): $e');
+        debugPrint('Full error details: ${e.toString()}');
+        return;
+      } catch (e) {
+        _setError('Failed to start recording: ${e.toString()}');
+        debugPrint('Recording error: $e');
+        return;
+      }
+
+      // Update state to recording
+      _state = RecordingState.recording;
+      isPaused = false;
+      isPlayback = false;
+      elapsed = Duration.zero;
+      amplitudes.count = 0; // reset recording indicator bars
+      notifyListeners();
+
+      // Track elapsed time
+      elapsedTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+        if (!isPaused) {
+          elapsed += const Duration(seconds: 1);
+          notifyListeners();
+        }
+      });
+
+      // Poll amplitudes
+      amplitudeTimer =
+          Timer.periodic(Duration(milliseconds: amplitudePollIntervalMs), (_) async {
+            if (!isPaused) {
+              try {
+                final amp = await recorder.getAmplitude();
+                double normalized = ((amp.current + 60) / 60).clamp(0.0, 1.0);
+                amplitudes.add(normalized);
+                notifyListeners();
+              } catch (e) {
+                // Silently handle amplitude errors during recording
+                debugPrint('Error getting amplitude: $e');
+              }
+            }
+          });
+    } catch (e) {
+      _setError('An unexpected error occurred: ${e.toString()}');
+    }
   }
 
   // Stop the recording session and transition to stopped state
@@ -139,6 +248,8 @@ class RecordingLogic extends ChangeNotifier {
     isPlayback = false;
     elapsed = Duration.zero;
     amplitudes.count = 0;
+    filePath = null; // Clear file path
+    _errorMessage = null; // Clear any error messages
     notifyListeners();
   }
 
@@ -160,6 +271,7 @@ class RecordingLogic extends ChangeNotifier {
   void dispose() {
     amplitudeTimer?.cancel();
     elapsedTimer?.cancel();
+    _recorder?.dispose();
     super.dispose();
   }
 }

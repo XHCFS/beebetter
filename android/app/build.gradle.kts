@@ -35,10 +35,52 @@ android {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig = signingConfigs.getByName("debug")
+            // Disable code shrinking to prevent MissingPluginException
+            // Plugins may be removed during code shrinking/obfuscation
+            isMinifyEnabled = false
+            isShrinkResources = false
+            // ProGuard rules file (even if minify is disabled, it's good to have)
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+    }
+    
+    packaging {
+        jniLibs {
+            // Handle duplicate native libraries (e.g., libonnxruntime.so)
+            // Pick the first occurrence when duplicates are found
+            pickFirsts += listOf("**/libonnxruntime.so")
         }
     }
 }
 
 flutter {
     source = "../.."
+}
+
+// Configure Cargokit to only build for Android 64-bit targets
+// This prevents the "Unknown darwin target or platform" error
+// by filtering out unsupported platforms before Cargokit processes them
+afterEvaluate {
+    // Configure Cargokit tasks directly - they are Exec tasks
+    tasks.withType<org.gradle.api.tasks.Exec>().configureEach {
+        if (name.contains("cargokit", ignoreCase = true)) {
+            doFirst {
+                val currentTargets = System.getenv("CARGOKIT_TARGET_PLATFORMS")
+                if (currentTargets != null) {
+                    // Filter to only supported Android 64-bit targets
+                    val supportedTargets = currentTargets.split(",")
+                        .filter { it == "android-arm64" || it == "android-x64" }
+                        .joinToString(",")
+                    
+                    if (supportedTargets.isNotEmpty()) {
+                        // Override the environment variable for this Exec task
+                        environment("CARGOKIT_TARGET_PLATFORMS", supportedTargets)
+                    }
+                }
+            }
+        }
+    }
 }

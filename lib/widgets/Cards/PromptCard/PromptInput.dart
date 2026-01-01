@@ -322,6 +322,15 @@ class PromptInputState extends State<PromptInput> with TickerProviderStateMixin 
                         prompt.isTextLocked = canContinue;
                         logic.updateCanContinue(canContinue);
                       },
+                      onError: (errorMessage) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(errorMessage),
+                            backgroundColor: Theme.of(context).colorScheme.error,
+                            duration: const Duration(seconds: 4),
+                          ),
+                        );
+                      },
                     ),
                     child: RecordingCard(),
                   ),

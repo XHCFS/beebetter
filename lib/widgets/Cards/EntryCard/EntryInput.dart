@@ -324,6 +324,15 @@ class EntryInputState extends State<EntryInput> with TickerProviderStateMixin {
                           logic.updateCanContinue(canContinue);
                           logic.entryInfo.isTextLocked = canContinue;
                         },
+                        onError: (errorMessage) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(errorMessage),
+                              backgroundColor: Theme.of(context).colorScheme.error,
+                              duration: const Duration(seconds: 4),
+                            ),
+                          );
+                        },
                       ),
                       child: RecordingCard(),
                     ),

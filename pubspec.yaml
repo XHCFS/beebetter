@@ -33,7 +33,9 @@ dependencies:
   drift:
   drift_flutter:
   path:
-  intl: ^0.18.1
+  intl: ^0.20.2
+  onnxruntime: ^1.4.1
+  permission_handler: ^11.3.1
   provider: ^6.0.5
   dotted_border: ^3.0.0
   material_symbols_icons: ^4.2661.0
@@ -48,6 +50,7 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
+  transformers: ^0.0.2
 
 dev_dependencies:
   flutter_test:
@@ -61,6 +64,13 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
 
+# Dependency overrides to resolve version conflicts
+# Both record and transformers need intl, but require different versions
+# This forces a single compatible version for all packages
+# CI successfully uses 0.20.2, so we override to that version
+dependency_overrides:
+  intl: ^0.20.2
+
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
@@ -68,6 +78,11 @@ dev_dependencies:
 flutter:
   assets:
     - assets/images/
+    - assets/models/mobile_text_model/emotion_model.onnx
+    - assets/models/mobile_text_model/config.json
+    - assets/models/mobile_text_model/vocab.txt
+    - assets/models/mobile_voice_model/emotion_model_quantized.onnx
+    - assets/models/mobile_voice_model/config.json
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
