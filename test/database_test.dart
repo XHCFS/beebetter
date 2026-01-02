@@ -79,7 +79,6 @@ void main() {
               preferredCategories: Value(
                 json.encode(['reflection', 'gratitude']),
               ),
-              avoidedPrompts: Value(json.encode([1, 3, 5])),
               lastDifficultyAdjustment: Value(DateTime.now()),
             ),
           );

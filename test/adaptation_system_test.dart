@@ -170,10 +170,10 @@ void main() {
 
       await service.runAdaptation(userId);
 
-      final updatedUser = await (db.select(
-        db.user,
-      )..where((u) => u.id.equals(userId))).getSingle();
-      expect(updatedUser.avoidedPrompts, contains('99'));
+      final avoidedPrompts = await (db.select(db.userAvoidedPrompts)
+            ..where((uap) => uap.userId.equals(userId)))
+          .get();
+      expect(avoidedPrompts.any((ap) => ap.promptId == dislikedPromptId), isTrue);
     });
   });
 }
