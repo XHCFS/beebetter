@@ -202,5 +202,128 @@ void main() {
         expect(writingRate, closeTo(0.56, 0.05));
       },
     );
+
+    test('Filters out avoided prompts from results', () async {
+      await seedPrompts();
+      final userId = await db
+          .into(db.user)
+          .insert(
+            UserCompanion.insert(
+              name: 'Test User',
+              preferredCategories: Value(jsonEncode(['gratitude'])),
+              currentDifficultyLevel: const Value(1),
+            ),
+          );
+
+      // Avoid the gratitude prompt (id: 1)
+      await db.into(db.userAvoidedPrompts).insert(
+            UserAvoidedPromptsCompanion.insert(
+              userId: userId,
+              promptId: 1,
+            ),
+          );
+
+      final ranked = await system.rankPromptsForUser(userId: userId);
+
+      // Should only return the expressive_writing prompt, not the avoided gratitude one
+      expect(ranked.length, 1);
+      expect(ranked.first.prompt.category, 'expressive_writing');
+      expect(ranked.first.prompt.id, 2);
+    });
+
+    test('Returns empty list when all prompts are avoided, then resets oldest', () async {
+      await seedPrompts();
+      final userId = await db
+          .into(db.user)
+          .insert(
+            UserCompanion.insert(
+              name: 'Test User',
+              currentDifficultyLevel: const Value(1),
+            ),
+          );
+
+      // Avoid both prompts
+      await db.into(db.userAvoidedPrompts).insert(
+            UserAvoidedPromptsCompanion.insert(
+              userId: userId,
+              promptId: 1,
+              avoidedAt: Value(DateTime.now().subtract(const Duration(days: 5))),
+            ),
+          );
+      await db.into(db.userAvoidedPrompts).insert(
+            UserAvoidedPromptsCompanion.insert(
+              userId: userId,
+              promptId: 2,
+              avoidedAt: Value(DateTime.now().subtract(const Duration(days: 2))),
+            ),
+          );
+
+      // First call should reset oldest (prompt 1) and return prompts
+      final ranked = await system.rankPromptsForUser(userId: userId);
+
+      // Should have at least one prompt (the one that was reset)
+      expect(ranked.isNotEmpty, isTrue);
+      
+      // Verify prompt 1 was reset (oldest)
+      final remainingAvoided = await (db.select(db.userAvoidedPrompts)
+            ..where((uap) => uap.userId.equals(userId)))
+          .get();
+      expect(remainingAvoided.length, 1); // Only prompt 2 should remain
+      expect(remainingAvoided.first.promptId, 2);
+    });
+
+    test('Balances difficulty to prevent too many consecutive same-difficulty prompts', () async {
+      // Create prompts with different difficulty levels
+      final prompts = [
+        {'id': 10, 'content': 'Easy 1', 'level': 1},
+        {'id': 11, 'content': 'Easy 2', 'level': 1},
+        {'id': 12, 'content': 'Easy 3', 'level': 1},
+        {'id': 20, 'content': 'Medium 1', 'level': 3},
+        {'id': 21, 'content': 'Medium 2', 'level': 3},
+        {'id': 30, 'content': 'Hard 1', 'level': 5},
+      ];
+
+      for (var p in prompts) {
+        await db.into(db.prompts).insert(
+              PromptsCompanion.insert(
+                id: Value(p['id'] as int),
+                content: p['content'] as String,
+                difficultyLevel: p['level'] as int,
+                therapeuticFramework: 'CBT',
+                isActive: const Value(true),
+              ),
+            );
+      }
+
+      final userId = await db
+          .into(db.user)
+          .insert(
+            UserCompanion.insert(
+              name: 'Balance User',
+              currentDifficultyLevel: const Value(2),
+            ),
+          );
+
+      final ranked = await system.rankPromptsForUser(userId: userId, limit: 6);
+
+      // Check that we don't have more than 2 consecutive prompts of the same difficulty
+      int consecutiveCount = 1;
+      int? lastDifficulty;
+
+      for (final scored in ranked) {
+        final difficulty = scored.prompt.difficultyLevel;
+        if (lastDifficulty == difficulty) {
+          consecutiveCount++;
+          expect(
+            consecutiveCount,
+            lessThanOrEqualTo(2),
+            reason: 'Should not have more than 2 consecutive prompts of difficulty $difficulty',
+          );
+        } else {
+          consecutiveCount = 1;
+          lastDifficulty = difficulty;
+        }
+      }
+    });
   });
 }

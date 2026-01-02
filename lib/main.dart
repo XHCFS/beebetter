@@ -1,12 +1,43 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:beebetter/pages/MainPage/MainPage.dart';
+import 'package:beebetter/data/database/app_database.dart';
+import 'package:beebetter/prompting_system/services/prompt_initalizer.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // Initialize database
+  final db = AppDatabase();
+  
+  // Initialize prompts from JSON
+  try {
+    final initService = PromptInitializationService(db);
+    final jsonContent = await rootBundle.loadString('assets/prompts.json');
+    await initService.initializePromptsFromJson(jsonContent);
+  } catch (e) {
+    debugPrint('Failed to initialize prompts: $e');
+  }
+  
+  // Get or create default user
+  final users = await db.select(db.user).get();
+  int userId;
+  if (users.isEmpty) {
+    userId = await db.into(db.user).insert(
+      UserCompanion.insert(name: 'User'),
+    );
+  } else {
+    userId = users.first.id;
+  }
+  
+  runApp(MyApp(db: db, userId: userId));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final AppDatabase db;
+  final int userId;
+  
+  const MyApp({super.key, required this.db, required this.userId});
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +55,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: colorScheme,
       ),
-      home: MainPage(),
+      home: MainPage(db: db, userId: userId),
     );
   }
 }

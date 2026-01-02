@@ -175,5 +175,88 @@ void main() {
           .get();
       expect(avoidedPrompts.any((ap) => ap.promptId == dislikedPromptId), isTrue);
     });
+
+    test('Expires avoided prompts older than 30 days', () async {
+      final userId = await db
+          .into(db.user)
+          .insert(UserCompanion.insert(name: 'Expiration User'));
+      const promptId1 = 10;
+      const promptId2 = 20;
+
+      // Create two avoided prompts: one old, one recent
+      await db.into(db.userAvoidedPrompts).insert(
+            UserAvoidedPromptsCompanion.insert(
+              userId: userId,
+              promptId: promptId1,
+              avoidedAt: Value(DateTime.now().subtract(const Duration(days: 35))), // Old
+            ),
+          );
+      await db.into(db.userAvoidedPrompts).insert(
+            UserAvoidedPromptsCompanion.insert(
+              userId: userId,
+              promptId: promptId2,
+              avoidedAt: Value(DateTime.now().subtract(const Duration(days: 10))), // Recent
+            ),
+          );
+
+      await service.runAdaptation(userId);
+
+      // Only the recent one should remain
+      final remaining = await (db.select(db.userAvoidedPrompts)
+            ..where((uap) => uap.userId.equals(userId)))
+          .get();
+      expect(remaining.length, 1);
+      expect(remaining.first.promptId, promptId2);
+    });
+  });
+
+  group('AdaptationService - Preference Learning Frequency', () {
+    test('Learns category after 6 entries (not just multiples of 6)', () async {
+      final userId = await db
+          .into(db.user)
+          .insert(UserCompanion.insert(name: 'Learning User'));
+
+      final promptId = await db
+          .into(db.prompts)
+          .insert(
+            PromptsCompanion.insert(
+              content: 'Reflect on joy',
+              therapeuticFramework: 'CBT',
+              difficultyLevel: 1,
+              category: const Value('Mindfulness'),
+            ),
+          );
+
+      // Create 7 entries (not a multiple of 6)
+      for (int i = 0; i < 7; i++) {
+        final recordId = await db
+            .into(db.records)
+            .insert(
+              RecordsCompanion.insert(
+                userId: Value(userId),
+                promptId: Value(promptId),
+                content: Value('Significant content... ' * 20),
+                createdAt: Value(DateTime.now().subtract(Duration(days: 29 - i))),
+              ),
+            );
+
+        await db
+            .into(db.moods)
+            .insert(
+              MoodsCompanion.insert(
+                recordId: recordId,
+                mood: Value(schema.Mood.grateful.index),
+              ),
+            );
+      }
+
+      await service.runAdaptation(userId);
+
+      final updatedUser = await (db.select(
+        db.user,
+      )..where((u) => u.id.equals(userId))).getSingle();
+      // Should learn preference even though 7 is not a multiple of 6
+      expect(updatedUser.preferredCategories, contains('Mindfulness'));
+    });
   });
 }

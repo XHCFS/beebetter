@@ -1,8 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 import 'package:beebetter/classes/EntryInfo.dart';
+import 'package:beebetter/data/database/app_database.dart';
+import 'package:beebetter/prompting_system/services/prompt_selection_system.dart';
+import 'package:beebetter/prompting_system/services/adaptation_system.dart';
+import 'package:drift/drift.dart';
 
 class GuidedModeLogic extends ChangeNotifier {
+  final AppDatabase _db;
+  final int _userId;
+  final PromptSelectionSystem _promptSystem;
+  final AdaptationService _adaptationService;
   // ---------------------------------------------------
   // Variables Initialization
   // ---------------------------------------------------
@@ -41,45 +49,125 @@ class GuidedModeLogic extends ChangeNotifier {
   // ---------------------------------------------------
 
   List<EntryInfo> prompts = [];
-  EntryInfo get currentPromptInfo => prompts[currentPrompt];
+  bool _isLoadingPrompts = true;
+  
+  EntryInfo get currentPromptInfo {
+    if (prompts.isEmpty) {
+      // Return a default prompt if none loaded yet
+      return EntryInfo(
+        id: "loading",
+        title: "Loading prompts...",
+        category: "general",
+        emotionLevels: emotionLevels,
+      );
+    }
+    return prompts[currentPrompt];
+  }
 
   String get currentPromptText => currentPromptInfo.title;
   String get currentPromptCategory => currentPromptInfo.category;
-  int get totalPrompts => prompts.length;
+  int get totalPrompts => prompts.isEmpty ? 1 : prompts.length;
 
   // ---------------------------------------------------
   // Constructor
   // ---------------------------------------------------
 
-  GuidedModeLogic() {
+  GuidedModeLogic(this._db, this._userId)
+      : _promptSystem = PromptSelectionSystem(_db),
+        _adaptationService = AdaptationService(_db) {
+    // Initialize with a default prompt immediately to prevent empty list errors
     prompts = [
       EntryInfo(
-        id: "p1",
-        title: "What's one small win you had today?",
-        category: "productivity",
-        emotionLevels: emotionLevels,
-      ),
-      EntryInfo(
-        id: "p2",
-        title: "Reflect on your energy levels today.",
-        category: "productivity",
-        emotionLevels: emotionLevels,
-      ),
-      EntryInfo(
-        id: "p3",
-        title: "Create a story using these three words.",
-        category: "creativity",
-        emotionLevels: emotionLevels,
-      ),
-      EntryInfo(
-        id: "p4",
-        title: "What made you smile today?",
-        category: "gratitude practice",
+        id: "loading",
+        title: "Loading prompts...",
+        category: "general",
         emotionLevels: emotionLevels,
       ),
     ];
+    originalTotalPrompts = 1;
+    _loadPrompts();
+  }
 
-    originalTotalPrompts = prompts.length;
+  Future<void> _loadPrompts() async {
+    try {
+      _isLoadingPrompts = true;
+      debugPrint('Loading prompts for user $_userId...');
+      
+      final ranked = await _promptSystem.rankPromptsForUser(
+        userId: _userId,
+        limit: 5,
+      );
+
+      debugPrint('Loaded ${ranked.length} prompts from system');
+
+      if (ranked.isEmpty) {
+        debugPrint('No prompts returned, using fallback prompts');
+        // Fallback to default prompts if none available
+        prompts = [
+          EntryInfo(
+            id: "p1",
+            title: "What's one small win you had today?",
+            category: "productivity",
+            emotionLevels: emotionLevels,
+          ),
+          EntryInfo(
+            id: "p2",
+            title: "Reflect on your energy levels today.",
+            category: "productivity",
+            emotionLevels: emotionLevels,
+          ),
+          EntryInfo(
+            id: "p3",
+            title: "What made you smile today?",
+            category: "gratitude practice",
+            emotionLevels: emotionLevels,
+          ),
+        ];
+      } else {
+        prompts = ranked.map((scored) {
+          final prompt = scored.prompt;
+          debugPrint('Adding prompt: ${prompt.content.substring(0, prompt.content.length > 50 ? 50 : prompt.content.length)}...');
+          return EntryInfo(
+            id: prompt.id.toString(),
+            title: prompt.content,
+            category: prompt.category ?? 'general',
+            emotionLevels: emotionLevels,
+          );
+        }).toList();
+      }
+
+      originalTotalPrompts = prompts.length;
+      _isLoadingPrompts = false;
+      debugPrint('Prompts loaded successfully. Total: ${prompts.length}');
+      notifyListeners();
+    } catch (e, stackTrace) {
+      debugPrint('Error loading prompts: $e');
+      debugPrint('Stack trace: $stackTrace');
+      // Fallback to default prompts on error
+      prompts = [
+        EntryInfo(
+          id: "p1",
+          title: "What's one small win you had today?",
+          category: "productivity",
+          emotionLevels: emotionLevels,
+        ),
+        EntryInfo(
+          id: "p2",
+          title: "Reflect on your energy levels today.",
+          category: "productivity",
+          emotionLevels: emotionLevels,
+        ),
+        EntryInfo(
+          id: "p3",
+          title: "What made you smile today?",
+          category: "gratitude practice",
+          emotionLevels: emotionLevels,
+        ),
+      ];
+      originalTotalPrompts = prompts.length;
+      _isLoadingPrompts = false;
+      notifyListeners();
+    }
   }
 
 
@@ -105,10 +193,30 @@ class GuidedModeLogic extends ChangeNotifier {
     notifyListeners();
   }
 
-  void submit(int index, CardSwiperController cardController) {
+  void submit(int index, CardSwiperController cardController) async {
     completedPrompts++;
 
     final removeIndex = index.clamp(0, prompts.length - 1);
+    final completedPrompt = prompts[removeIndex];
+
+    // Track prompt interaction
+    if (completedPrompt.id != "done" && completedPrompt.id != "p1") {
+      try {
+        final promptId = int.tryParse(completedPrompt.id);
+        if (promptId != null) {
+          await _db.into(_db.promptInteractions).insert(
+                PromptInteractionsCompanion.insert(
+                  userId: _userId,
+                  promptId: promptId,
+                  completed: true,
+                  skipped: false,
+                ),
+              );
+        }
+      } catch (e) {
+        debugPrint('Error tracking prompt interaction: $e');
+      }
+    }
 
     if (prompts.length == 1) {
       prompts[0] = EntryInfo(
@@ -118,6 +226,9 @@ class GuidedModeLogic extends ChangeNotifier {
         emotionLevels: emotionLevels,
       );
       currentPrompt = 0;
+      
+      // Run adaptation after completing prompts
+      _runAdaptation();
     } else {
       if (prompts[removeIndex].id != "done") {
         prompts.removeAt(removeIndex);
@@ -138,6 +249,14 @@ class GuidedModeLogic extends ChangeNotifier {
       }
     });
     updateCanSelectNextForLevel(0);
+  }
+
+  Future<void> _runAdaptation() async {
+    try {
+      await _adaptationService.runAdaptation(_userId);
+    } catch (e) {
+      debugPrint('Error running adaptation: $e');
+    }
   }
 
 
@@ -206,10 +325,31 @@ class GuidedModeLogic extends ChangeNotifier {
     notifyListeners();
   }
 
-  void deletePrompt(int index) {
+  void deletePrompt(int index) async {
     if (index < 0 || index >= prompts.length) return;
 
     if (prompts[index].id == "done") return;
+
+    final skippedPrompt = prompts[index];
+    
+    // Track skipped prompt
+    if (skippedPrompt.id != "p1") {
+      try {
+        final promptId = int.tryParse(skippedPrompt.id);
+        if (promptId != null) {
+          await _db.into(_db.promptInteractions).insert(
+                PromptInteractionsCompanion.insert(
+                  userId: _userId,
+                  promptId: promptId,
+                  completed: false,
+                  skipped: true,
+                ),
+              );
+        }
+      } catch (e) {
+        debugPrint('Error tracking skipped prompt: $e');
+      }
+    }
 
     prompts.removeAt(index);
     prompts.add(createNewPrompt());

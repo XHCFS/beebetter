@@ -22,9 +22,9 @@ class GuidedModeContent extends StatelessWidget {
           // Delete Visual Indicator
           // -----------------------------------
           Positioned(
-            left: -16,
-            right: -16,
-            bottom: -16,
+            left: 0,
+            right: 0,
+            bottom: 0,
             child: IgnorePointer(
               ignoring: true,
               child: AnimatedOpacity(
@@ -33,6 +33,7 @@ class GuidedModeContent extends StatelessWidget {
                 child: Stack(
                   children: [
                     Container(
+                      width: double.infinity,
                       height: 200,
                       decoration: BoxDecoration(
                         gradient: RadialGradient(
