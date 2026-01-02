@@ -13,7 +13,7 @@ part 'app_database.g.dart';
 // import 'package:beebetter/data/database/app_database.dart';
 // final db = AppDatabase();
 
-@DriftDatabase(tables: [User, Prompts, Records, Moods, PromptInteractions])
+@DriftDatabase(tables: [User, Prompts, Records, Moods, PromptInteractions, UserAvoidedPrompts])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
@@ -22,7 +22,21 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(DatabaseConnection connection) : super(connection);
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
+
+  @override
+  MigrationStrategy get migration {
+    return MigrationStrategy(
+      onUpgrade: (migrator, from, to) async {
+        if (from < 2) {
+          // Create UserAvoidedPrompts table
+          await migrator.createTable(userAvoidedPrompts);
+          // Remove avoidedPrompts column from User table
+          await migrator.deleteColumn(user, 'avoided_prompts');
+        }
+      },
+    );
+  }
 }
 
 /// Opens a persistent SQLite database file.

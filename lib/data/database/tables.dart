@@ -86,7 +86,6 @@ class User extends Table {
   IntColumn get currentDifficultyLevel => integer().nullable()();
   IntColumn get journalingStreak => integer().nullable()();
   TextColumn get preferredCategories => text().nullable()();
-  TextColumn get avoidedPrompts => text().nullable()();
   DateTimeColumn get lastDifficultyAdjustment => dateTime().nullable()();
 
 }
@@ -152,4 +151,13 @@ class PromptInteractions extends Table {
   IntColumn get promptId => integer().references(Prompts, #id)();
   BoolColumn get completed => boolean()(); 
   BoolColumn get skipped => boolean()(); 
+}
+
+class UserAvoidedPrompts extends Table {
+  IntColumn get userId => integer().references(User, #id)();
+  IntColumn get promptId => integer().references(Prompts, #id)();
+  DateTimeColumn get avoidedAt => dateTime().withDefault(currentDateAndTime)();
+
+  @override
+  Set<Column> get primaryKey => {userId, promptId};
 }
