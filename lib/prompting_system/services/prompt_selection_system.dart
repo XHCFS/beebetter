@@ -21,41 +21,56 @@ class PromptSelectionSystem {
     required int userId,
     int? limit,
   }) async {
-    final user = await _getUser(userId);
-    if (user == null) return [];
+    try {
+      final user = await _getUser(userId);
+      if (user == null) return [];
 
-    final prompts = await _getActivePrompts();
-    if (prompts.isEmpty) return [];
+      final prompts = await _getActivePrompts();
+      if (prompts.isEmpty) return [];
 
-    final recentPromptIds = await _getRecentlyUsedPromptIds(userId);
-    final recentCategories = await _getRecentCategories(userId);
-    final recentMoods = await _getRecentMoods(userId);
-    final preferredCategories = _decodeStringList(
-      user.preferredCategories ?? '[]',
-    );
+      // Get avoided prompt IDs for this user
+      final avoidedPromptIds = await _getAvoidedPromptIds(userId);
 
-    final timeOfDay = _currentTimeOfDay();
+      // Filter out avoided prompts
+      final availablePrompts = prompts
+          .where((p) => !avoidedPromptIds.contains(p.id))
+          .toList();
 
-    final scored = prompts.map((prompt) {
-      final score = _scorer.score(
-        prompt: prompt,
-        user: user,
-        recentPromptIds: recentPromptIds,
-        recentCategories: recentCategories,
-        recentMoods: recentMoods,
-        preferredCategories: preferredCategories,
-        timeOfDay: timeOfDay,
+      if (availablePrompts.isEmpty) return [];
+
+      final recentPromptIds = await _getRecentlyUsedPromptIds(userId);
+      final recentCategories = await _getRecentCategories(userId);
+      final recentMoods = await _getRecentMoods(userId);
+      final preferredCategories = _decodeStringList(
+        user.preferredCategories ?? '[]',
       );
-      return ScoredPrompt(prompt, score);
-    }).toList();
 
-    final ranked = _weightedRank(scored);
+      final timeOfDay = _currentTimeOfDay();
 
-    if (limit != null && ranked.length > limit) {
-      return ranked.take(limit).toList();
+      final scored = availablePrompts.map((prompt) {
+        final score = _scorer.score(
+          prompt: prompt,
+          user: user,
+          recentPromptIds: recentPromptIds,
+          recentCategories: recentCategories,
+          recentMoods: recentMoods,
+          preferredCategories: preferredCategories,
+          timeOfDay: timeOfDay,
+        );
+        return ScoredPrompt(prompt, score);
+      }).toList();
+
+      final ranked = _weightedRank(scored);
+
+      if (limit != null && ranked.length > limit) {
+        return ranked.take(limit).toList();
+      }
+
+      return ranked;
+    } catch (e) {
+      print('Error ranking prompts for user $userId: $e');
+      return [];
     }
-
-    return ranked;
   }
 
   /* -------------------------------------------------------------------------- */
@@ -160,6 +175,18 @@ class PromptSelectionSystem {
         .whereType<int>()
         .map((i) => schema.Mood.values[i])
         .toList();
+  }
+
+  Future<Set<int>> _getAvoidedPromptIds(int userId) async {
+    try {
+      final avoided = await (_db.select(_db.userAvoidedPrompts)
+            ..where((uap) => uap.userId.equals(userId)))
+          .get();
+      return avoided.map((a) => a.promptId).toSet();
+    } catch (e) {
+      print('Error fetching avoided prompts for user $userId: $e');
+      return {};
+    }
   }
 
   /* -------------------------------------------------------------------------- */
