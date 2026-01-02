@@ -10,9 +10,16 @@ class AdaptationService {
 
   /// Main entry point to run adaptation logic for a user.
   Future<void> runAdaptation(int userId) async {
-    await _adjustDifficultyLevel(userId);
-    await _updatePreferenceCategories(userId);
-    await _updateAvoidedPrompts(userId);
+    try {
+      await _adjustDifficultyLevel(userId);
+      await _updatePreferenceCategories(userId);
+      await _expireOldAvoidedPrompts(userId);
+      await _updateAvoidedPrompts(userId);
+    } catch (e) {
+      // Log error but don't crash the app
+      print('Error in adaptation system for user $userId: $e');
+      rethrow;
+    }
   }
 
   /* -------------------------------------------------------------------------- */
@@ -22,7 +29,9 @@ class AdaptationService {
   Future<void> _adjustDifficultyLevel(int userId) async {
     final user = await (_db.select(
       _db.user,
-    )..where((u) => u.id.equals(userId))).getSingle();
+    )..where((u) => u.id.equals(userId))).getSingleOrNull();
+    
+    if (user == null) return;
     final now = DateTime.now();
 
     // Constraint: Once per day check
@@ -125,8 +134,8 @@ class AdaptationService {
 
     final rows = await query.get();
 
-    // Constraint: Run every 6 entries in the same 30 days
-    if (rows.length < 6 || rows.length % 6 != 0) return;
+    // Constraint: Need at least 6 entries to learn preferences
+    if (rows.length < 6) return;
 
     final Map<String, double> categoryScores = {};
     final avgWords =
@@ -171,22 +180,28 @@ class AdaptationService {
   /* AVOIDED PROMPTS UPDATE                                                     */
   /* -------------------------------------------------------------------------- */
 
+  /// Expires avoided prompts that are older than 30 days
+  Future<void> _expireOldAvoidedPrompts(int userId) async {
+    final thirtyDaysAgo = DateTime.now().subtract(const Duration(days: 30));
+    
+    await (_db.delete(_db.userAvoidedPrompts)
+          ..where((uap) => uap.userId.equals(userId))
+          ..where((uap) => uap.avoidedAt.isSmallerThanValue(thirtyDaysAgo)))
+        .go();
+  }
+
+  /// Updates avoided prompts based on skip count (>= 3 skips)
   Future<void> _updateAvoidedPrompts(int userId) async {
-    final interactions =
-        await (_db.select(_db.promptInteractions)
-              ..where((pi) => pi.userId.equals(userId))
-              ..where(
-                (pi) => pi.id.isBiggerThanValue(0),
-              ) // Just to trigger where
-              )
-            .get();
+    // Optimize: Only fetch skipped interactions
+    final skippedInteractions = await (_db.select(_db.promptInteractions)
+          ..where((pi) => pi.userId.equals(userId))
+          ..where((pi) => pi.skipped.equals(true)))
+        .get();
 
     final skipCounts = <int, int>{};
-    for (final interaction in interactions) {
-      if (interaction.skipped) {
-        skipCounts[interaction.promptId] =
-            (skipCounts[interaction.promptId] ?? 0) + 1;
-      }
+    for (final interaction in skippedInteractions) {
+      skipCounts[interaction.promptId] =
+          (skipCounts[interaction.promptId] ?? 0) + 1;
     }
 
     final avoidedIds = skipCounts.entries
@@ -194,9 +209,23 @@ class AdaptationService {
         .map((e) => e.key)
         .toList();
 
-    await (_db.update(_db.user)..where((u) => u.id.equals(userId))).write(
-      UserCompanion(avoidedPrompts: Value(jsonEncode(avoidedIds))),
-    );
+    // Get currently avoided prompts to avoid duplicates
+    final currentAvoided = await (_db.select(_db.userAvoidedPrompts)
+          ..where((uap) => uap.userId.equals(userId)))
+        .get();
+    final currentAvoidedIds = currentAvoided.map((a) => a.promptId).toSet();
+
+    // Insert new avoided prompts
+    for (final promptId in avoidedIds) {
+      if (!currentAvoidedIds.contains(promptId)) {
+        await _db.into(_db.userAvoidedPrompts).insert(
+              UserAvoidedPromptsCompanion.insert(
+                userId: userId,
+                promptId: promptId,
+              ),
+            );
+      }
+    }
   }
 
   /* -------------------------------------------------------------------------- */
