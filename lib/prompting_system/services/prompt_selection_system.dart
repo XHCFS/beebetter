@@ -72,11 +72,14 @@ class PromptSelectionSystem {
 
       final ranked = _weightedRank(scored);
 
-      if (limit != null && ranked.length > limit) {
-        return ranked.take(limit).toList();
+      // Apply difficulty balancing to prevent too many same-difficulty prompts
+      final balanced = _balanceDifficulty(ranked, user.currentDifficultyLevel ?? 2);
+
+      if (limit != null && balanced.length > limit) {
+        return balanced.take(limit).toList();
       }
 
-      return ranked;
+      return balanced;
     } catch (e) {
       print('Error ranking prompts for user $userId: $e');
       return [];
@@ -219,6 +222,74 @@ class PromptSelectionSystem {
     } catch (e) {
       print('Error resetting oldest avoided prompts for user $userId: $e');
     }
+  }
+
+  /// Balances difficulty distribution to prevent too many same-difficulty prompts
+  /// Ensures no more than 2 consecutive prompts of the same difficulty level
+  List<ScoredPrompt> _balanceDifficulty(
+    List<ScoredPrompt> ranked,
+    int userDifficultyLevel,
+  ) {
+    if (ranked.length <= 2) return ranked;
+
+    final result = <ScoredPrompt>[];
+    final remaining = List<ScoredPrompt>.from(ranked);
+    int? lastDifficulty;
+    int consecutiveCount = 0;
+
+    while (remaining.isNotEmpty) {
+      // Find the best prompt that doesn't violate difficulty balance
+      ScoredPrompt? selected;
+      int selectedIndex = -1;
+
+      for (int i = 0; i < remaining.length; i++) {
+        final prompt = remaining[i];
+        final difficulty = prompt.prompt.difficultyLevel;
+
+        // If this would be the 3rd consecutive prompt of same difficulty, skip it
+        if (lastDifficulty == difficulty && consecutiveCount >= 2) {
+          continue;
+        }
+
+        // Prefer prompts closer to user's difficulty level
+        final userDelta = (difficulty - userDifficultyLevel).abs();
+
+        // Select this prompt if it's better than current candidate
+        if (selected == null || 
+            userDelta < (selected.prompt.difficultyLevel - userDifficultyLevel).abs() ||
+            (userDelta == (selected.prompt.difficultyLevel - userDifficultyLevel).abs() && 
+             prompt.score > selected.score)) {
+          selected = prompt;
+          selectedIndex = i;
+        }
+      }
+
+      // If no suitable prompt found (all would violate balance), take the best one anyway
+      if (selected == null && remaining.isNotEmpty) {
+        selected = remaining.first;
+        selectedIndex = 0;
+      }
+
+      if (selected != null) {
+        result.add(selected);
+        final difficulty = selected.prompt.difficultyLevel;
+
+        if (lastDifficulty == difficulty) {
+          consecutiveCount++;
+        } else {
+          consecutiveCount = 1;
+          lastDifficulty = difficulty;
+        }
+
+        remaining.removeAt(selectedIndex);
+      } else {
+        break;
+      }
+    }
+
+    // Add any remaining prompts
+    result.addAll(remaining);
+    return result;
   }
 
   /* -------------------------------------------------------------------------- */
