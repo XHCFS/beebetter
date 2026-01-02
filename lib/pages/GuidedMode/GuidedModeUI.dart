@@ -161,49 +161,58 @@ class GuidedModeUI extends StatelessWidget {
                 Column(
                   children: [
                     Expanded(
-                      child:CardSwiper(
-                        key: ValueKey(logic.prompts.length),
-                        cardsCount: logic.prompts.length,
-                        numberOfCardsDisplayed: logic.prompts.length > 1 ? 2 : 1,
-                        controller: cardSwiperController,
+                      child: logic.prompts.isEmpty || (logic.prompts.length == 1 && logic.prompts.first.id == "loading")
+                          ? Center(
+                              child: CircularProgressIndicator(
+                                color: colorScheme.primary,
+                              ),
+                            )
+                          : CardSwiper(
+                              key: ValueKey('${logic.prompts.length}_${logic.prompts.map((p) => p.id).join('_')}'),
+                              cardsCount: logic.prompts.length,
+                              numberOfCardsDisplayed: logic.prompts.length > 1 ? 2 : 1,
+                              controller: cardSwiperController,
 
-                        onSwipeDirectionChange: (previous, current) {
-                          if (current == CardSwiperDirection.bottom) {
-                            logic.isDraggingToDelete = true;
-                            logic.deleteDragProgress = 0.3;
-                          } else {
-                            logic.resetDeleteDrag();
-                          }
-                        },
+                              onSwipeDirectionChange: (previous, current) {
+                                if (current == CardSwiperDirection.bottom) {
+                                  logic.isDraggingToDelete = true;
+                                  logic.deleteDragProgress = 0.3;
+                                } else {
+                                  logic.resetDeleteDrag();
+                                }
+                              },
 
-                        onSwipe:  (prevIndex, currentIndex, direction) {
-                          if (direction == CardSwiperDirection.bottom) {
-                            logic.deletePrompt(prevIndex);
-                            return false;
-                          }
+                              onSwipe:  (prevIndex, currentIndex, direction) {
+                                if (direction == CardSwiperDirection.bottom) {
+                                  logic.deletePrompt(prevIndex);
+                                  return false;
+                                }
 
-                          logic.onSwipe(currentIndex);
-                          return true;
-                        },
-                        cardBuilder: (context, index, percentThresholdX, percentThresholdY) {
-                          final promptInfo = logic.prompts[index];
+                                logic.onSwipe(currentIndex);
+                                return true;
+                              },
+                              cardBuilder: (context, index, percentThresholdX, percentThresholdY) {
+                                if (index >= logic.prompts.length) {
+                                  return Container();
+                                }
+                                final promptInfo = logic.prompts[index];
 
-                          return PromptCard(
-                            key: ValueKey(promptInfo.title),
-                            index: index,
-                            category: promptInfo.category,
-                            prompt: promptInfo.title,
-                            canContinue: promptInfo.canContinue,
-                            isDone: promptInfo.isDone,
-                            initialText: promptInfo.userInput,
-                            cardSwiperController : cardSwiperController,
-                            onTextChanged: (value) {
-                              logic.updatePromptInput(index, value);
-                              logic.updateCanContinue(value.trim().isNotEmpty);
-                            },
-                          );
-                        },
-                      ),
+                                return PromptCard(
+                                  key: ValueKey('${promptInfo.id}_$index'),
+                                  index: index,
+                                  category: promptInfo.category,
+                                  prompt: promptInfo.title,
+                                  canContinue: promptInfo.canContinue,
+                                  isDone: promptInfo.isDone,
+                                  initialText: promptInfo.userInput,
+                                  cardSwiperController : cardSwiperController,
+                                  onTextChanged: (value) {
+                                    logic.updatePromptInput(index, value);
+                                    logic.updateCanContinue(value.trim().isNotEmpty);
+                                  },
+                                );
+                              },
+                            ),
                     ),
                     SizedBox(height: 72), // area for navigation bar
                   ]

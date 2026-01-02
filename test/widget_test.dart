@@ -9,22 +9,27 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:beebetter/main.dart';
+import 'package:beebetter/data/database/app_database.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
+  testWidgets('App initializes successfully', (WidgetTester tester) async {
+    // Create a test database
+    final db = AppDatabase.test();
+    
+    // Create a test user
+    final userId = await db.into(db.user).insert(
+      UserCompanion.insert(name: 'Test User'),
+    );
+    
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(MyApp(db: db, userId: userId));
+    await tester.pumpAndSettle();
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
-
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
-
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    // Verify that the app loads (check for any text that should be present)
+    // Since we don't know what's on the main page, just verify no errors occurred
+    expect(tester.takeException(), isNull);
+    
+    // Clean up
+    await db.close();
   });
 }

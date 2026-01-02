@@ -13,12 +13,30 @@ part 'app_database.g.dart';
 // import 'package:beebetter/data/database/app_database.dart';
 // final db = AppDatabase();
 
-@DriftDatabase(tables: [User, Prompts, Records, Moods])
+@DriftDatabase(tables: [User, Prompts, Records, Moods, PromptInteractions, UserAvoidedPrompts])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
+  // The new constructor for Tests
+  // This allows you to pass in NativeDatabase.memory() during testing
+  AppDatabase.forTesting(DatabaseConnection connection) : super(connection);
+
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
+
+  @override
+  MigrationStrategy get migration {
+    return MigrationStrategy(
+      onUpgrade: (migrator, from, to) async {
+        if (from < 2) {
+          // Create UserAvoidedPrompts table
+          await migrator.createTable(userAvoidedPrompts);
+          // Note: avoidedPrompts column removal is handled by schema change
+          // Old data in that column will be ignored since we no longer reference it
+        }
+      },
+    );
+  }
 }
 
 /// Opens a persistent SQLite database file.

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:beebetter/data/database/app_database.dart';
 
 class MainPageLogic extends ChangeNotifier {
   // ---------------------------------------------------
@@ -7,8 +8,10 @@ class MainPageLogic extends ChangeNotifier {
   int selectedIndex = 1;
   final PageController pageController = PageController(initialPage: 1);
   late final AnimationController guidedModeController;
+  final AppDatabase db;
+  final int userId;
 
-  MainPageLogic(TickerProvider vsync) {
+  MainPageLogic(TickerProvider vsync, this.db, this.userId) {
     guidedModeController = AnimationController(
       vsync: vsync,
       duration: const Duration(milliseconds: 250),

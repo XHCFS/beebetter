@@ -1,0 +1,381 @@
+import 'dart:convert';
+import 'dart:math';
+
+import 'package:beebetter/data/database/app_database.dart';
+import 'package:beebetter/data/database/tables.dart' as schema;
+import 'package:drift/drift.dart';
+
+/// Public service used by the app
+class PromptSelectionSystem {
+  final AppDatabase _db;
+  final PromptScorer _scorer;
+  final Random _random;
+
+  PromptSelectionSystem(this._db, {PromptScorer? scorer, Random? random})
+    : _scorer = scorer ?? PromptScorer(),
+      _random = random ?? Random();
+
+  /// Returns prompts in a *probabilistically ranked* order.
+  /// Higher scores appear earlier more often, but ordering varies.
+  Future<List<ScoredPrompt>> rankPromptsForUser({
+    required int userId,
+    int? limit,
+  }) async {
+    try {
+      final user = await _getUser(userId);
+      if (user == null) return [];
+
+      final prompts = await _getActivePrompts();
+      if (prompts.isEmpty) return [];
+
+      // Get avoided prompt IDs for this user
+      final avoidedPromptIds = await _getAvoidedPromptIds(userId);
+
+      // Filter out avoided prompts
+      var availablePrompts = prompts
+          .where((p) => !avoidedPromptIds.contains(p.id))
+          .toList();
+
+      // If all prompts are avoided, reset the oldest 50% of avoided prompts
+      if (availablePrompts.isEmpty && avoidedPromptIds.isNotEmpty) {
+        await _resetOldestAvoidedPrompts(userId, (avoidedPromptIds.length / 2).ceil());
+        // Re-fetch available prompts after reset
+        final updatedAvoidedIds = await _getAvoidedPromptIds(userId);
+        availablePrompts = prompts
+            .where((p) => !updatedAvoidedIds.contains(p.id))
+            .toList();
+      }
+
+      if (availablePrompts.isEmpty) return [];
+
+      final recentPromptIds = await _getRecentlyUsedPromptIds(userId);
+      final recentCategories = await _getRecentCategories(userId);
+      final recentMoods = await _getRecentMoods(userId);
+      final preferredCategories = _decodeStringList(
+        user.preferredCategories ?? '[]',
+      );
+
+      final timeOfDay = _currentTimeOfDay();
+
+      final scored = availablePrompts.map((prompt) {
+        final score = _scorer.score(
+          prompt: prompt,
+          user: user,
+          recentPromptIds: recentPromptIds,
+          recentCategories: recentCategories,
+          recentMoods: recentMoods,
+          preferredCategories: preferredCategories,
+          timeOfDay: timeOfDay,
+        );
+        return ScoredPrompt(prompt, score);
+      }).toList();
+
+      final ranked = _weightedRank(scored);
+
+      // Apply difficulty balancing to prevent too many same-difficulty prompts
+      final balanced = _balanceDifficulty(ranked, user.currentDifficultyLevel ?? 2);
+
+      if (limit != null && balanced.length > limit) {
+        return balanced.take(limit).toList();
+      }
+
+      return balanced;
+    } catch (e) {
+      print('Error ranking prompts for user $userId: $e');
+      return [];
+    }
+  }
+
+  /* -------------------------------------------------------------------------- */
+  /*                               STOCHASTIC RANK                               */
+  /* -------------------------------------------------------------------------- */
+
+  List<ScoredPrompt> _weightedRank(List<ScoredPrompt> input) {
+    final remaining = List<ScoredPrompt>.from(input);
+    final result = <ScoredPrompt>[];
+
+    while (remaining.isNotEmpty) {
+      final totalWeight = remaining.fold<double>(
+        0,
+        (sum, e) => sum + max(e.score, 0.01),
+      );
+
+      double r = _random.nextDouble() * totalWeight;
+
+      for (final item in remaining) {
+        r -= max(item.score, 0.01);
+        if (r <= 0) {
+          result.add(item);
+          remaining.remove(item);
+          break;
+        }
+      }
+    }
+
+    return result;
+  }
+
+  /* -------------------------------------------------------------------------- */
+  /*                                   QUERIES                                   */
+  /* -------------------------------------------------------------------------- */
+
+  Future<UserData?> _getUser(int userId) {
+    return (_db.select(
+      _db.user,
+    )..where((u) => u.id.equals(userId))).getSingleOrNull();
+  }
+
+  Future<List<Prompt>> _getActivePrompts() {
+    return (_db.select(
+      _db.prompts,
+    )..where((p) => p.isActive.equals(true))).get();
+  }
+
+  Future<List<int>> _getRecentlyUsedPromptIds(
+    int userId, {
+    int limit = 10,
+  }) async {
+    final rows =
+        await (_db.select(_db.promptInteractions)
+              ..where((p) => p.userId.equals(userId) & p.completed.equals(true))
+              ..orderBy([(p) => OrderingTerm.desc(p.id)])
+              ..limit(limit))
+            .get();
+
+    return rows.map((e) => e.promptId).toList();
+  }
+
+  Future<List<String>> _getRecentCategories(int userId, {int days = 7}) async {
+    final since = DateTime.now().subtract(Duration(days: days));
+
+    final query =
+        _db.select(_db.records).join([
+            leftOuterJoin(
+              _db.prompts,
+              _db.prompts.id.equalsExp(_db.records.promptId),
+            ),
+          ])
+          ..where(_db.records.userId.equals(userId))
+          ..where(_db.records.createdAt.isBiggerThanValue(since));
+
+    final rows = await query.get();
+
+    return rows
+            .map(
+              (row) => row.readTableOrNull(_db.prompts)?.category,
+            ) 
+            .whereType<String>()
+            .toList();
+      }
+
+  Future<List<schema.Mood>> _getRecentMoods(int userId, {int days = 7}) async {
+    final since = DateTime.now().subtract(Duration(days: days));
+
+    final query =
+        _db.select(_db.moods).join([
+            innerJoin(
+              _db.records,
+              _db.records.id.equalsExp(_db.moods.recordId),
+            ),
+          ])
+          ..where(_db.records.userId.equals(userId))
+          ..where(_db.records.createdAt.isBiggerThanValue(since));
+
+    final rows = await query.get();
+
+    return rows
+        .map((row) => row.readTable(_db.moods).mood)
+        .whereType<int>()
+        .map((i) => schema.Mood.values[i])
+        .toList();
+  }
+
+  Future<Set<int>> _getAvoidedPromptIds(int userId) async {
+    try {
+      final avoided = await (_db.select(_db.userAvoidedPrompts)
+            ..where((uap) => uap.userId.equals(userId)))
+          .get();
+      return avoided.map((a) => a.promptId).toSet();
+    } catch (e) {
+      print('Error fetching avoided prompts for user $userId: $e');
+      return {};
+    }
+  }
+
+  /// Resets the oldest N avoided prompts for a user
+  /// Used when all prompts are avoided to ensure users always have prompts available
+  Future<void> _resetOldestAvoidedPrompts(int userId, int count) async {
+    try {
+      final oldestAvoided = await (_db.select(_db.userAvoidedPrompts)
+            ..where((uap) => uap.userId.equals(userId))
+            ..orderBy([(uap) => OrderingTerm.asc(uap.avoidedAt)])
+            ..limit(count))
+          .get();
+
+      for (final avoided in oldestAvoided) {
+        await (_db.delete(_db.userAvoidedPrompts)
+              ..where((uap) => 
+                  uap.userId.equals(userId) & 
+                  uap.promptId.equals(avoided.promptId)))
+            .go();
+      }
+    } catch (e) {
+      print('Error resetting oldest avoided prompts for user $userId: $e');
+    }
+  }
+
+  /// Balances difficulty distribution to prevent too many same-difficulty prompts
+  /// Ensures no more than 2 consecutive prompts of the same difficulty level
+  List<ScoredPrompt> _balanceDifficulty(
+    List<ScoredPrompt> ranked,
+    int userDifficultyLevel,
+  ) {
+    if (ranked.length <= 2) return ranked;
+
+    final result = <ScoredPrompt>[];
+    final remaining = List<ScoredPrompt>.from(ranked);
+    int? lastDifficulty;
+    int consecutiveCount = 0;
+
+    while (remaining.isNotEmpty) {
+      // Find the best prompt that doesn't violate difficulty balance
+      ScoredPrompt? selected;
+      int selectedIndex = -1;
+
+      for (int i = 0; i < remaining.length; i++) {
+        final prompt = remaining[i];
+        final difficulty = prompt.prompt.difficultyLevel;
+
+        // If this would be the 3rd consecutive prompt of same difficulty, skip it
+        if (lastDifficulty == difficulty && consecutiveCount >= 2) {
+          continue;
+        }
+
+        // Prefer prompts closer to user's difficulty level
+        final userDelta = (difficulty - userDifficultyLevel).abs();
+
+        // Select this prompt if it's better than current candidate
+        if (selected == null || 
+            userDelta < (selected.prompt.difficultyLevel - userDifficultyLevel).abs() ||
+            (userDelta == (selected.prompt.difficultyLevel - userDifficultyLevel).abs() && 
+             prompt.score > selected.score)) {
+          selected = prompt;
+          selectedIndex = i;
+        }
+      }
+
+      // If no suitable prompt found (all would violate balance), take the best one anyway
+      if (selected == null && remaining.isNotEmpty) {
+        selected = remaining.first;
+        selectedIndex = 0;
+      }
+
+      if (selected != null) {
+        result.add(selected);
+        final difficulty = selected.prompt.difficultyLevel;
+
+        if (lastDifficulty == difficulty) {
+          consecutiveCount++;
+        } else {
+          consecutiveCount = 1;
+          lastDifficulty = difficulty;
+        }
+
+        remaining.removeAt(selectedIndex);
+      } else {
+        break;
+      }
+    }
+
+    // Add any remaining prompts
+    result.addAll(remaining);
+    return result;
+  }
+
+  /* -------------------------------------------------------------------------- */
+  /*                                  UTILITIES                                  */
+  /* -------------------------------------------------------------------------- */
+
+  List<String> _decodeStringList(String raw) {
+    try {
+      final decoded = jsonDecode(raw);
+      if (decoded is List) {
+        return decoded.map((e) => e.toString()).toList();
+      }
+    } catch (_) {}
+    return [];
+  }
+
+  String _currentTimeOfDay() {
+    final hour = DateTime.now().hour;
+    if (hour < 12) return 'morning';
+    if (hour < 17) return 'afternoon';
+    if (hour < 21) return 'evening';
+    return 'night';
+  }
+}
+
+/* -------------------------------------------------------------------------- */
+/*                              SCORING ENGINE                                 */
+/* -------------------------------------------------------------------------- */
+
+class PromptScorer {
+  double score({
+    required Prompt prompt,
+    required UserData user,
+    required List<int> recentPromptIds,
+    required List<String> recentCategories,
+    required List<schema.Mood> recentMoods,
+    required List<String> preferredCategories,
+    required String timeOfDay,
+  }) {
+    double score = 0;
+
+    if (!recentPromptIds.contains(prompt.id)) {
+      score += 2.0;
+    }
+
+    if (prompt.category != null &&
+        !recentCategories.contains(prompt.category)) {
+      score += 1.5;
+    }
+
+    if (prompt.category != null &&
+        preferredCategories.contains(prompt.category)) {
+      score += 2.0;
+    }
+
+    if (user.currentDifficultyLevel != null) {
+      final delta = (prompt.difficultyLevel - user.currentDifficultyLevel!)
+          .abs();
+      score += max(0, 2 - delta);
+    }
+
+    if (prompt.targetMoodStates != null && recentMoods.isNotEmpty) {
+      final targets = (jsonDecode(prompt.targetMoodStates!) as List)
+          .map((i) => schema.Mood.values[i])
+          .toSet();
+
+      final overlap = recentMoods.where(targets.contains).length;
+
+      score += overlap * 1.2;
+    }
+
+    if (prompt.bestTimeOfDay == null || prompt.bestTimeOfDay == timeOfDay || prompt.bestTimeOfDay == 'anytime') {
+      score += 1.0;
+    }
+
+    return score;
+  }
+}
+
+/* -------------------------------------------------------------------------- */
+/*                                   MODELS                                    */
+/* -------------------------------------------------------------------------- */
+
+class ScoredPrompt {
+  final Prompt prompt;
+  final double score;
+
+  ScoredPrompt(this.prompt, this.score);
+}

@@ -33,7 +33,7 @@ class GuidedModeOverlay extends StatelessWidget {
             // ---------------------------------------------------
             // Guided Mode
             // ---------------------------------------------------
-            GuidedMode(),
+            GuidedMode(db: logic.db, userId: logic.userId),
 
             // ---------------------------------------------------
             // Swipe Gesture Indication Bar

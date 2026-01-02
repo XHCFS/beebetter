@@ -78,6 +78,7 @@ dependency_overrides:
 flutter:
   assets:
     - assets/images/
+    - assets/prompts.json
     - assets/models/mobile_text_model/emotion_model.onnx
     - assets/models/mobile_text_model/config.json
     - assets/models/mobile_text_model/vocab.txt

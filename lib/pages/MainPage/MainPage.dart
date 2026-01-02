@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:beebetter/data/database/app_database.dart';
 import 'MainPageLogic.dart';
 import 'MainPageUI.dart';
 
 class MainPage extends StatefulWidget {
-  const MainPage({super.key});
+  final AppDatabase db;
+  final int userId;
+  
+  const MainPage({super.key, required this.db, required this.userId});
 
   @override
   State<MainPage> createState() => MainPageState();
@@ -16,7 +20,7 @@ class MainPageState extends State<MainPage> with SingleTickerProviderStateMixin 
   @override
   void initState() {
     super.initState();
-    logic = MainPageLogic(this);
+    logic = MainPageLogic(this, widget.db, widget.userId);
   }
 
   @override
