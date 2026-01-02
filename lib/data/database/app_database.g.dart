@@ -39,8 +39,59 @@ class $UserTable extends User with TableInfo<$UserTable, UserData> {
     type: DriftSqlType.int,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _currentDifficultyLevelMeta =
+      const VerificationMeta('currentDifficultyLevel');
   @override
-  List<GeneratedColumn> get $columns => [id, name, age];
+  late final GeneratedColumn<int> currentDifficultyLevel = GeneratedColumn<int>(
+    'current_difficulty_level',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _journalingStreakMeta = const VerificationMeta(
+    'journalingStreak',
+  );
+  @override
+  late final GeneratedColumn<int> journalingStreak = GeneratedColumn<int>(
+    'journaling_streak',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _preferredCategoriesMeta =
+      const VerificationMeta('preferredCategories');
+  @override
+  late final GeneratedColumn<String> preferredCategories =
+      GeneratedColumn<String>(
+        'preferred_categories',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _lastDifficultyAdjustmentMeta =
+      const VerificationMeta('lastDifficultyAdjustment');
+  @override
+  late final GeneratedColumn<DateTime> lastDifficultyAdjustment =
+      GeneratedColumn<DateTime>(
+        'last_difficulty_adjustment',
+        aliasedName,
+        true,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: false,
+      );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    name,
+    age,
+    currentDifficultyLevel,
+    journalingStreak,
+    preferredCategories,
+    lastDifficultyAdjustment,
+  ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -70,6 +121,42 @@ class $UserTable extends User with TableInfo<$UserTable, UserData> {
         age.isAcceptableOrUnknown(data['age']!, _ageMeta),
       );
     }
+    if (data.containsKey('current_difficulty_level')) {
+      context.handle(
+        _currentDifficultyLevelMeta,
+        currentDifficultyLevel.isAcceptableOrUnknown(
+          data['current_difficulty_level']!,
+          _currentDifficultyLevelMeta,
+        ),
+      );
+    }
+    if (data.containsKey('journaling_streak')) {
+      context.handle(
+        _journalingStreakMeta,
+        journalingStreak.isAcceptableOrUnknown(
+          data['journaling_streak']!,
+          _journalingStreakMeta,
+        ),
+      );
+    }
+    if (data.containsKey('preferred_categories')) {
+      context.handle(
+        _preferredCategoriesMeta,
+        preferredCategories.isAcceptableOrUnknown(
+          data['preferred_categories']!,
+          _preferredCategoriesMeta,
+        ),
+      );
+    }
+    if (data.containsKey('last_difficulty_adjustment')) {
+      context.handle(
+        _lastDifficultyAdjustmentMeta,
+        lastDifficultyAdjustment.isAcceptableOrUnknown(
+          data['last_difficulty_adjustment']!,
+          _lastDifficultyAdjustmentMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -91,6 +178,22 @@ class $UserTable extends User with TableInfo<$UserTable, UserData> {
         DriftSqlType.int,
         data['${effectivePrefix}age'],
       ),
+      currentDifficultyLevel: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}current_difficulty_level'],
+      ),
+      journalingStreak: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}journaling_streak'],
+      ),
+      preferredCategories: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}preferred_categories'],
+      ),
+      lastDifficultyAdjustment: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}last_difficulty_adjustment'],
+      ),
     );
   }
 
@@ -104,7 +207,19 @@ class UserData extends DataClass implements Insertable<UserData> {
   final int id;
   final String name;
   final int? age;
-  const UserData({required this.id, required this.name, this.age});
+  final int? currentDifficultyLevel;
+  final int? journalingStreak;
+  final String? preferredCategories;
+  final DateTime? lastDifficultyAdjustment;
+  const UserData({
+    required this.id,
+    required this.name,
+    this.age,
+    this.currentDifficultyLevel,
+    this.journalingStreak,
+    this.preferredCategories,
+    this.lastDifficultyAdjustment,
+  });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -112,6 +227,20 @@ class UserData extends DataClass implements Insertable<UserData> {
     map['name'] = Variable<String>(name);
     if (!nullToAbsent || age != null) {
       map['age'] = Variable<int>(age);
+    }
+    if (!nullToAbsent || currentDifficultyLevel != null) {
+      map['current_difficulty_level'] = Variable<int>(currentDifficultyLevel);
+    }
+    if (!nullToAbsent || journalingStreak != null) {
+      map['journaling_streak'] = Variable<int>(journalingStreak);
+    }
+    if (!nullToAbsent || preferredCategories != null) {
+      map['preferred_categories'] = Variable<String>(preferredCategories);
+    }
+    if (!nullToAbsent || lastDifficultyAdjustment != null) {
+      map['last_difficulty_adjustment'] = Variable<DateTime>(
+        lastDifficultyAdjustment,
+      );
     }
     return map;
   }
@@ -121,6 +250,18 @@ class UserData extends DataClass implements Insertable<UserData> {
       id: Value(id),
       name: Value(name),
       age: age == null && nullToAbsent ? const Value.absent() : Value(age),
+      currentDifficultyLevel: currentDifficultyLevel == null && nullToAbsent
+          ? const Value.absent()
+          : Value(currentDifficultyLevel),
+      journalingStreak: journalingStreak == null && nullToAbsent
+          ? const Value.absent()
+          : Value(journalingStreak),
+      preferredCategories: preferredCategories == null && nullToAbsent
+          ? const Value.absent()
+          : Value(preferredCategories),
+      lastDifficultyAdjustment: lastDifficultyAdjustment == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastDifficultyAdjustment),
     );
   }
 
@@ -133,6 +274,16 @@ class UserData extends DataClass implements Insertable<UserData> {
       id: serializer.fromJson<int>(json['id']),
       name: serializer.fromJson<String>(json['name']),
       age: serializer.fromJson<int?>(json['age']),
+      currentDifficultyLevel: serializer.fromJson<int?>(
+        json['currentDifficultyLevel'],
+      ),
+      journalingStreak: serializer.fromJson<int?>(json['journalingStreak']),
+      preferredCategories: serializer.fromJson<String?>(
+        json['preferredCategories'],
+      ),
+      lastDifficultyAdjustment: serializer.fromJson<DateTime?>(
+        json['lastDifficultyAdjustment'],
+      ),
     );
   }
   @override
@@ -142,6 +293,12 @@ class UserData extends DataClass implements Insertable<UserData> {
       'id': serializer.toJson<int>(id),
       'name': serializer.toJson<String>(name),
       'age': serializer.toJson<int?>(age),
+      'currentDifficultyLevel': serializer.toJson<int?>(currentDifficultyLevel),
+      'journalingStreak': serializer.toJson<int?>(journalingStreak),
+      'preferredCategories': serializer.toJson<String?>(preferredCategories),
+      'lastDifficultyAdjustment': serializer.toJson<DateTime?>(
+        lastDifficultyAdjustment,
+      ),
     };
   }
 
@@ -149,16 +306,44 @@ class UserData extends DataClass implements Insertable<UserData> {
     int? id,
     String? name,
     Value<int?> age = const Value.absent(),
+    Value<int?> currentDifficultyLevel = const Value.absent(),
+    Value<int?> journalingStreak = const Value.absent(),
+    Value<String?> preferredCategories = const Value.absent(),
+    Value<DateTime?> lastDifficultyAdjustment = const Value.absent(),
   }) => UserData(
     id: id ?? this.id,
     name: name ?? this.name,
     age: age.present ? age.value : this.age,
+    currentDifficultyLevel: currentDifficultyLevel.present
+        ? currentDifficultyLevel.value
+        : this.currentDifficultyLevel,
+    journalingStreak: journalingStreak.present
+        ? journalingStreak.value
+        : this.journalingStreak,
+    preferredCategories: preferredCategories.present
+        ? preferredCategories.value
+        : this.preferredCategories,
+    lastDifficultyAdjustment: lastDifficultyAdjustment.present
+        ? lastDifficultyAdjustment.value
+        : this.lastDifficultyAdjustment,
   );
   UserData copyWithCompanion(UserCompanion data) {
     return UserData(
       id: data.id.present ? data.id.value : this.id,
       name: data.name.present ? data.name.value : this.name,
       age: data.age.present ? data.age.value : this.age,
+      currentDifficultyLevel: data.currentDifficultyLevel.present
+          ? data.currentDifficultyLevel.value
+          : this.currentDifficultyLevel,
+      journalingStreak: data.journalingStreak.present
+          ? data.journalingStreak.value
+          : this.journalingStreak,
+      preferredCategories: data.preferredCategories.present
+          ? data.preferredCategories.value
+          : this.preferredCategories,
+      lastDifficultyAdjustment: data.lastDifficultyAdjustment.present
+          ? data.lastDifficultyAdjustment.value
+          : this.lastDifficultyAdjustment,
     );
   }
 
@@ -167,45 +352,84 @@ class UserData extends DataClass implements Insertable<UserData> {
     return (StringBuffer('UserData(')
           ..write('id: $id, ')
           ..write('name: $name, ')
-          ..write('age: $age')
+          ..write('age: $age, ')
+          ..write('currentDifficultyLevel: $currentDifficultyLevel, ')
+          ..write('journalingStreak: $journalingStreak, ')
+          ..write('preferredCategories: $preferredCategories, ')
+          ..write('lastDifficultyAdjustment: $lastDifficultyAdjustment')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, name, age);
+  int get hashCode => Object.hash(
+    id,
+    name,
+    age,
+    currentDifficultyLevel,
+    journalingStreak,
+    preferredCategories,
+    lastDifficultyAdjustment,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is UserData &&
           other.id == this.id &&
           other.name == this.name &&
-          other.age == this.age);
+          other.age == this.age &&
+          other.currentDifficultyLevel == this.currentDifficultyLevel &&
+          other.journalingStreak == this.journalingStreak &&
+          other.preferredCategories == this.preferredCategories &&
+          other.lastDifficultyAdjustment == this.lastDifficultyAdjustment);
 }
 
 class UserCompanion extends UpdateCompanion<UserData> {
   final Value<int> id;
   final Value<String> name;
   final Value<int?> age;
+  final Value<int?> currentDifficultyLevel;
+  final Value<int?> journalingStreak;
+  final Value<String?> preferredCategories;
+  final Value<DateTime?> lastDifficultyAdjustment;
   const UserCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
     this.age = const Value.absent(),
+    this.currentDifficultyLevel = const Value.absent(),
+    this.journalingStreak = const Value.absent(),
+    this.preferredCategories = const Value.absent(),
+    this.lastDifficultyAdjustment = const Value.absent(),
   });
   UserCompanion.insert({
     this.id = const Value.absent(),
     required String name,
     this.age = const Value.absent(),
+    this.currentDifficultyLevel = const Value.absent(),
+    this.journalingStreak = const Value.absent(),
+    this.preferredCategories = const Value.absent(),
+    this.lastDifficultyAdjustment = const Value.absent(),
   }) : name = Value(name);
   static Insertable<UserData> custom({
     Expression<int>? id,
     Expression<String>? name,
     Expression<int>? age,
+    Expression<int>? currentDifficultyLevel,
+    Expression<int>? journalingStreak,
+    Expression<String>? preferredCategories,
+    Expression<DateTime>? lastDifficultyAdjustment,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (name != null) 'name': name,
       if (age != null) 'age': age,
+      if (currentDifficultyLevel != null)
+        'current_difficulty_level': currentDifficultyLevel,
+      if (journalingStreak != null) 'journaling_streak': journalingStreak,
+      if (preferredCategories != null)
+        'preferred_categories': preferredCategories,
+      if (lastDifficultyAdjustment != null)
+        'last_difficulty_adjustment': lastDifficultyAdjustment,
     });
   }
 
@@ -213,11 +437,21 @@ class UserCompanion extends UpdateCompanion<UserData> {
     Value<int>? id,
     Value<String>? name,
     Value<int?>? age,
+    Value<int?>? currentDifficultyLevel,
+    Value<int?>? journalingStreak,
+    Value<String?>? preferredCategories,
+    Value<DateTime?>? lastDifficultyAdjustment,
   }) {
     return UserCompanion(
       id: id ?? this.id,
       name: name ?? this.name,
       age: age ?? this.age,
+      currentDifficultyLevel:
+          currentDifficultyLevel ?? this.currentDifficultyLevel,
+      journalingStreak: journalingStreak ?? this.journalingStreak,
+      preferredCategories: preferredCategories ?? this.preferredCategories,
+      lastDifficultyAdjustment:
+          lastDifficultyAdjustment ?? this.lastDifficultyAdjustment,
     );
   }
 
@@ -233,6 +467,22 @@ class UserCompanion extends UpdateCompanion<UserData> {
     if (age.present) {
       map['age'] = Variable<int>(age.value);
     }
+    if (currentDifficultyLevel.present) {
+      map['current_difficulty_level'] = Variable<int>(
+        currentDifficultyLevel.value,
+      );
+    }
+    if (journalingStreak.present) {
+      map['journaling_streak'] = Variable<int>(journalingStreak.value);
+    }
+    if (preferredCategories.present) {
+      map['preferred_categories'] = Variable<String>(preferredCategories.value);
+    }
+    if (lastDifficultyAdjustment.present) {
+      map['last_difficulty_adjustment'] = Variable<DateTime>(
+        lastDifficultyAdjustment.value,
+      );
+    }
     return map;
   }
 
@@ -241,7 +491,11 @@ class UserCompanion extends UpdateCompanion<UserData> {
     return (StringBuffer('UserCompanion(')
           ..write('id: $id, ')
           ..write('name: $name, ')
-          ..write('age: $age')
+          ..write('age: $age, ')
+          ..write('currentDifficultyLevel: $currentDifficultyLevel, ')
+          ..write('journalingStreak: $journalingStreak, ')
+          ..write('preferredCategories: $preferredCategories, ')
+          ..write('lastDifficultyAdjustment: $lastDifficultyAdjustment')
           ..write(')'))
         .toString();
   }
@@ -276,8 +530,109 @@ class $PromptsTable extends Prompts with TableInfo<$PromptsTable, Prompt> {
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _therapeuticFrameworkMeta =
+      const VerificationMeta('therapeuticFramework');
   @override
-  List<GeneratedColumn> get $columns => [id, content];
+  late final GeneratedColumn<String> therapeuticFramework =
+      GeneratedColumn<String>(
+        'therapeutic_framework',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _difficultyLevelMeta = const VerificationMeta(
+    'difficultyLevel',
+  );
+  @override
+  late final GeneratedColumn<int> difficultyLevel = GeneratedColumn<int>(
+    'difficulty_level',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _categoryMeta = const VerificationMeta(
+    'category',
+  );
+  @override
+  late final GeneratedColumn<String> category = GeneratedColumn<String>(
+    'category',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _targetMoodStatesMeta = const VerificationMeta(
+    'targetMoodStates',
+  );
+  @override
+  late final GeneratedColumn<String> targetMoodStates = GeneratedColumn<String>(
+    'target_mood_states',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _bestTimeOfDayMeta = const VerificationMeta(
+    'bestTimeOfDay',
+  );
+  @override
+  late final GeneratedColumn<String> bestTimeOfDay = GeneratedColumn<String>(
+    'best_time_of_day',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _tagsMeta = const VerificationMeta('tags');
+  @override
+  late final GeneratedColumn<String> tags = GeneratedColumn<String>(
+    'tags',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _sourceCitationMeta = const VerificationMeta(
+    'sourceCitation',
+  );
+  @override
+  late final GeneratedColumn<String> sourceCitation = GeneratedColumn<String>(
+    'source_citation',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _isActiveMeta = const VerificationMeta(
+    'isActive',
+  );
+  @override
+  late final GeneratedColumn<bool> isActive = GeneratedColumn<bool>(
+    'is_active',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_active" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    content,
+    therapeuticFramework,
+    difficultyLevel,
+    category,
+    targetMoodStates,
+    bestTimeOfDay,
+    tags,
+    sourceCitation,
+    isActive,
+  ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -301,6 +656,73 @@ class $PromptsTable extends Prompts with TableInfo<$PromptsTable, Prompt> {
     } else if (isInserting) {
       context.missing(_contentMeta);
     }
+    if (data.containsKey('therapeutic_framework')) {
+      context.handle(
+        _therapeuticFrameworkMeta,
+        therapeuticFramework.isAcceptableOrUnknown(
+          data['therapeutic_framework']!,
+          _therapeuticFrameworkMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_therapeuticFrameworkMeta);
+    }
+    if (data.containsKey('difficulty_level')) {
+      context.handle(
+        _difficultyLevelMeta,
+        difficultyLevel.isAcceptableOrUnknown(
+          data['difficulty_level']!,
+          _difficultyLevelMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_difficultyLevelMeta);
+    }
+    if (data.containsKey('category')) {
+      context.handle(
+        _categoryMeta,
+        category.isAcceptableOrUnknown(data['category']!, _categoryMeta),
+      );
+    }
+    if (data.containsKey('target_mood_states')) {
+      context.handle(
+        _targetMoodStatesMeta,
+        targetMoodStates.isAcceptableOrUnknown(
+          data['target_mood_states']!,
+          _targetMoodStatesMeta,
+        ),
+      );
+    }
+    if (data.containsKey('best_time_of_day')) {
+      context.handle(
+        _bestTimeOfDayMeta,
+        bestTimeOfDay.isAcceptableOrUnknown(
+          data['best_time_of_day']!,
+          _bestTimeOfDayMeta,
+        ),
+      );
+    }
+    if (data.containsKey('tags')) {
+      context.handle(
+        _tagsMeta,
+        tags.isAcceptableOrUnknown(data['tags']!, _tagsMeta),
+      );
+    }
+    if (data.containsKey('source_citation')) {
+      context.handle(
+        _sourceCitationMeta,
+        sourceCitation.isAcceptableOrUnknown(
+          data['source_citation']!,
+          _sourceCitationMeta,
+        ),
+      );
+    }
+    if (data.containsKey('is_active')) {
+      context.handle(
+        _isActiveMeta,
+        isActive.isAcceptableOrUnknown(data['is_active']!, _isActiveMeta),
+      );
+    }
     return context;
   }
 
@@ -318,6 +740,38 @@ class $PromptsTable extends Prompts with TableInfo<$PromptsTable, Prompt> {
         DriftSqlType.string,
         data['${effectivePrefix}content'],
       )!,
+      therapeuticFramework: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}therapeutic_framework'],
+      )!,
+      difficultyLevel: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}difficulty_level'],
+      )!,
+      category: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}category'],
+      ),
+      targetMoodStates: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}target_mood_states'],
+      ),
+      bestTimeOfDay: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}best_time_of_day'],
+      ),
+      tags: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}tags'],
+      ),
+      sourceCitation: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}source_citation'],
+      ),
+      isActive: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_active'],
+      )!,
     );
   }
 
@@ -330,17 +784,73 @@ class $PromptsTable extends Prompts with TableInfo<$PromptsTable, Prompt> {
 class Prompt extends DataClass implements Insertable<Prompt> {
   final int id;
   final String content;
-  const Prompt({required this.id, required this.content});
+  final String therapeuticFramework;
+  final int difficultyLevel;
+  final String? category;
+  final String? targetMoodStates;
+  final String? bestTimeOfDay;
+  final String? tags;
+  final String? sourceCitation;
+  final bool isActive;
+  const Prompt({
+    required this.id,
+    required this.content,
+    required this.therapeuticFramework,
+    required this.difficultyLevel,
+    this.category,
+    this.targetMoodStates,
+    this.bestTimeOfDay,
+    this.tags,
+    this.sourceCitation,
+    required this.isActive,
+  });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['content'] = Variable<String>(content);
+    map['therapeutic_framework'] = Variable<String>(therapeuticFramework);
+    map['difficulty_level'] = Variable<int>(difficultyLevel);
+    if (!nullToAbsent || category != null) {
+      map['category'] = Variable<String>(category);
+    }
+    if (!nullToAbsent || targetMoodStates != null) {
+      map['target_mood_states'] = Variable<String>(targetMoodStates);
+    }
+    if (!nullToAbsent || bestTimeOfDay != null) {
+      map['best_time_of_day'] = Variable<String>(bestTimeOfDay);
+    }
+    if (!nullToAbsent || tags != null) {
+      map['tags'] = Variable<String>(tags);
+    }
+    if (!nullToAbsent || sourceCitation != null) {
+      map['source_citation'] = Variable<String>(sourceCitation);
+    }
+    map['is_active'] = Variable<bool>(isActive);
     return map;
   }
 
   PromptsCompanion toCompanion(bool nullToAbsent) {
-    return PromptsCompanion(id: Value(id), content: Value(content));
+    return PromptsCompanion(
+      id: Value(id),
+      content: Value(content),
+      therapeuticFramework: Value(therapeuticFramework),
+      difficultyLevel: Value(difficultyLevel),
+      category: category == null && nullToAbsent
+          ? const Value.absent()
+          : Value(category),
+      targetMoodStates: targetMoodStates == null && nullToAbsent
+          ? const Value.absent()
+          : Value(targetMoodStates),
+      bestTimeOfDay: bestTimeOfDay == null && nullToAbsent
+          ? const Value.absent()
+          : Value(bestTimeOfDay),
+      tags: tags == null && nullToAbsent ? const Value.absent() : Value(tags),
+      sourceCitation: sourceCitation == null && nullToAbsent
+          ? const Value.absent()
+          : Value(sourceCitation),
+      isActive: Value(isActive),
+    );
   }
 
   factory Prompt.fromJson(
@@ -351,6 +861,16 @@ class Prompt extends DataClass implements Insertable<Prompt> {
     return Prompt(
       id: serializer.fromJson<int>(json['id']),
       content: serializer.fromJson<String>(json['content']),
+      therapeuticFramework: serializer.fromJson<String>(
+        json['therapeuticFramework'],
+      ),
+      difficultyLevel: serializer.fromJson<int>(json['difficultyLevel']),
+      category: serializer.fromJson<String?>(json['category']),
+      targetMoodStates: serializer.fromJson<String?>(json['targetMoodStates']),
+      bestTimeOfDay: serializer.fromJson<String?>(json['bestTimeOfDay']),
+      tags: serializer.fromJson<String?>(json['tags']),
+      sourceCitation: serializer.fromJson<String?>(json['sourceCitation']),
+      isActive: serializer.fromJson<bool>(json['isActive']),
     );
   }
   @override
@@ -359,15 +879,68 @@ class Prompt extends DataClass implements Insertable<Prompt> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'content': serializer.toJson<String>(content),
+      'therapeuticFramework': serializer.toJson<String>(therapeuticFramework),
+      'difficultyLevel': serializer.toJson<int>(difficultyLevel),
+      'category': serializer.toJson<String?>(category),
+      'targetMoodStates': serializer.toJson<String?>(targetMoodStates),
+      'bestTimeOfDay': serializer.toJson<String?>(bestTimeOfDay),
+      'tags': serializer.toJson<String?>(tags),
+      'sourceCitation': serializer.toJson<String?>(sourceCitation),
+      'isActive': serializer.toJson<bool>(isActive),
     };
   }
 
-  Prompt copyWith({int? id, String? content}) =>
-      Prompt(id: id ?? this.id, content: content ?? this.content);
+  Prompt copyWith({
+    int? id,
+    String? content,
+    String? therapeuticFramework,
+    int? difficultyLevel,
+    Value<String?> category = const Value.absent(),
+    Value<String?> targetMoodStates = const Value.absent(),
+    Value<String?> bestTimeOfDay = const Value.absent(),
+    Value<String?> tags = const Value.absent(),
+    Value<String?> sourceCitation = const Value.absent(),
+    bool? isActive,
+  }) => Prompt(
+    id: id ?? this.id,
+    content: content ?? this.content,
+    therapeuticFramework: therapeuticFramework ?? this.therapeuticFramework,
+    difficultyLevel: difficultyLevel ?? this.difficultyLevel,
+    category: category.present ? category.value : this.category,
+    targetMoodStates: targetMoodStates.present
+        ? targetMoodStates.value
+        : this.targetMoodStates,
+    bestTimeOfDay: bestTimeOfDay.present
+        ? bestTimeOfDay.value
+        : this.bestTimeOfDay,
+    tags: tags.present ? tags.value : this.tags,
+    sourceCitation: sourceCitation.present
+        ? sourceCitation.value
+        : this.sourceCitation,
+    isActive: isActive ?? this.isActive,
+  );
   Prompt copyWithCompanion(PromptsCompanion data) {
     return Prompt(
       id: data.id.present ? data.id.value : this.id,
       content: data.content.present ? data.content.value : this.content,
+      therapeuticFramework: data.therapeuticFramework.present
+          ? data.therapeuticFramework.value
+          : this.therapeuticFramework,
+      difficultyLevel: data.difficultyLevel.present
+          ? data.difficultyLevel.value
+          : this.difficultyLevel,
+      category: data.category.present ? data.category.value : this.category,
+      targetMoodStates: data.targetMoodStates.present
+          ? data.targetMoodStates.value
+          : this.targetMoodStates,
+      bestTimeOfDay: data.bestTimeOfDay.present
+          ? data.bestTimeOfDay.value
+          : this.bestTimeOfDay,
+      tags: data.tags.present ? data.tags.value : this.tags,
+      sourceCitation: data.sourceCitation.present
+          ? data.sourceCitation.value
+          : this.sourceCitation,
+      isActive: data.isActive.present ? data.isActive.value : this.isActive,
     );
   }
 
@@ -375,44 +948,135 @@ class Prompt extends DataClass implements Insertable<Prompt> {
   String toString() {
     return (StringBuffer('Prompt(')
           ..write('id: $id, ')
-          ..write('content: $content')
+          ..write('content: $content, ')
+          ..write('therapeuticFramework: $therapeuticFramework, ')
+          ..write('difficultyLevel: $difficultyLevel, ')
+          ..write('category: $category, ')
+          ..write('targetMoodStates: $targetMoodStates, ')
+          ..write('bestTimeOfDay: $bestTimeOfDay, ')
+          ..write('tags: $tags, ')
+          ..write('sourceCitation: $sourceCitation, ')
+          ..write('isActive: $isActive')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, content);
+  int get hashCode => Object.hash(
+    id,
+    content,
+    therapeuticFramework,
+    difficultyLevel,
+    category,
+    targetMoodStates,
+    bestTimeOfDay,
+    tags,
+    sourceCitation,
+    isActive,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is Prompt && other.id == this.id && other.content == this.content);
+      (other is Prompt &&
+          other.id == this.id &&
+          other.content == this.content &&
+          other.therapeuticFramework == this.therapeuticFramework &&
+          other.difficultyLevel == this.difficultyLevel &&
+          other.category == this.category &&
+          other.targetMoodStates == this.targetMoodStates &&
+          other.bestTimeOfDay == this.bestTimeOfDay &&
+          other.tags == this.tags &&
+          other.sourceCitation == this.sourceCitation &&
+          other.isActive == this.isActive);
 }
 
 class PromptsCompanion extends UpdateCompanion<Prompt> {
   final Value<int> id;
   final Value<String> content;
+  final Value<String> therapeuticFramework;
+  final Value<int> difficultyLevel;
+  final Value<String?> category;
+  final Value<String?> targetMoodStates;
+  final Value<String?> bestTimeOfDay;
+  final Value<String?> tags;
+  final Value<String?> sourceCitation;
+  final Value<bool> isActive;
   const PromptsCompanion({
     this.id = const Value.absent(),
     this.content = const Value.absent(),
+    this.therapeuticFramework = const Value.absent(),
+    this.difficultyLevel = const Value.absent(),
+    this.category = const Value.absent(),
+    this.targetMoodStates = const Value.absent(),
+    this.bestTimeOfDay = const Value.absent(),
+    this.tags = const Value.absent(),
+    this.sourceCitation = const Value.absent(),
+    this.isActive = const Value.absent(),
   });
   PromptsCompanion.insert({
     this.id = const Value.absent(),
     required String content,
-  }) : content = Value(content);
+    required String therapeuticFramework,
+    required int difficultyLevel,
+    this.category = const Value.absent(),
+    this.targetMoodStates = const Value.absent(),
+    this.bestTimeOfDay = const Value.absent(),
+    this.tags = const Value.absent(),
+    this.sourceCitation = const Value.absent(),
+    this.isActive = const Value.absent(),
+  }) : content = Value(content),
+       therapeuticFramework = Value(therapeuticFramework),
+       difficultyLevel = Value(difficultyLevel);
   static Insertable<Prompt> custom({
     Expression<int>? id,
     Expression<String>? content,
+    Expression<String>? therapeuticFramework,
+    Expression<int>? difficultyLevel,
+    Expression<String>? category,
+    Expression<String>? targetMoodStates,
+    Expression<String>? bestTimeOfDay,
+    Expression<String>? tags,
+    Expression<String>? sourceCitation,
+    Expression<bool>? isActive,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (content != null) 'content': content,
+      if (therapeuticFramework != null)
+        'therapeutic_framework': therapeuticFramework,
+      if (difficultyLevel != null) 'difficulty_level': difficultyLevel,
+      if (category != null) 'category': category,
+      if (targetMoodStates != null) 'target_mood_states': targetMoodStates,
+      if (bestTimeOfDay != null) 'best_time_of_day': bestTimeOfDay,
+      if (tags != null) 'tags': tags,
+      if (sourceCitation != null) 'source_citation': sourceCitation,
+      if (isActive != null) 'is_active': isActive,
     });
   }
 
-  PromptsCompanion copyWith({Value<int>? id, Value<String>? content}) {
+  PromptsCompanion copyWith({
+    Value<int>? id,
+    Value<String>? content,
+    Value<String>? therapeuticFramework,
+    Value<int>? difficultyLevel,
+    Value<String?>? category,
+    Value<String?>? targetMoodStates,
+    Value<String?>? bestTimeOfDay,
+    Value<String?>? tags,
+    Value<String?>? sourceCitation,
+    Value<bool>? isActive,
+  }) {
     return PromptsCompanion(
       id: id ?? this.id,
       content: content ?? this.content,
+      therapeuticFramework: therapeuticFramework ?? this.therapeuticFramework,
+      difficultyLevel: difficultyLevel ?? this.difficultyLevel,
+      category: category ?? this.category,
+      targetMoodStates: targetMoodStates ?? this.targetMoodStates,
+      bestTimeOfDay: bestTimeOfDay ?? this.bestTimeOfDay,
+      tags: tags ?? this.tags,
+      sourceCitation: sourceCitation ?? this.sourceCitation,
+      isActive: isActive ?? this.isActive,
     );
   }
 
@@ -425,6 +1089,32 @@ class PromptsCompanion extends UpdateCompanion<Prompt> {
     if (content.present) {
       map['content'] = Variable<String>(content.value);
     }
+    if (therapeuticFramework.present) {
+      map['therapeutic_framework'] = Variable<String>(
+        therapeuticFramework.value,
+      );
+    }
+    if (difficultyLevel.present) {
+      map['difficulty_level'] = Variable<int>(difficultyLevel.value);
+    }
+    if (category.present) {
+      map['category'] = Variable<String>(category.value);
+    }
+    if (targetMoodStates.present) {
+      map['target_mood_states'] = Variable<String>(targetMoodStates.value);
+    }
+    if (bestTimeOfDay.present) {
+      map['best_time_of_day'] = Variable<String>(bestTimeOfDay.value);
+    }
+    if (tags.present) {
+      map['tags'] = Variable<String>(tags.value);
+    }
+    if (sourceCitation.present) {
+      map['source_citation'] = Variable<String>(sourceCitation.value);
+    }
+    if (isActive.present) {
+      map['is_active'] = Variable<bool>(isActive.value);
+    }
     return map;
   }
 
@@ -432,7 +1122,15 @@ class PromptsCompanion extends UpdateCompanion<Prompt> {
   String toString() {
     return (StringBuffer('PromptsCompanion(')
           ..write('id: $id, ')
-          ..write('content: $content')
+          ..write('content: $content, ')
+          ..write('therapeuticFramework: $therapeuticFramework, ')
+          ..write('difficultyLevel: $difficultyLevel, ')
+          ..write('category: $category, ')
+          ..write('targetMoodStates: $targetMoodStates, ')
+          ..write('bestTimeOfDay: $bestTimeOfDay, ')
+          ..write('tags: $tags, ')
+          ..write('sourceCitation: $sourceCitation, ')
+          ..write('isActive: $isActive')
           ..write(')'))
         .toString();
   }
@@ -1182,6 +1880,641 @@ class MoodsCompanion extends UpdateCompanion<Mood> {
   }
 }
 
+class $PromptInteractionsTable extends PromptInteractions
+    with TableInfo<$PromptInteractionsTable, PromptInteraction> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $PromptInteractionsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _userIdMeta = const VerificationMeta('userId');
+  @override
+  late final GeneratedColumn<int> userId = GeneratedColumn<int>(
+    'user_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES user (id)',
+    ),
+  );
+  static const VerificationMeta _promptIdMeta = const VerificationMeta(
+    'promptId',
+  );
+  @override
+  late final GeneratedColumn<int> promptId = GeneratedColumn<int>(
+    'prompt_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES prompts (id)',
+    ),
+  );
+  static const VerificationMeta _completedMeta = const VerificationMeta(
+    'completed',
+  );
+  @override
+  late final GeneratedColumn<bool> completed = GeneratedColumn<bool>(
+    'completed',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("completed" IN (0, 1))',
+    ),
+  );
+  static const VerificationMeta _skippedMeta = const VerificationMeta(
+    'skipped',
+  );
+  @override
+  late final GeneratedColumn<bool> skipped = GeneratedColumn<bool>(
+    'skipped',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("skipped" IN (0, 1))',
+    ),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    userId,
+    promptId,
+    completed,
+    skipped,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'prompt_interactions';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<PromptInteraction> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('user_id')) {
+      context.handle(
+        _userIdMeta,
+        userId.isAcceptableOrUnknown(data['user_id']!, _userIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_userIdMeta);
+    }
+    if (data.containsKey('prompt_id')) {
+      context.handle(
+        _promptIdMeta,
+        promptId.isAcceptableOrUnknown(data['prompt_id']!, _promptIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_promptIdMeta);
+    }
+    if (data.containsKey('completed')) {
+      context.handle(
+        _completedMeta,
+        completed.isAcceptableOrUnknown(data['completed']!, _completedMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_completedMeta);
+    }
+    if (data.containsKey('skipped')) {
+      context.handle(
+        _skippedMeta,
+        skipped.isAcceptableOrUnknown(data['skipped']!, _skippedMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_skippedMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  PromptInteraction map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return PromptInteraction(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      userId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}user_id'],
+      )!,
+      promptId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}prompt_id'],
+      )!,
+      completed: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}completed'],
+      )!,
+      skipped: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}skipped'],
+      )!,
+    );
+  }
+
+  @override
+  $PromptInteractionsTable createAlias(String alias) {
+    return $PromptInteractionsTable(attachedDatabase, alias);
+  }
+}
+
+class PromptInteraction extends DataClass
+    implements Insertable<PromptInteraction> {
+  final int id;
+  final int userId;
+  final int promptId;
+  final bool completed;
+  final bool skipped;
+  const PromptInteraction({
+    required this.id,
+    required this.userId,
+    required this.promptId,
+    required this.completed,
+    required this.skipped,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['user_id'] = Variable<int>(userId);
+    map['prompt_id'] = Variable<int>(promptId);
+    map['completed'] = Variable<bool>(completed);
+    map['skipped'] = Variable<bool>(skipped);
+    return map;
+  }
+
+  PromptInteractionsCompanion toCompanion(bool nullToAbsent) {
+    return PromptInteractionsCompanion(
+      id: Value(id),
+      userId: Value(userId),
+      promptId: Value(promptId),
+      completed: Value(completed),
+      skipped: Value(skipped),
+    );
+  }
+
+  factory PromptInteraction.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return PromptInteraction(
+      id: serializer.fromJson<int>(json['id']),
+      userId: serializer.fromJson<int>(json['userId']),
+      promptId: serializer.fromJson<int>(json['promptId']),
+      completed: serializer.fromJson<bool>(json['completed']),
+      skipped: serializer.fromJson<bool>(json['skipped']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'userId': serializer.toJson<int>(userId),
+      'promptId': serializer.toJson<int>(promptId),
+      'completed': serializer.toJson<bool>(completed),
+      'skipped': serializer.toJson<bool>(skipped),
+    };
+  }
+
+  PromptInteraction copyWith({
+    int? id,
+    int? userId,
+    int? promptId,
+    bool? completed,
+    bool? skipped,
+  }) => PromptInteraction(
+    id: id ?? this.id,
+    userId: userId ?? this.userId,
+    promptId: promptId ?? this.promptId,
+    completed: completed ?? this.completed,
+    skipped: skipped ?? this.skipped,
+  );
+  PromptInteraction copyWithCompanion(PromptInteractionsCompanion data) {
+    return PromptInteraction(
+      id: data.id.present ? data.id.value : this.id,
+      userId: data.userId.present ? data.userId.value : this.userId,
+      promptId: data.promptId.present ? data.promptId.value : this.promptId,
+      completed: data.completed.present ? data.completed.value : this.completed,
+      skipped: data.skipped.present ? data.skipped.value : this.skipped,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PromptInteraction(')
+          ..write('id: $id, ')
+          ..write('userId: $userId, ')
+          ..write('promptId: $promptId, ')
+          ..write('completed: $completed, ')
+          ..write('skipped: $skipped')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, userId, promptId, completed, skipped);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is PromptInteraction &&
+          other.id == this.id &&
+          other.userId == this.userId &&
+          other.promptId == this.promptId &&
+          other.completed == this.completed &&
+          other.skipped == this.skipped);
+}
+
+class PromptInteractionsCompanion extends UpdateCompanion<PromptInteraction> {
+  final Value<int> id;
+  final Value<int> userId;
+  final Value<int> promptId;
+  final Value<bool> completed;
+  final Value<bool> skipped;
+  const PromptInteractionsCompanion({
+    this.id = const Value.absent(),
+    this.userId = const Value.absent(),
+    this.promptId = const Value.absent(),
+    this.completed = const Value.absent(),
+    this.skipped = const Value.absent(),
+  });
+  PromptInteractionsCompanion.insert({
+    this.id = const Value.absent(),
+    required int userId,
+    required int promptId,
+    required bool completed,
+    required bool skipped,
+  }) : userId = Value(userId),
+       promptId = Value(promptId),
+       completed = Value(completed),
+       skipped = Value(skipped);
+  static Insertable<PromptInteraction> custom({
+    Expression<int>? id,
+    Expression<int>? userId,
+    Expression<int>? promptId,
+    Expression<bool>? completed,
+    Expression<bool>? skipped,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (userId != null) 'user_id': userId,
+      if (promptId != null) 'prompt_id': promptId,
+      if (completed != null) 'completed': completed,
+      if (skipped != null) 'skipped': skipped,
+    });
+  }
+
+  PromptInteractionsCompanion copyWith({
+    Value<int>? id,
+    Value<int>? userId,
+    Value<int>? promptId,
+    Value<bool>? completed,
+    Value<bool>? skipped,
+  }) {
+    return PromptInteractionsCompanion(
+      id: id ?? this.id,
+      userId: userId ?? this.userId,
+      promptId: promptId ?? this.promptId,
+      completed: completed ?? this.completed,
+      skipped: skipped ?? this.skipped,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (userId.present) {
+      map['user_id'] = Variable<int>(userId.value);
+    }
+    if (promptId.present) {
+      map['prompt_id'] = Variable<int>(promptId.value);
+    }
+    if (completed.present) {
+      map['completed'] = Variable<bool>(completed.value);
+    }
+    if (skipped.present) {
+      map['skipped'] = Variable<bool>(skipped.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PromptInteractionsCompanion(')
+          ..write('id: $id, ')
+          ..write('userId: $userId, ')
+          ..write('promptId: $promptId, ')
+          ..write('completed: $completed, ')
+          ..write('skipped: $skipped')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $UserAvoidedPromptsTable extends UserAvoidedPrompts
+    with TableInfo<$UserAvoidedPromptsTable, UserAvoidedPrompt> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $UserAvoidedPromptsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _userIdMeta = const VerificationMeta('userId');
+  @override
+  late final GeneratedColumn<int> userId = GeneratedColumn<int>(
+    'user_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES user (id)',
+    ),
+  );
+  static const VerificationMeta _promptIdMeta = const VerificationMeta(
+    'promptId',
+  );
+  @override
+  late final GeneratedColumn<int> promptId = GeneratedColumn<int>(
+    'prompt_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES prompts (id)',
+    ),
+  );
+  static const VerificationMeta _avoidedAtMeta = const VerificationMeta(
+    'avoidedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> avoidedAt = GeneratedColumn<DateTime>(
+    'avoided_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [userId, promptId, avoidedAt];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'user_avoided_prompts';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<UserAvoidedPrompt> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('user_id')) {
+      context.handle(
+        _userIdMeta,
+        userId.isAcceptableOrUnknown(data['user_id']!, _userIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_userIdMeta);
+    }
+    if (data.containsKey('prompt_id')) {
+      context.handle(
+        _promptIdMeta,
+        promptId.isAcceptableOrUnknown(data['prompt_id']!, _promptIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_promptIdMeta);
+    }
+    if (data.containsKey('avoided_at')) {
+      context.handle(
+        _avoidedAtMeta,
+        avoidedAt.isAcceptableOrUnknown(data['avoided_at']!, _avoidedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {userId, promptId};
+  @override
+  UserAvoidedPrompt map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return UserAvoidedPrompt(
+      userId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}user_id'],
+      )!,
+      promptId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}prompt_id'],
+      )!,
+      avoidedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}avoided_at'],
+      )!,
+    );
+  }
+
+  @override
+  $UserAvoidedPromptsTable createAlias(String alias) {
+    return $UserAvoidedPromptsTable(attachedDatabase, alias);
+  }
+}
+
+class UserAvoidedPrompt extends DataClass
+    implements Insertable<UserAvoidedPrompt> {
+  final int userId;
+  final int promptId;
+  final DateTime avoidedAt;
+  const UserAvoidedPrompt({
+    required this.userId,
+    required this.promptId,
+    required this.avoidedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['user_id'] = Variable<int>(userId);
+    map['prompt_id'] = Variable<int>(promptId);
+    map['avoided_at'] = Variable<DateTime>(avoidedAt);
+    return map;
+  }
+
+  UserAvoidedPromptsCompanion toCompanion(bool nullToAbsent) {
+    return UserAvoidedPromptsCompanion(
+      userId: Value(userId),
+      promptId: Value(promptId),
+      avoidedAt: Value(avoidedAt),
+    );
+  }
+
+  factory UserAvoidedPrompt.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return UserAvoidedPrompt(
+      userId: serializer.fromJson<int>(json['userId']),
+      promptId: serializer.fromJson<int>(json['promptId']),
+      avoidedAt: serializer.fromJson<DateTime>(json['avoidedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'userId': serializer.toJson<int>(userId),
+      'promptId': serializer.toJson<int>(promptId),
+      'avoidedAt': serializer.toJson<DateTime>(avoidedAt),
+    };
+  }
+
+  UserAvoidedPrompt copyWith({
+    int? userId,
+    int? promptId,
+    DateTime? avoidedAt,
+  }) => UserAvoidedPrompt(
+    userId: userId ?? this.userId,
+    promptId: promptId ?? this.promptId,
+    avoidedAt: avoidedAt ?? this.avoidedAt,
+  );
+  UserAvoidedPrompt copyWithCompanion(UserAvoidedPromptsCompanion data) {
+    return UserAvoidedPrompt(
+      userId: data.userId.present ? data.userId.value : this.userId,
+      promptId: data.promptId.present ? data.promptId.value : this.promptId,
+      avoidedAt: data.avoidedAt.present ? data.avoidedAt.value : this.avoidedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('UserAvoidedPrompt(')
+          ..write('userId: $userId, ')
+          ..write('promptId: $promptId, ')
+          ..write('avoidedAt: $avoidedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(userId, promptId, avoidedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is UserAvoidedPrompt &&
+          other.userId == this.userId &&
+          other.promptId == this.promptId &&
+          other.avoidedAt == this.avoidedAt);
+}
+
+class UserAvoidedPromptsCompanion extends UpdateCompanion<UserAvoidedPrompt> {
+  final Value<int> userId;
+  final Value<int> promptId;
+  final Value<DateTime> avoidedAt;
+  final Value<int> rowid;
+  const UserAvoidedPromptsCompanion({
+    this.userId = const Value.absent(),
+    this.promptId = const Value.absent(),
+    this.avoidedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  UserAvoidedPromptsCompanion.insert({
+    required int userId,
+    required int promptId,
+    this.avoidedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : userId = Value(userId),
+       promptId = Value(promptId);
+  static Insertable<UserAvoidedPrompt> custom({
+    Expression<int>? userId,
+    Expression<int>? promptId,
+    Expression<DateTime>? avoidedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (userId != null) 'user_id': userId,
+      if (promptId != null) 'prompt_id': promptId,
+      if (avoidedAt != null) 'avoided_at': avoidedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  UserAvoidedPromptsCompanion copyWith({
+    Value<int>? userId,
+    Value<int>? promptId,
+    Value<DateTime>? avoidedAt,
+    Value<int>? rowid,
+  }) {
+    return UserAvoidedPromptsCompanion(
+      userId: userId ?? this.userId,
+      promptId: promptId ?? this.promptId,
+      avoidedAt: avoidedAt ?? this.avoidedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (userId.present) {
+      map['user_id'] = Variable<int>(userId.value);
+    }
+    if (promptId.present) {
+      map['prompt_id'] = Variable<int>(promptId.value);
+    }
+    if (avoidedAt.present) {
+      map['avoided_at'] = Variable<DateTime>(avoidedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('UserAvoidedPromptsCompanion(')
+          ..write('userId: $userId, ')
+          ..write('promptId: $promptId, ')
+          ..write('avoidedAt: $avoidedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -1189,6 +2522,10 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $PromptsTable prompts = $PromptsTable(this);
   late final $RecordsTable records = $RecordsTable(this);
   late final $MoodsTable moods = $MoodsTable(this);
+  late final $PromptInteractionsTable promptInteractions =
+      $PromptInteractionsTable(this);
+  late final $UserAvoidedPromptsTable userAvoidedPrompts =
+      $UserAvoidedPromptsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -1198,6 +2535,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     prompts,
     records,
     moods,
+    promptInteractions,
+    userAvoidedPrompts,
   ];
 }
 
@@ -1206,12 +2545,20 @@ typedef $$UserTableCreateCompanionBuilder =
       Value<int> id,
       required String name,
       Value<int?> age,
+      Value<int?> currentDifficultyLevel,
+      Value<int?> journalingStreak,
+      Value<String?> preferredCategories,
+      Value<DateTime?> lastDifficultyAdjustment,
     });
 typedef $$UserTableUpdateCompanionBuilder =
     UserCompanion Function({
       Value<int> id,
       Value<String> name,
       Value<int?> age,
+      Value<int?> currentDifficultyLevel,
+      Value<int?> journalingStreak,
+      Value<String?> preferredCategories,
+      Value<DateTime?> lastDifficultyAdjustment,
     });
 
 final class $$UserTableReferences
@@ -1232,6 +2579,54 @@ final class $$UserTableReferences
     ).filter((f) => f.userId.id.sqlEquals($_itemColumn<int>('id')!));
 
     final cache = $_typedResult.readTableOrNull(_recordsRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$PromptInteractionsTable, List<PromptInteraction>>
+  _promptInteractionsRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.promptInteractions,
+        aliasName: $_aliasNameGenerator(
+          db.user.id,
+          db.promptInteractions.userId,
+        ),
+      );
+
+  $$PromptInteractionsTableProcessedTableManager get promptInteractionsRefs {
+    final manager = $$PromptInteractionsTableTableManager(
+      $_db,
+      $_db.promptInteractions,
+    ).filter((f) => f.userId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _promptInteractionsRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$UserAvoidedPromptsTable, List<UserAvoidedPrompt>>
+  _userAvoidedPromptsRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.userAvoidedPrompts,
+        aliasName: $_aliasNameGenerator(
+          db.user.id,
+          db.userAvoidedPrompts.userId,
+        ),
+      );
+
+  $$UserAvoidedPromptsTableProcessedTableManager get userAvoidedPromptsRefs {
+    final manager = $$UserAvoidedPromptsTableTableManager(
+      $_db,
+      $_db.userAvoidedPrompts,
+    ).filter((f) => f.userId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _userAvoidedPromptsRefsTable($_db),
+    );
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: cache),
     );
@@ -1261,6 +2656,26 @@ class $$UserTableFilterComposer extends Composer<_$AppDatabase, $UserTable> {
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<int> get currentDifficultyLevel => $composableBuilder(
+    column: $table.currentDifficultyLevel,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get journalingStreak => $composableBuilder(
+    column: $table.journalingStreak,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get preferredCategories => $composableBuilder(
+    column: $table.preferredCategories,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get lastDifficultyAdjustment => $composableBuilder(
+    column: $table.lastDifficultyAdjustment,
+    builder: (column) => ColumnFilters(column),
+  );
+
   Expression<bool> recordsRefs(
     Expression<bool> Function($$RecordsTableFilterComposer f) f,
   ) {
@@ -1277,6 +2692,56 @@ class $$UserTableFilterComposer extends Composer<_$AppDatabase, $UserTable> {
           }) => $$RecordsTableFilterComposer(
             $db: $db,
             $table: $db.records,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> promptInteractionsRefs(
+    Expression<bool> Function($$PromptInteractionsTableFilterComposer f) f,
+  ) {
+    final $$PromptInteractionsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.promptInteractions,
+      getReferencedColumn: (t) => t.userId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PromptInteractionsTableFilterComposer(
+            $db: $db,
+            $table: $db.promptInteractions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> userAvoidedPromptsRefs(
+    Expression<bool> Function($$UserAvoidedPromptsTableFilterComposer f) f,
+  ) {
+    final $$UserAvoidedPromptsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.userAvoidedPrompts,
+      getReferencedColumn: (t) => t.userId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$UserAvoidedPromptsTableFilterComposer(
+            $db: $db,
+            $table: $db.userAvoidedPrompts,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -1309,6 +2774,26 @@ class $$UserTableOrderingComposer extends Composer<_$AppDatabase, $UserTable> {
     column: $table.age,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<int> get currentDifficultyLevel => $composableBuilder(
+    column: $table.currentDifficultyLevel,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get journalingStreak => $composableBuilder(
+    column: $table.journalingStreak,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get preferredCategories => $composableBuilder(
+    column: $table.preferredCategories,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get lastDifficultyAdjustment => $composableBuilder(
+    column: $table.lastDifficultyAdjustment,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$UserTableAnnotationComposer
@@ -1328,6 +2813,26 @@ class $$UserTableAnnotationComposer
 
   GeneratedColumn<int> get age =>
       $composableBuilder(column: $table.age, builder: (column) => column);
+
+  GeneratedColumn<int> get currentDifficultyLevel => $composableBuilder(
+    column: $table.currentDifficultyLevel,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get journalingStreak => $composableBuilder(
+    column: $table.journalingStreak,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get preferredCategories => $composableBuilder(
+    column: $table.preferredCategories,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get lastDifficultyAdjustment => $composableBuilder(
+    column: $table.lastDifficultyAdjustment,
+    builder: (column) => column,
+  );
 
   Expression<T> recordsRefs<T extends Object>(
     Expression<T> Function($$RecordsTableAnnotationComposer a) f,
@@ -1353,6 +2858,58 @@ class $$UserTableAnnotationComposer
     );
     return f(composer);
   }
+
+  Expression<T> promptInteractionsRefs<T extends Object>(
+    Expression<T> Function($$PromptInteractionsTableAnnotationComposer a) f,
+  ) {
+    final $$PromptInteractionsTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.promptInteractions,
+          getReferencedColumn: (t) => t.userId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$PromptInteractionsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.promptInteractions,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
+
+  Expression<T> userAvoidedPromptsRefs<T extends Object>(
+    Expression<T> Function($$UserAvoidedPromptsTableAnnotationComposer a) f,
+  ) {
+    final $$UserAvoidedPromptsTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.userAvoidedPrompts,
+          getReferencedColumn: (t) => t.userId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$UserAvoidedPromptsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.userAvoidedPrompts,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
 }
 
 class $$UserTableTableManager
@@ -1368,7 +2925,11 @@ class $$UserTableTableManager
           $$UserTableUpdateCompanionBuilder,
           (UserData, $$UserTableReferences),
           UserData,
-          PrefetchHooks Function({bool recordsRefs})
+          PrefetchHooks Function({
+            bool recordsRefs,
+            bool promptInteractionsRefs,
+            bool userAvoidedPromptsRefs,
+          })
         > {
   $$UserTableTableManager(_$AppDatabase db, $UserTable table)
     : super(
@@ -1386,42 +2947,118 @@ class $$UserTableTableManager
                 Value<int> id = const Value.absent(),
                 Value<String> name = const Value.absent(),
                 Value<int?> age = const Value.absent(),
-              }) => UserCompanion(id: id, name: name, age: age),
+                Value<int?> currentDifficultyLevel = const Value.absent(),
+                Value<int?> journalingStreak = const Value.absent(),
+                Value<String?> preferredCategories = const Value.absent(),
+                Value<DateTime?> lastDifficultyAdjustment =
+                    const Value.absent(),
+              }) => UserCompanion(
+                id: id,
+                name: name,
+                age: age,
+                currentDifficultyLevel: currentDifficultyLevel,
+                journalingStreak: journalingStreak,
+                preferredCategories: preferredCategories,
+                lastDifficultyAdjustment: lastDifficultyAdjustment,
+              ),
           createCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
                 required String name,
                 Value<int?> age = const Value.absent(),
-              }) => UserCompanion.insert(id: id, name: name, age: age),
+                Value<int?> currentDifficultyLevel = const Value.absent(),
+                Value<int?> journalingStreak = const Value.absent(),
+                Value<String?> preferredCategories = const Value.absent(),
+                Value<DateTime?> lastDifficultyAdjustment =
+                    const Value.absent(),
+              }) => UserCompanion.insert(
+                id: id,
+                name: name,
+                age: age,
+                currentDifficultyLevel: currentDifficultyLevel,
+                journalingStreak: journalingStreak,
+                preferredCategories: preferredCategories,
+                lastDifficultyAdjustment: lastDifficultyAdjustment,
+              ),
           withReferenceMapper: (p0) => p0
               .map(
                 (e) =>
                     (e.readTable(table), $$UserTableReferences(db, table, e)),
               )
               .toList(),
-          prefetchHooksCallback: ({recordsRefs = false}) {
-            return PrefetchHooks(
-              db: db,
-              explicitlyWatchedTables: [if (recordsRefs) db.records],
-              addJoins: null,
-              getPrefetchedDataCallback: (items) async {
-                return [
-                  if (recordsRefs)
-                    await $_getPrefetchedData<UserData, $UserTable, Record>(
-                      currentTable: table,
-                      referencedTable: $$UserTableReferences._recordsRefsTable(
-                        db,
-                      ),
-                      managerFromTypedResult: (p0) =>
-                          $$UserTableReferences(db, table, p0).recordsRefs,
-                      referencedItemsForCurrentItem: (item, referencedItems) =>
-                          referencedItems.where((e) => e.userId == item.id),
-                      typedResults: items,
-                    ),
-                ];
+          prefetchHooksCallback:
+              ({
+                recordsRefs = false,
+                promptInteractionsRefs = false,
+                userAvoidedPromptsRefs = false,
+              }) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (recordsRefs) db.records,
+                    if (promptInteractionsRefs) db.promptInteractions,
+                    if (userAvoidedPromptsRefs) db.userAvoidedPrompts,
+                  ],
+                  addJoins: null,
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (recordsRefs)
+                        await $_getPrefetchedData<UserData, $UserTable, Record>(
+                          currentTable: table,
+                          referencedTable: $$UserTableReferences
+                              ._recordsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$UserTableReferences(db, table, p0).recordsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.userId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (promptInteractionsRefs)
+                        await $_getPrefetchedData<
+                          UserData,
+                          $UserTable,
+                          PromptInteraction
+                        >(
+                          currentTable: table,
+                          referencedTable: $$UserTableReferences
+                              ._promptInteractionsRefsTable(db),
+                          managerFromTypedResult: (p0) => $$UserTableReferences(
+                            db,
+                            table,
+                            p0,
+                          ).promptInteractionsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.userId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (userAvoidedPromptsRefs)
+                        await $_getPrefetchedData<
+                          UserData,
+                          $UserTable,
+                          UserAvoidedPrompt
+                        >(
+                          currentTable: table,
+                          referencedTable: $$UserTableReferences
+                              ._userAvoidedPromptsRefsTable(db),
+                          managerFromTypedResult: (p0) => $$UserTableReferences(
+                            db,
+                            table,
+                            p0,
+                          ).userAvoidedPromptsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.userId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
               },
-            );
-          },
         ),
       );
 }
@@ -1438,12 +3075,38 @@ typedef $$UserTableProcessedTableManager =
       $$UserTableUpdateCompanionBuilder,
       (UserData, $$UserTableReferences),
       UserData,
-      PrefetchHooks Function({bool recordsRefs})
+      PrefetchHooks Function({
+        bool recordsRefs,
+        bool promptInteractionsRefs,
+        bool userAvoidedPromptsRefs,
+      })
     >;
 typedef $$PromptsTableCreateCompanionBuilder =
-    PromptsCompanion Function({Value<int> id, required String content});
+    PromptsCompanion Function({
+      Value<int> id,
+      required String content,
+      required String therapeuticFramework,
+      required int difficultyLevel,
+      Value<String?> category,
+      Value<String?> targetMoodStates,
+      Value<String?> bestTimeOfDay,
+      Value<String?> tags,
+      Value<String?> sourceCitation,
+      Value<bool> isActive,
+    });
 typedef $$PromptsTableUpdateCompanionBuilder =
-    PromptsCompanion Function({Value<int> id, Value<String> content});
+    PromptsCompanion Function({
+      Value<int> id,
+      Value<String> content,
+      Value<String> therapeuticFramework,
+      Value<int> difficultyLevel,
+      Value<String?> category,
+      Value<String?> targetMoodStates,
+      Value<String?> bestTimeOfDay,
+      Value<String?> tags,
+      Value<String?> sourceCitation,
+      Value<bool> isActive,
+    });
 
 final class $$PromptsTableReferences
     extends BaseReferences<_$AppDatabase, $PromptsTable, Prompt> {
@@ -1463,6 +3126,54 @@ final class $$PromptsTableReferences
     ).filter((f) => f.promptId.id.sqlEquals($_itemColumn<int>('id')!));
 
     final cache = $_typedResult.readTableOrNull(_recordsRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$PromptInteractionsTable, List<PromptInteraction>>
+  _promptInteractionsRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.promptInteractions,
+        aliasName: $_aliasNameGenerator(
+          db.prompts.id,
+          db.promptInteractions.promptId,
+        ),
+      );
+
+  $$PromptInteractionsTableProcessedTableManager get promptInteractionsRefs {
+    final manager = $$PromptInteractionsTableTableManager(
+      $_db,
+      $_db.promptInteractions,
+    ).filter((f) => f.promptId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _promptInteractionsRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$UserAvoidedPromptsTable, List<UserAvoidedPrompt>>
+  _userAvoidedPromptsRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.userAvoidedPrompts,
+        aliasName: $_aliasNameGenerator(
+          db.prompts.id,
+          db.userAvoidedPrompts.promptId,
+        ),
+      );
+
+  $$UserAvoidedPromptsTableProcessedTableManager get userAvoidedPromptsRefs {
+    final manager = $$UserAvoidedPromptsTableTableManager(
+      $_db,
+      $_db.userAvoidedPrompts,
+    ).filter((f) => f.promptId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _userAvoidedPromptsRefsTable($_db),
+    );
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: cache),
     );
@@ -1488,6 +3199,46 @@ class $$PromptsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<String> get therapeuticFramework => $composableBuilder(
+    column: $table.therapeuticFramework,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get difficultyLevel => $composableBuilder(
+    column: $table.difficultyLevel,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get category => $composableBuilder(
+    column: $table.category,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get targetMoodStates => $composableBuilder(
+    column: $table.targetMoodStates,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get bestTimeOfDay => $composableBuilder(
+    column: $table.bestTimeOfDay,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get tags => $composableBuilder(
+    column: $table.tags,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get sourceCitation => $composableBuilder(
+    column: $table.sourceCitation,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isActive => $composableBuilder(
+    column: $table.isActive,
+    builder: (column) => ColumnFilters(column),
+  );
+
   Expression<bool> recordsRefs(
     Expression<bool> Function($$RecordsTableFilterComposer f) f,
   ) {
@@ -1504,6 +3255,56 @@ class $$PromptsTableFilterComposer
           }) => $$RecordsTableFilterComposer(
             $db: $db,
             $table: $db.records,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> promptInteractionsRefs(
+    Expression<bool> Function($$PromptInteractionsTableFilterComposer f) f,
+  ) {
+    final $$PromptInteractionsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.promptInteractions,
+      getReferencedColumn: (t) => t.promptId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PromptInteractionsTableFilterComposer(
+            $db: $db,
+            $table: $db.promptInteractions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> userAvoidedPromptsRefs(
+    Expression<bool> Function($$UserAvoidedPromptsTableFilterComposer f) f,
+  ) {
+    final $$UserAvoidedPromptsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.userAvoidedPrompts,
+      getReferencedColumn: (t) => t.promptId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$UserAvoidedPromptsTableFilterComposer(
+            $db: $db,
+            $table: $db.userAvoidedPrompts,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -1532,6 +3333,46 @@ class $$PromptsTableOrderingComposer
     column: $table.content,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get therapeuticFramework => $composableBuilder(
+    column: $table.therapeuticFramework,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get difficultyLevel => $composableBuilder(
+    column: $table.difficultyLevel,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get category => $composableBuilder(
+    column: $table.category,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get targetMoodStates => $composableBuilder(
+    column: $table.targetMoodStates,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get bestTimeOfDay => $composableBuilder(
+    column: $table.bestTimeOfDay,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get tags => $composableBuilder(
+    column: $table.tags,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get sourceCitation => $composableBuilder(
+    column: $table.sourceCitation,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get isActive => $composableBuilder(
+    column: $table.isActive,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$PromptsTableAnnotationComposer
@@ -1548,6 +3389,40 @@ class $$PromptsTableAnnotationComposer
 
   GeneratedColumn<String> get content =>
       $composableBuilder(column: $table.content, builder: (column) => column);
+
+  GeneratedColumn<String> get therapeuticFramework => $composableBuilder(
+    column: $table.therapeuticFramework,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get difficultyLevel => $composableBuilder(
+    column: $table.difficultyLevel,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get category =>
+      $composableBuilder(column: $table.category, builder: (column) => column);
+
+  GeneratedColumn<String> get targetMoodStates => $composableBuilder(
+    column: $table.targetMoodStates,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get bestTimeOfDay => $composableBuilder(
+    column: $table.bestTimeOfDay,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get tags =>
+      $composableBuilder(column: $table.tags, builder: (column) => column);
+
+  GeneratedColumn<String> get sourceCitation => $composableBuilder(
+    column: $table.sourceCitation,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get isActive =>
+      $composableBuilder(column: $table.isActive, builder: (column) => column);
 
   Expression<T> recordsRefs<T extends Object>(
     Expression<T> Function($$RecordsTableAnnotationComposer a) f,
@@ -1573,6 +3448,58 @@ class $$PromptsTableAnnotationComposer
     );
     return f(composer);
   }
+
+  Expression<T> promptInteractionsRefs<T extends Object>(
+    Expression<T> Function($$PromptInteractionsTableAnnotationComposer a) f,
+  ) {
+    final $$PromptInteractionsTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.promptInteractions,
+          getReferencedColumn: (t) => t.promptId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$PromptInteractionsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.promptInteractions,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
+
+  Expression<T> userAvoidedPromptsRefs<T extends Object>(
+    Expression<T> Function($$UserAvoidedPromptsTableAnnotationComposer a) f,
+  ) {
+    final $$UserAvoidedPromptsTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.userAvoidedPrompts,
+          getReferencedColumn: (t) => t.promptId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$UserAvoidedPromptsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.userAvoidedPrompts,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
 }
 
 class $$PromptsTableTableManager
@@ -1588,7 +3515,11 @@ class $$PromptsTableTableManager
           $$PromptsTableUpdateCompanionBuilder,
           (Prompt, $$PromptsTableReferences),
           Prompt,
-          PrefetchHooks Function({bool recordsRefs})
+          PrefetchHooks Function({
+            bool recordsRefs,
+            bool promptInteractionsRefs,
+            bool userAvoidedPromptsRefs,
+          })
         > {
   $$PromptsTableTableManager(_$AppDatabase db, $PromptsTable table)
     : super(
@@ -1605,12 +3536,50 @@ class $$PromptsTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 Value<String> content = const Value.absent(),
-              }) => PromptsCompanion(id: id, content: content),
+                Value<String> therapeuticFramework = const Value.absent(),
+                Value<int> difficultyLevel = const Value.absent(),
+                Value<String?> category = const Value.absent(),
+                Value<String?> targetMoodStates = const Value.absent(),
+                Value<String?> bestTimeOfDay = const Value.absent(),
+                Value<String?> tags = const Value.absent(),
+                Value<String?> sourceCitation = const Value.absent(),
+                Value<bool> isActive = const Value.absent(),
+              }) => PromptsCompanion(
+                id: id,
+                content: content,
+                therapeuticFramework: therapeuticFramework,
+                difficultyLevel: difficultyLevel,
+                category: category,
+                targetMoodStates: targetMoodStates,
+                bestTimeOfDay: bestTimeOfDay,
+                tags: tags,
+                sourceCitation: sourceCitation,
+                isActive: isActive,
+              ),
           createCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
                 required String content,
-              }) => PromptsCompanion.insert(id: id, content: content),
+                required String therapeuticFramework,
+                required int difficultyLevel,
+                Value<String?> category = const Value.absent(),
+                Value<String?> targetMoodStates = const Value.absent(),
+                Value<String?> bestTimeOfDay = const Value.absent(),
+                Value<String?> tags = const Value.absent(),
+                Value<String?> sourceCitation = const Value.absent(),
+                Value<bool> isActive = const Value.absent(),
+              }) => PromptsCompanion.insert(
+                id: id,
+                content: content,
+                therapeuticFramework: therapeuticFramework,
+                difficultyLevel: difficultyLevel,
+                category: category,
+                targetMoodStates: targetMoodStates,
+                bestTimeOfDay: bestTimeOfDay,
+                tags: tags,
+                sourceCitation: sourceCitation,
+                isActive: isActive,
+              ),
           withReferenceMapper: (p0) => p0
               .map(
                 (e) => (
@@ -1619,28 +3588,89 @@ class $$PromptsTableTableManager
                 ),
               )
               .toList(),
-          prefetchHooksCallback: ({recordsRefs = false}) {
-            return PrefetchHooks(
-              db: db,
-              explicitlyWatchedTables: [if (recordsRefs) db.records],
-              addJoins: null,
-              getPrefetchedDataCallback: (items) async {
-                return [
-                  if (recordsRefs)
-                    await $_getPrefetchedData<Prompt, $PromptsTable, Record>(
-                      currentTable: table,
-                      referencedTable: $$PromptsTableReferences
-                          ._recordsRefsTable(db),
-                      managerFromTypedResult: (p0) =>
-                          $$PromptsTableReferences(db, table, p0).recordsRefs,
-                      referencedItemsForCurrentItem: (item, referencedItems) =>
-                          referencedItems.where((e) => e.promptId == item.id),
-                      typedResults: items,
-                    ),
-                ];
+          prefetchHooksCallback:
+              ({
+                recordsRefs = false,
+                promptInteractionsRefs = false,
+                userAvoidedPromptsRefs = false,
+              }) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (recordsRefs) db.records,
+                    if (promptInteractionsRefs) db.promptInteractions,
+                    if (userAvoidedPromptsRefs) db.userAvoidedPrompts,
+                  ],
+                  addJoins: null,
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (recordsRefs)
+                        await $_getPrefetchedData<
+                          Prompt,
+                          $PromptsTable,
+                          Record
+                        >(
+                          currentTable: table,
+                          referencedTable: $$PromptsTableReferences
+                              ._recordsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$PromptsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).recordsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.promptId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (promptInteractionsRefs)
+                        await $_getPrefetchedData<
+                          Prompt,
+                          $PromptsTable,
+                          PromptInteraction
+                        >(
+                          currentTable: table,
+                          referencedTable: $$PromptsTableReferences
+                              ._promptInteractionsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$PromptsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).promptInteractionsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.promptId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (userAvoidedPromptsRefs)
+                        await $_getPrefetchedData<
+                          Prompt,
+                          $PromptsTable,
+                          UserAvoidedPrompt
+                        >(
+                          currentTable: table,
+                          referencedTable: $$PromptsTableReferences
+                              ._userAvoidedPromptsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$PromptsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).userAvoidedPromptsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.promptId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
               },
-            );
-          },
         ),
       );
 }
@@ -1657,7 +3687,11 @@ typedef $$PromptsTableProcessedTableManager =
       $$PromptsTableUpdateCompanionBuilder,
       (Prompt, $$PromptsTableReferences),
       Prompt,
-      PrefetchHooks Function({bool recordsRefs})
+      PrefetchHooks Function({
+        bool recordsRefs,
+        bool promptInteractionsRefs,
+        bool userAvoidedPromptsRefs,
+      })
     >;
 typedef $$RecordsTableCreateCompanionBuilder =
     RecordsCompanion Function({
@@ -2467,6 +4501,810 @@ typedef $$MoodsTableProcessedTableManager =
       Mood,
       PrefetchHooks Function({bool recordId})
     >;
+typedef $$PromptInteractionsTableCreateCompanionBuilder =
+    PromptInteractionsCompanion Function({
+      Value<int> id,
+      required int userId,
+      required int promptId,
+      required bool completed,
+      required bool skipped,
+    });
+typedef $$PromptInteractionsTableUpdateCompanionBuilder =
+    PromptInteractionsCompanion Function({
+      Value<int> id,
+      Value<int> userId,
+      Value<int> promptId,
+      Value<bool> completed,
+      Value<bool> skipped,
+    });
+
+final class $$PromptInteractionsTableReferences
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          $PromptInteractionsTable,
+          PromptInteraction
+        > {
+  $$PromptInteractionsTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $UserTable _userIdTable(_$AppDatabase db) => db.user.createAlias(
+    $_aliasNameGenerator(db.promptInteractions.userId, db.user.id),
+  );
+
+  $$UserTableProcessedTableManager get userId {
+    final $_column = $_itemColumn<int>('user_id')!;
+
+    final manager = $$UserTableTableManager(
+      $_db,
+      $_db.user,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_userIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $PromptsTable _promptIdTable(_$AppDatabase db) =>
+      db.prompts.createAlias(
+        $_aliasNameGenerator(db.promptInteractions.promptId, db.prompts.id),
+      );
+
+  $$PromptsTableProcessedTableManager get promptId {
+    final $_column = $_itemColumn<int>('prompt_id')!;
+
+    final manager = $$PromptsTableTableManager(
+      $_db,
+      $_db.prompts,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_promptIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$PromptInteractionsTableFilterComposer
+    extends Composer<_$AppDatabase, $PromptInteractionsTable> {
+  $$PromptInteractionsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get completed => $composableBuilder(
+    column: $table.completed,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get skipped => $composableBuilder(
+    column: $table.skipped,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$UserTableFilterComposer get userId {
+    final $$UserTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.userId,
+      referencedTable: $db.user,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$UserTableFilterComposer(
+            $db: $db,
+            $table: $db.user,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$PromptsTableFilterComposer get promptId {
+    final $$PromptsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.promptId,
+      referencedTable: $db.prompts,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PromptsTableFilterComposer(
+            $db: $db,
+            $table: $db.prompts,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$PromptInteractionsTableOrderingComposer
+    extends Composer<_$AppDatabase, $PromptInteractionsTable> {
+  $$PromptInteractionsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get completed => $composableBuilder(
+    column: $table.completed,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get skipped => $composableBuilder(
+    column: $table.skipped,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$UserTableOrderingComposer get userId {
+    final $$UserTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.userId,
+      referencedTable: $db.user,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$UserTableOrderingComposer(
+            $db: $db,
+            $table: $db.user,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$PromptsTableOrderingComposer get promptId {
+    final $$PromptsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.promptId,
+      referencedTable: $db.prompts,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PromptsTableOrderingComposer(
+            $db: $db,
+            $table: $db.prompts,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$PromptInteractionsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $PromptInteractionsTable> {
+  $$PromptInteractionsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<bool> get completed =>
+      $composableBuilder(column: $table.completed, builder: (column) => column);
+
+  GeneratedColumn<bool> get skipped =>
+      $composableBuilder(column: $table.skipped, builder: (column) => column);
+
+  $$UserTableAnnotationComposer get userId {
+    final $$UserTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.userId,
+      referencedTable: $db.user,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$UserTableAnnotationComposer(
+            $db: $db,
+            $table: $db.user,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$PromptsTableAnnotationComposer get promptId {
+    final $$PromptsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.promptId,
+      referencedTable: $db.prompts,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PromptsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.prompts,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$PromptInteractionsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $PromptInteractionsTable,
+          PromptInteraction,
+          $$PromptInteractionsTableFilterComposer,
+          $$PromptInteractionsTableOrderingComposer,
+          $$PromptInteractionsTableAnnotationComposer,
+          $$PromptInteractionsTableCreateCompanionBuilder,
+          $$PromptInteractionsTableUpdateCompanionBuilder,
+          (PromptInteraction, $$PromptInteractionsTableReferences),
+          PromptInteraction,
+          PrefetchHooks Function({bool userId, bool promptId})
+        > {
+  $$PromptInteractionsTableTableManager(
+    _$AppDatabase db,
+    $PromptInteractionsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$PromptInteractionsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$PromptInteractionsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$PromptInteractionsTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<int> userId = const Value.absent(),
+                Value<int> promptId = const Value.absent(),
+                Value<bool> completed = const Value.absent(),
+                Value<bool> skipped = const Value.absent(),
+              }) => PromptInteractionsCompanion(
+                id: id,
+                userId: userId,
+                promptId: promptId,
+                completed: completed,
+                skipped: skipped,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required int userId,
+                required int promptId,
+                required bool completed,
+                required bool skipped,
+              }) => PromptInteractionsCompanion.insert(
+                id: id,
+                userId: userId,
+                promptId: promptId,
+                completed: completed,
+                skipped: skipped,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$PromptInteractionsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({userId = false, promptId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (userId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.userId,
+                                referencedTable:
+                                    $$PromptInteractionsTableReferences
+                                        ._userIdTable(db),
+                                referencedColumn:
+                                    $$PromptInteractionsTableReferences
+                                        ._userIdTable(db)
+                                        .id,
+                              )
+                              as T;
+                    }
+                    if (promptId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.promptId,
+                                referencedTable:
+                                    $$PromptInteractionsTableReferences
+                                        ._promptIdTable(db),
+                                referencedColumn:
+                                    $$PromptInteractionsTableReferences
+                                        ._promptIdTable(db)
+                                        .id,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$PromptInteractionsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $PromptInteractionsTable,
+      PromptInteraction,
+      $$PromptInteractionsTableFilterComposer,
+      $$PromptInteractionsTableOrderingComposer,
+      $$PromptInteractionsTableAnnotationComposer,
+      $$PromptInteractionsTableCreateCompanionBuilder,
+      $$PromptInteractionsTableUpdateCompanionBuilder,
+      (PromptInteraction, $$PromptInteractionsTableReferences),
+      PromptInteraction,
+      PrefetchHooks Function({bool userId, bool promptId})
+    >;
+typedef $$UserAvoidedPromptsTableCreateCompanionBuilder =
+    UserAvoidedPromptsCompanion Function({
+      required int userId,
+      required int promptId,
+      Value<DateTime> avoidedAt,
+      Value<int> rowid,
+    });
+typedef $$UserAvoidedPromptsTableUpdateCompanionBuilder =
+    UserAvoidedPromptsCompanion Function({
+      Value<int> userId,
+      Value<int> promptId,
+      Value<DateTime> avoidedAt,
+      Value<int> rowid,
+    });
+
+final class $$UserAvoidedPromptsTableReferences
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          $UserAvoidedPromptsTable,
+          UserAvoidedPrompt
+        > {
+  $$UserAvoidedPromptsTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $UserTable _userIdTable(_$AppDatabase db) => db.user.createAlias(
+    $_aliasNameGenerator(db.userAvoidedPrompts.userId, db.user.id),
+  );
+
+  $$UserTableProcessedTableManager get userId {
+    final $_column = $_itemColumn<int>('user_id')!;
+
+    final manager = $$UserTableTableManager(
+      $_db,
+      $_db.user,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_userIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $PromptsTable _promptIdTable(_$AppDatabase db) =>
+      db.prompts.createAlias(
+        $_aliasNameGenerator(db.userAvoidedPrompts.promptId, db.prompts.id),
+      );
+
+  $$PromptsTableProcessedTableManager get promptId {
+    final $_column = $_itemColumn<int>('prompt_id')!;
+
+    final manager = $$PromptsTableTableManager(
+      $_db,
+      $_db.prompts,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_promptIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$UserAvoidedPromptsTableFilterComposer
+    extends Composer<_$AppDatabase, $UserAvoidedPromptsTable> {
+  $$UserAvoidedPromptsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<DateTime> get avoidedAt => $composableBuilder(
+    column: $table.avoidedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$UserTableFilterComposer get userId {
+    final $$UserTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.userId,
+      referencedTable: $db.user,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$UserTableFilterComposer(
+            $db: $db,
+            $table: $db.user,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$PromptsTableFilterComposer get promptId {
+    final $$PromptsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.promptId,
+      referencedTable: $db.prompts,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PromptsTableFilterComposer(
+            $db: $db,
+            $table: $db.prompts,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$UserAvoidedPromptsTableOrderingComposer
+    extends Composer<_$AppDatabase, $UserAvoidedPromptsTable> {
+  $$UserAvoidedPromptsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<DateTime> get avoidedAt => $composableBuilder(
+    column: $table.avoidedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$UserTableOrderingComposer get userId {
+    final $$UserTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.userId,
+      referencedTable: $db.user,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$UserTableOrderingComposer(
+            $db: $db,
+            $table: $db.user,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$PromptsTableOrderingComposer get promptId {
+    final $$PromptsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.promptId,
+      referencedTable: $db.prompts,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PromptsTableOrderingComposer(
+            $db: $db,
+            $table: $db.prompts,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$UserAvoidedPromptsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $UserAvoidedPromptsTable> {
+  $$UserAvoidedPromptsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<DateTime> get avoidedAt =>
+      $composableBuilder(column: $table.avoidedAt, builder: (column) => column);
+
+  $$UserTableAnnotationComposer get userId {
+    final $$UserTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.userId,
+      referencedTable: $db.user,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$UserTableAnnotationComposer(
+            $db: $db,
+            $table: $db.user,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$PromptsTableAnnotationComposer get promptId {
+    final $$PromptsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.promptId,
+      referencedTable: $db.prompts,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PromptsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.prompts,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$UserAvoidedPromptsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $UserAvoidedPromptsTable,
+          UserAvoidedPrompt,
+          $$UserAvoidedPromptsTableFilterComposer,
+          $$UserAvoidedPromptsTableOrderingComposer,
+          $$UserAvoidedPromptsTableAnnotationComposer,
+          $$UserAvoidedPromptsTableCreateCompanionBuilder,
+          $$UserAvoidedPromptsTableUpdateCompanionBuilder,
+          (UserAvoidedPrompt, $$UserAvoidedPromptsTableReferences),
+          UserAvoidedPrompt,
+          PrefetchHooks Function({bool userId, bool promptId})
+        > {
+  $$UserAvoidedPromptsTableTableManager(
+    _$AppDatabase db,
+    $UserAvoidedPromptsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$UserAvoidedPromptsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$UserAvoidedPromptsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$UserAvoidedPromptsTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<int> userId = const Value.absent(),
+                Value<int> promptId = const Value.absent(),
+                Value<DateTime> avoidedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => UserAvoidedPromptsCompanion(
+                userId: userId,
+                promptId: promptId,
+                avoidedAt: avoidedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required int userId,
+                required int promptId,
+                Value<DateTime> avoidedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => UserAvoidedPromptsCompanion.insert(
+                userId: userId,
+                promptId: promptId,
+                avoidedAt: avoidedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$UserAvoidedPromptsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({userId = false, promptId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (userId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.userId,
+                                referencedTable:
+                                    $$UserAvoidedPromptsTableReferences
+                                        ._userIdTable(db),
+                                referencedColumn:
+                                    $$UserAvoidedPromptsTableReferences
+                                        ._userIdTable(db)
+                                        .id,
+                              )
+                              as T;
+                    }
+                    if (promptId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.promptId,
+                                referencedTable:
+                                    $$UserAvoidedPromptsTableReferences
+                                        ._promptIdTable(db),
+                                referencedColumn:
+                                    $$UserAvoidedPromptsTableReferences
+                                        ._promptIdTable(db)
+                                        .id,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$UserAvoidedPromptsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $UserAvoidedPromptsTable,
+      UserAvoidedPrompt,
+      $$UserAvoidedPromptsTableFilterComposer,
+      $$UserAvoidedPromptsTableOrderingComposer,
+      $$UserAvoidedPromptsTableAnnotationComposer,
+      $$UserAvoidedPromptsTableCreateCompanionBuilder,
+      $$UserAvoidedPromptsTableUpdateCompanionBuilder,
+      (UserAvoidedPrompt, $$UserAvoidedPromptsTableReferences),
+      UserAvoidedPrompt,
+      PrefetchHooks Function({bool userId, bool promptId})
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -2478,4 +5316,8 @@ class $AppDatabaseManager {
       $$RecordsTableTableManager(_db, _db.records);
   $$MoodsTableTableManager get moods =>
       $$MoodsTableTableManager(_db, _db.moods);
+  $$PromptInteractionsTableTableManager get promptInteractions =>
+      $$PromptInteractionsTableTableManager(_db, _db.promptInteractions);
+  $$UserAvoidedPromptsTableTableManager get userAvoidedPrompts =>
+      $$UserAvoidedPromptsTableTableManager(_db, _db.userAvoidedPrompts);
 }
