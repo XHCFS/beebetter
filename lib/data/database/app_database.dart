@@ -31,8 +31,8 @@ class AppDatabase extends _$AppDatabase {
         if (from < 2) {
           // Create UserAvoidedPrompts table
           await migrator.createTable(userAvoidedPrompts);
-          // Remove avoidedPrompts column from User table
-          await migrator.deleteColumn(user, 'avoided_prompts');
+          // Note: avoidedPrompts column removal is handled by schema change
+          // Old data in that column will be ignored since we no longer reference it
         }
       },
     );
