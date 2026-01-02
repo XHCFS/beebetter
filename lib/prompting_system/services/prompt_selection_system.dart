@@ -32,9 +32,19 @@ class PromptSelectionSystem {
       final avoidedPromptIds = await _getAvoidedPromptIds(userId);
 
       // Filter out avoided prompts
-      final availablePrompts = prompts
+      var availablePrompts = prompts
           .where((p) => !avoidedPromptIds.contains(p.id))
           .toList();
+
+      // If all prompts are avoided, reset the oldest 50% of avoided prompts
+      if (availablePrompts.isEmpty && avoidedPromptIds.isNotEmpty) {
+        await _resetOldestAvoidedPrompts(userId, (avoidedPromptIds.length / 2).ceil());
+        // Re-fetch available prompts after reset
+        final updatedAvoidedIds = await _getAvoidedPromptIds(userId);
+        availablePrompts = prompts
+            .where((p) => !updatedAvoidedIds.contains(p.id))
+            .toList();
+      }
 
       if (availablePrompts.isEmpty) return [];
 
@@ -186,6 +196,28 @@ class PromptSelectionSystem {
     } catch (e) {
       print('Error fetching avoided prompts for user $userId: $e');
       return {};
+    }
+  }
+
+  /// Resets the oldest N avoided prompts for a user
+  /// Used when all prompts are avoided to ensure users always have prompts available
+  Future<void> _resetOldestAvoidedPrompts(int userId, int count) async {
+    try {
+      final oldestAvoided = await (_db.select(_db.userAvoidedPrompts)
+            ..where((uap) => uap.userId.equals(userId))
+            ..orderBy([(uap) => OrderingTerm.asc(uap.avoidedAt)])
+            ..limit(count))
+          .get();
+
+      for (final avoided in oldestAvoided) {
+        await (_db.delete(_db.userAvoidedPrompts)
+              ..where((uap) => 
+                  uap.userId.equals(userId) & 
+                  uap.promptId.equals(avoided.promptId)))
+            .go();
+      }
+    } catch (e) {
+      print('Error resetting oldest avoided prompts for user $userId: $e');
     }
   }
 
